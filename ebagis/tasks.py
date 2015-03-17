@@ -8,7 +8,6 @@ from django.db import transaction
 
 import arcpy
 
-from .constants import RASTER_TYPECODE, FC_TYPECODE, TABLE_TYPECODE
 from .constants import RASTER_EXT, FC_EXT, TABLE_EXT
 
 # Geodatabase Classes
@@ -22,7 +21,9 @@ from .models import Maps, CRS_WKID
 
 from .models import AOIUpload
 
-from .gdb_functions import Geodatabase
+from arcpy_extensions.constants import RASTER_TYPECODE, FC_TYPECODE,\
+    TABLE_TYPECODE
+from arcpy_extensions.geodatabase import Geodatabase
 
 from .utilities import make_short_name, get_multipart_wkt_geometry,\
     tempdirectory, create_spatial_ref_from_EPSG, reproject_wkt,\
