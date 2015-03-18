@@ -47,6 +47,6 @@ setup(
         https://github.com/jkeifer/drf-chunked-upload/tarball/0.1.2,
         https://github.com/jkeifer/arcpy-extensions/tarball/0.0.1,
         https://github.com/djangonauts/django-rest-framework-gis/tarball/master,
-    ]
-    license=''
+    ],
+    license='',
 )
