@@ -1,3 +1,5 @@
 --process-dependency-links
---allow-all-external
+--allow-external drf-chunked-uploads
+--allow-external arcpy-extensions
+--allow-external djangorestframework-gis
 -e .
