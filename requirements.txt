@@ -1,2 +1,2 @@
-https://github.com/PSU-CSAR/django-ebagis/tarball/master/0.1.0
+django-ebagis>=0.2.1
 django-rest-swagger==0.2.9
