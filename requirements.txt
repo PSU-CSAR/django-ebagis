@@ -1,1 +1,1 @@
--e . --process-dependency-links --allow-external
+-e . --process-dependency-links --allow-all-external
