@@ -1,0 +1,9 @@
+https://github.com/jkeifer/drf-chunked-upload/tarball/v0.1.2
+https://github.com/jkeifer/arcpy-extensions/tarball/v0.0.1
+Django==1.7.4
+djangorestframework==3.0.1
+djangorestframework-gis==3.0.4
+numpy==1.9.2
+gdal==1.11.2
+celery==3.1.17
+django-celery==3.1.16
