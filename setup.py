@@ -25,7 +25,7 @@ setup(
     author='Portland State University Center for Spatial Analysis and Research',
     author_email='jkeifer@pdx.edu',
     url='https://github.com/PSU-CSAR/django-ebagis',
-    download_url=download_url % "master",#version,
+    download_url=download_url % version,
     install_requires=[
         'celery>=3.1.17',
         'Django>=1.7.4',
