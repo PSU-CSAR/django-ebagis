@@ -18,14 +18,14 @@ download_url = (
 
 setup(
     name='django-ebagis',
-    packages=['django-ebagis'],
+    packages=['ebagis'],
     version=version,
     description=('Django app implementing the server-side portion of the BAGIS project.'),
     long_description=readme,
     author='Portland State University Center for Spatial Analysis and Research',
-    author_email='jduh@pdx.edu',
+    author_email='jkeifer@pdx.edu',
     url='https://github.com/PSU-CSAR/django-ebagis',
-    download_url=download_url % version,
+    download_url=download_url# % version,
     install_requires=[
         amqp>=1.4.6,
         anyjson>=0.3.3,
@@ -41,7 +41,7 @@ setup(
         pytz>=2014.10,
         drf-chunked-upload>=0.1.2,
         arcpy-extensions>=0.0.1,
-        djangorestframework-gis>=0.8.1
+        djangorestframework-gis>=0.8.1,
     ],
     dependency_links=[
         https://github.com/jkeifer/drf-chunked-upload/tarball/0.1.2,
