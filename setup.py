@@ -44,9 +44,9 @@ setup(
         djangorestframework-gis>=0.8.1,
     ],
     dependency_links=[
-        https://github.com/jkeifer/drf-chunked-upload/tarball/0.1.2,
-        https://github.com/jkeifer/arcpy-extensions/tarball/0.0.1,
-        https://github.com/djangonauts/django-rest-framework-gis/tarball/master,
+        'https://github.com/jkeifer/drf-chunked-upload/tarball/0.1.2',
+        'https://github.com/jkeifer/arcpy-extensions/tarball/0.0.1',
+        'https://github.com/djangonauts/django-rest-framework-gis/tarball/master',
     ],
     license='',
 )
