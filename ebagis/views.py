@@ -14,8 +14,6 @@ from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework import mixins
 from rest_framework import generics
 
-from rest_framework_extensions.mixins import NestedViewSetMixin
-
 from drf_chunked_upload.views import ChunkedUploadView
 
 from djcelery.models import TaskMeta
@@ -92,7 +90,7 @@ class UpdateUploadView(ChunkedUploadView):
     serializer_class = UpdateUploadSerializer
 
 
-class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -100,7 +98,7 @@ class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class GroupViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
@@ -108,7 +106,7 @@ class GroupViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
-class AOIViewSet(NestedViewSetMixin, MultiSerializerViewSet):
+class AOIViewSet(MultiSerializerViewSet):
     """
     API endpoint that allows AOIs to be viewed or edited.
     """
@@ -248,45 +246,45 @@ class GeodatabaseRasterViewSet(viewsets.ModelViewSet):
 
 
 # *************** BASE FILE VIEWSETS ***************
-
-class XMLViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    """
-    API endpoint that allows XMLs to be viewed or edited.
-    """
-    queryset = XML.objects.all()
-    serializer_class = XMLSerializer
-
-
-class VectorViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    """
-    API endpoint that allows Vectors to be viewed or edited.
-    """
-    queryset = Vector.objects.all()
-    serializer_class = VectorSerializer
-
-
-class RasterViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    """
-    API endpoint that allows Rasters to be viewed or edited.
-    """
-    queryset = Raster.objects.all()
-    serializer_class = RasterSerializer
-
-
-class TableViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    """
-    API endpoint that allows Tables to be viewed or edited.
-    """
-    queryset = Table.objects.all()
-    serializer_class = TableSerializer
-
-
-class MapDocViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    """
-    API endpoint that allows Map Documents to be viewed or edited.
-    """
-    queryset = MapDocument.objects.all()
-    serializer_class = MapDocSerializer
+#
+#class XMLViewSet(viewsets.ModelViewSet):
+#    """
+#    API endpoint that allows XMLs to be viewed or edited.
+#    """
+#    queryset = XML.objects.all()
+#    serializer_class = XMLSerializer
+#
+#
+#class VectorViewSet(viewsets.ModelViewSet):
+#    """
+#    API endpoint that allows Vectors to be viewed or edited.
+#    """
+#    queryset = Vector.objects.all()
+#    serializer_class = VectorSerializer
+#
+#
+#class RasterViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+#    """
+#    API endpoint that allows Rasters to be viewed or edited.
+#    """
+#    queryset = Raster.objects.all()
+#    serializer_class = RasterSerializer
+#
+#
+#class TableViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+#    """
+#    API endpoint that allows Tables to be viewed or edited.
+#    """
+#    queryset = Table.objects.all()
+#    serializer_class = TableSerializer
+#
+#
+#class MapDocViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+#    """
+#    API endpoint that allows Map Documents to be viewed or edited.
+#    """
+#    queryset = MapDocument.objects.all()
+#    serializer_class = MapDocSerializer
 
 
 # *************** UTILITY FUNCTIONS ***************
@@ -305,3 +303,4 @@ def get_queryset_arguments(obj):
             query_dict[query_lookup] = query_value
 
     return query_dict
+
