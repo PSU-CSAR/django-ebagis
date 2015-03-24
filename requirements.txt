@@ -1,2 +1,4 @@
 django-ebagis>=0.2.1
+django-extensions>=1.4.9
 django-windows-tools>=0.1.1
+psycopg2>=2.5.4
