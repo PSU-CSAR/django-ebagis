@@ -68,8 +68,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'ebagis.urls'
-WSGI_APPLICATION = 'ebagis.wsgi.application'
+ROOT_URLCONF = 'ebagis_site.urls'
+WSGI_APPLICATION = 'ebagis_site.wsgi.application'
 
 
 # Database
