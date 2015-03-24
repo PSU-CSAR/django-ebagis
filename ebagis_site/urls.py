@@ -23,5 +23,5 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
 
     # rest urls
-    url(REST_ROOT, include(ebagisapp.urls)),
+    url(REST_ROOT, include(ebagis.urls)),
 )
