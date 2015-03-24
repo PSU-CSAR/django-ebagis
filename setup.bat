@@ -3,7 +3,7 @@
 Setlocal EnableDelayedExpansion
 
 REM create secret key
-set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace('\'', ''))) for i in range(50)])"'
+set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace('\'', '').replace('\\', ''))) for i in range(50)])"'
 echo %command%
 for /f %%i in (%command%) do set SECRET_KEY=%%i
 
