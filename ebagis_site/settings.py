@@ -13,6 +13,7 @@ from . import secret
 
 # this is a really stupid hack for arc 10.3
 try:
+    import arcserver
     import arcpy
     arcpy.Exists(r"..\arcpy_hack\test_img.tif")
 except Exception as e:
