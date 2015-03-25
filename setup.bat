@@ -50,5 +50,6 @@ set pthfile=C:\Anaconda_x86\envs\%1\Lib\site-packages\desktop10.3.pth
 @echo C:\Program Files (x86)\ArcGIS\Desktop10.3\ArcPy>>%pthfile%
 @echo C:\Program Files (x86)\ArcGIS\Desktop10.3\ArcToolBox\Scripts>>%pthfile%
 
-REM migrate database
+REM migrate database and load users
 python manage.py migrate
+python manage.py loaddata ebagis_site\fixtures\user_fixtures.json
