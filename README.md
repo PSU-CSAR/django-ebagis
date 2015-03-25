@@ -27,7 +27,7 @@ name and location on disk. Within that directory, clone this
 repository. From the command line, navigate to the cloned
 directory. Next, run the setup.bat file with three arguments:
 
-    > setup.bat <name_of_project> <postgres_username> <postgres_password>
+    $ setup.bat <name_of_project> <postgres_username> <postgres_password>
 
 The batch file will do the following:
 
@@ -49,13 +49,13 @@ The batch file will do the following:
 6. Create a database named with the specified  project name in the
    local postgres installation, using the template `postgis_21`
    and tablespace `gis_data`. The user and password for authentication
-   will be those provided to the script as arguments.
+   will be those provided to the script as arguments.  
    **NOTE:** the password does not currently get passed
    to the command, so the user must input it again, manually.
 
 7. Create the `secret.py` file required by the settings module,
    containing the project's secret key and the database name,
-   user, and password.
+   user, and password.  
    **NOTE:** this file is not tracked by git and should
    never be added as it contains highly sensitive information.
 
@@ -88,7 +88,7 @@ From the docs:
 2. Begin by collecting all static assets using the standard
    django manage.py command:
    
-      > python manage.py collectstatic
+      `$ python manage.py collectstatic`
 
 3. Within the `static` directory this command will create, make
    a file called `web.config` with the following:
@@ -106,7 +106,7 @@ From the docs:
 
 4. Setup the IIS site with the following command:
    
-       > python manage.py winfcgi_install --site-name <project_name> --monitor-changes-to <full_path_to_touch_this_to_update_cgi.txt> --binding=https://*:443
+       `$ python manage.py winfcgi_install --site-name <project_name> --monitor-changes-to <full_path_to_touch_this_to_update_cgi.txt> --binding=https://*:443`
 
 
 Running a Development Instance
@@ -122,7 +122,8 @@ in separate command prompt windows:
 
 2. In one window, run the command `python manage.py runserver`.
    This should start the development web server accessible at the
-   localhost on port 8000. **NOTE:** do not use this server
+   localhost on port 8000.   
+   **NOTE:** do not use this server
    for connections across a network. It is not secure.
 
 3. In the other window, run the command
