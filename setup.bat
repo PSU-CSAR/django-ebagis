@@ -26,7 +26,6 @@ pip install -r ../django-ebagis/requirements.txt
 cd %OLDDIR%
 pip install -r requirements.txt
 
-@echo on
 REM create database
 echo %3 | createdb -U %2 -D gis_data -T postgis_21 %1
 
