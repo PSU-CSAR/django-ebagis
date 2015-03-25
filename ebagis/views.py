@@ -145,6 +145,14 @@ class AOIViewSet(MultiSerializerViewSet):
                                              )
         return Response(serializer.data)
 
+    def create(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            return AOIUploadView.put(request, args, kwargs)
+        elif request.method == 'POST':
+            return AOIUploadView.post(request, args, kwargs)
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @detail_route()
     def surfaces(self, request, *args, **kwargs):
         surfaces = self.get_object().surfaces
