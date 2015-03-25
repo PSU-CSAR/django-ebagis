@@ -51,6 +51,7 @@ coverage.xml
 *secret.py
 *.log
 static/
+*web.config
 
 # Sphinx documentation
 docs/_build/
