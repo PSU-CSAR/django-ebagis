@@ -88,7 +88,9 @@ From the docs:
 2. Begin by collecting all static assets using the standard
    django manage.py command:
    
-      `$ python manage.py collectstatic`
+    ```
+    $ python manage.py collectstatic
+    ```
 
 3. Within the `static` directory this command will create, make
    a file called `web.config` with the following:
@@ -106,7 +108,9 @@ From the docs:
 
 4. Setup the IIS site with the following command:
    
-       `$ python manage.py winfcgi_install --site-name <project_name> --monitor-changes-to <full_path_to_touch_this_to_update_cgi.txt> --binding=https://*:443`
+    ```
+    $ python manage.py winfcgi_install --site-name <project_name> --monitor-changes-to  <full_path_to_touch_this_to_update_cgi.txt> --binding=https://*:443
+    ```
 
 
 Running a Development Instance
