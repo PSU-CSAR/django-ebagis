@@ -4,9 +4,7 @@ from rest_framework import viewsets, views
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.exceptions import APIException
 from rest_framework.decorators import detail_route, list_route
-from rest_framework import filters
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
@@ -72,6 +70,16 @@ class MultiSerializerViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return self.serializers.get(self.action,
                                     self.serializers['default'])
+
+
+class APIRoot(APIView):
+    def get(self, request):
+        return Response({
+            'AOIs': reverse('aoi-list', request=request),
+            'AOI Uploads': reverse('aoiupload-list', request=request),
+            'Users': reverse('user-list', request=request),
+            'Groups': reverse('group-list', request=request),
+        })
 
 
 class AOIUploadView(ChunkedUploadView):
@@ -146,10 +154,11 @@ class AOIViewSet(MultiSerializerViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        upload_view = AOIUploadView()
         if request.method == 'PUT':
-            return AOIUploadView.put(request, args, kwargs)
+            return upload_view.put(request)
         elif request.method == 'POST':
-            return AOIUploadView.post(request, args, kwargs)
+            return upload_view.post(request)
         else:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

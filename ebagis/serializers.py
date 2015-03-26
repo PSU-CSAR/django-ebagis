@@ -1,5 +1,6 @@
 import os
 from django.contrib.auth.models import User, Group
+from django.core.urlresolvers import NoReverseMatch
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework.reverse import reverse
@@ -208,8 +209,15 @@ class AOIGeoSerializer(GeoFeatureModelSerializer):
 # *************** UPLOAD SERIALIZERS *****************
 
 class AOITaskSerializer(serializers.ModelSerializer):
-    result = serializers.HyperlinkedRelatedField(view_name='aoi-detail',
-                                                 read_only=True)
+    result = serializers.SerializerMethodField()
+
+    def get_result(self, obj):
+        if obj.status == 'SUCCESS':
+            return reverse('aoi-detail',
+                           kwargs={'pk': obj.result},
+                           request=self.context['request'])
+        else:
+            return obj.result
 
     class Meta:
         model = TaskMeta

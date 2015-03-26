@@ -32,9 +32,7 @@ from .utilities import make_short_name, get_multipart_wkt_geometry,\
 
 from .serializers import AOIListSerializer
 
-
-AOIS_ROOT = r"D:\projects\ebagis\DatabaseInterfaceTesting\AOIs\ebagis"
-TEMP_DIRECTORY = r"D:\projects\ebagis\DatabaseInterfaceTesting\AOIs\temp"
+from .settings import AOI_DIRECTORY, TEMP_DIRECTORY
 
 # aoi gdb names, required layers, and optional layers
 REQUIRED_LAYERS = {}
@@ -172,7 +170,7 @@ def import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user):
     """
     """
     # make AOI directory in AOIS_ROOT
-    aoi_dir = os.path.join(AOIS_ROOT, aoi_name)
+    aoi_dir = os.path.join(AOI_DIRECTORY, aoi_name)
     try:
         os.makedirs(aoi_dir)
     except Exception as e:
@@ -256,8 +254,10 @@ def validate_required_gdb_layers(gdb_path, required_layers):
         if required_layers:
             for layer, layertype in required_layers:
                 try:
-                    if not arcpy.Describe(os.path.join(gdb_path,
-                                                layer)).DataType == layertype:
+                    if not arcpy.Describe(
+                        os.path.join(gdb_path,
+                                     layer)
+                    ).DataType == layertype:
                         errorlist.append(
                             "Layer {} is not required type {}.".format(
                                 os.path.join(os.path.basename(gdb_path),
@@ -345,7 +345,8 @@ def unzip_AOI(aoizip, unzipdir):
             raise BadZipfile("AOI zipfile is empty.")
         else:
             for filename in files:
-                if filename.startswith("/") or filename.startswith("\\") or ".." in filename:
+                if filename.startswith("/") or \
+                        filename.startswith("\\") or ".." in filename:
                     raise BadZipfile("AOI zipfile contains nonstandard" +
                                      " filenames and cannot be opened.")
 
@@ -355,6 +356,27 @@ def unzip_AOI(aoizip, unzipdir):
 def validate_shortname(shortname):
     validate_path(shortname)
     return shortname
+
+
+def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user):
+    with tempdirectory(prefix="AOI_", dir=TEMP_DIRECTORY) as tempdir:
+        print "Extracting AOI to {}.".format(tempdir)
+        unzip_AOI(aoi_zip_path, tempdir)
+
+        temp_aoi_path = get_aoi_path_from_tempdir(tempdir)
+
+        print "AOI to import is {}.".format(temp_aoi_path)
+
+        aoi_errors = validate_aoi(temp_aoi_path)
+
+        if aoi_errors:
+            errormsg = "Errors were encountered with the AOI {}:"\
+                .format(temp_aoi_path)
+            for error in aoi_errors:
+                errormsg += "\n\t{}".format(error)
+            raise AOIError(errormsg)
+
+        return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
 
 
 @shared_task
@@ -367,24 +389,8 @@ def add_aoi(aoiupload_id):
     user = aoiupload.user
     aoi_zip_path = aoiupload.file
 
-    with tempdirectory(prefix="AOI_") as tempdir:
-        print "Extracting AOI to {}.".format(tempdir)
-        unzip_AOI(aoi_zip_path, tempdir)
-
-        temp_aoi_path = get_aoi_path_from_tempdir(tempdir)
-
-        print "AOI to import is {}.".format(temp_aoi_path)
-
-        aoi_errors = validate_aoi(temp_aoi_path)
-
-        if aoi_errors:
-            errormsg = "Errors were encountered with the AOI {}:"\
-                                                     .format(temp_aoi_path)
-            for error in aoi_errors:
-                errormsg += "\n\t{}".format(error)
-            raise AOIError(errormsg)
-
-        aoi = import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
+    aoi = extract_and_import_aoi(aoi_zip_path, aoi_name,
+                                 aoi_shortname, user)
 
     return aoi.id
 
@@ -401,21 +407,4 @@ def add_aoi_manually(aoi_zip_path, aoi_name, user_id, aoi_shortname=None):
 
     user = User.objects.get(pk=user_id)
 
-    with tempdirectory(prefix="AOI_") as tempdir:
-        print "Extracting AOI to {}.".format(tempdir)
-        unzip_AOI(aoi_zip_path, tempdir)
-
-        temp_aoi_path = get_aoi_path_from_tempdir(tempdir)
-
-        print "AOI to import is {}.".format(temp_aoi_path)
-
-        aoi_errors = validate_aoi(temp_aoi_path)
-
-        if aoi_errors:
-            errormsg = "Errors were encountered with the AOI {}:"\
-                                                       .format(temp_aoi_path)
-            for error in aoi_errors:
-                errormsg += "\n\t{}".format(error)
-            raise AOIError(errormsg)
-
-        import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
+    extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user)
