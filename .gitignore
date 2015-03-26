@@ -65,3 +65,4 @@ target/
 *.db
 *~
 .DS_Store
+start_celery.bat
