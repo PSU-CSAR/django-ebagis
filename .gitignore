@@ -52,6 +52,8 @@ coverage.xml
 *.log
 static/
 *web.config
+uploads/
+aois/
 
 # Sphinx documentation
 docs/_build/

@@ -13,6 +13,7 @@ from . import secret
 
 # this is a really stupid hack for arc 10.3
 try:
+    # needed this next line for a weird RuntimeError saying NotInitialized
     import arcserver
     import arcpy
     arcpy.Exists(r"..\arcpy_hack\test_img.tif")
@@ -117,6 +118,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # media/upload settings
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 DRF_CHUNKED_UPLOAD_PATH = MEDIA_ROOT + "/%Y/%m/%d"
+
+
+# AOI storage/temp unzip location
+EBAGIS_AOI_DIRECTORY = 'AOIs/'
+EBAGIS_TEMP_DIRECTORY = None  # None is windows temp folder
 
 
 # authentication settings
