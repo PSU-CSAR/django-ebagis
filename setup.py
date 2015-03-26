@@ -33,7 +33,7 @@ setup(
         'djangorestframework>=3.0.1',
         'GDAL>=1.11.2',
         'drf-chunked-upload>=0.1.2',
-        'arcpy-extensions>=0.0.1',
+        'arcpy-extensions>=0.0.2',
         'djangorestframework-gis>=0.8.1',
         'django-rest-swagger>=0.2.9',
     ],
