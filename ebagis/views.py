@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import viewsets, views
@@ -8,6 +10,8 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.parsers import FileUploadParser, JSONParser, FormParser,\
+    MultiPartParser
 
 from rest_framework import mixins
 from rest_framework import generics
@@ -16,8 +20,8 @@ from drf_chunked_upload.views import ChunkedUploadView
 
 from djcelery.models import TaskMeta
 
-# model objects
-from django.contrib.auth.models import User, Group
+# model objects`
+from django.contrib.auth.models import User, Group, Permission
 from .models import AOI, Surfaces, Layers, AOIdb, Prism, HRUZones, XML,\
     Vector, Raster, Table, MapDocument, Analysis, Geodatabase,\
     AOIUpload, UpdateUpload
@@ -28,7 +32,7 @@ from .serializers import AOISerializer, SurfacesSerializer, LayersSerializer,\
     VectorSerializer, RasterSerializer, TableSerializer, MapDocSerializer,\
     UserSerializer, GroupSerializer, AnalysisSerializer, AOIListSerializer,\
     AOIGeoListSerializer, GeodatabaseSerializer, AOIGeoSerializer,\
-    AOIUploadSerializer, UpdateUploadSerializer
+    AOIUploadSerializer, UpdateUploadSerializer, PermissionSerializer
 
 
 from .tasks import add_aoi
@@ -114,6 +118,14 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
+class PermissionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer
+
+
 class AOIViewSet(MultiSerializerViewSet):
     """
     API endpoint that allows AOIs to be viewed or edited.
@@ -124,6 +136,12 @@ class AOIViewSet(MultiSerializerViewSet):
         'list': AOIListSerializer,
     }
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
+    parser_classes = (
+        FileUploadParser,
+        JSONParser,
+        FormParser,
+        MultiPartParser,
+    )
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -153,7 +171,9 @@ class AOIViewSet(MultiSerializerViewSet):
                                              )
         return Response(serializer.data)
 
+    @list_route()
     def create(self, request, *args, **kwargs):
+        logging.info(request.data)
         upload_view = AOIUploadView()
         if request.method == 'PUT':
             return upload_view.put(request)

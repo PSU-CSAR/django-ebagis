@@ -30,11 +30,22 @@ user_detail = views.UserViewSet.as_view({
 
 group_list = views.GroupViewSet.as_view({
     'get': 'list',
-    'put': 'create',
     'post': 'create',
 })
 
 group_detail = views.GroupViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy',
+})
+
+permission_list = views.PermissionViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+})
+
+permission_detail = views.PermissionViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
     'patch': 'partial_update',
@@ -151,6 +162,9 @@ urlpatterns = patterns(
 
     url(r'^groups/$', group_list, name='group-list'),
     url(r'^groups/(?P<pk>[0-9]+)/$', group_detail, name='group-detail'),
+
+    url(r'^permissions/$', permission_list, name='permission-list'),
+    url(r'^permissions/(?P<pk>[0-9]+)/$', permission_detail, name='permission-detail'),
 
 
     # upload URLs

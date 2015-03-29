@@ -1,5 +1,5 @@
 import os
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from django.core.urlresolvers import NoReverseMatch
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -26,8 +26,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
 
 
+class PermissionSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Permission
+
+
 class GroupSerializer(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField()
+    #url = serializers.SerializerMethodField()
 
     def get_url(self, obj):
         return reverse('user-detail',
@@ -155,6 +160,9 @@ class HRUZonesSerializer(GeodatabaseSerializer):
 # *************** AOI SERIALIZERS *****************
 
 class AOIListSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
+                                               read_only=True)
+
     class Meta:
         model = AOI
         fields = ('url', 'name', 'created_at', 'created_by')
