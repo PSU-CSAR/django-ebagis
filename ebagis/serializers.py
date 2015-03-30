@@ -236,6 +236,7 @@ class AOIUploadSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(view_name="user-detail",
                                                read_only=True)
     task = AOITaskSerializer(read_only=True)
+    md5 = serializers.CharField(required=False)
 
     def validate_filename(self, value):
         aoi_name = os.path.splitext(value)[0]
@@ -252,7 +253,7 @@ class AOIUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AOIUpload
-        read_only_fields = ('status', 'completed_at', 'task')
+        read_only_fields = ('status', 'completed_at', 'task', 'offset')
 
 
 class UpdateUploadSerializer(serializers.ModelSerializer):

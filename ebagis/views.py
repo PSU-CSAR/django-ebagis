@@ -137,7 +137,7 @@ class AOIViewSet(MultiSerializerViewSet):
     }
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
     parser_classes = (
-        FileUploadParser,
+        #FileUploadParser,
         JSONParser,
         FormParser,
         MultiPartParser,
@@ -171,7 +171,7 @@ class AOIViewSet(MultiSerializerViewSet):
                                              )
         return Response(serializer.data)
 
-    @list_route()
+    #@list_route()
     def create(self, request, *args, **kwargs):
         logging.info(request.data)
         upload_view = AOIUploadView()
