@@ -93,6 +93,7 @@ CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERYD_CONCURRENCY = 4
 
 
 # Static files (CSS, JavaScript, Images)
@@ -121,7 +122,7 @@ DRF_CHUNKED_UPLOAD_PATH = MEDIA_ROOT + "/%Y/%m/%d"
 
 
 # AOI storage/temp unzip location
-EBAGIS_AOI_DIRECTORY = 'AOIs/'
+EBAGIS_AOI_DIRECTORY = os.path.join(BASE_DIR, 'AOIs')
 EBAGIS_TEMP_DIRECTORY = None  # None is windows temp folder
 
 
@@ -151,19 +152,19 @@ REST_FRAMEWORK = {
 
 # settings for graphing data model
 GRAPH_MODELS = {
-  'all_applications': True,
-  'group_models': True,
+    'all_applications': True,
+    'group_models': True,
 }
 
 
 # logging settings
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -173,17 +174,33 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'django.log',
-            'formatter': 'verbose'
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+            'formatter': 'verbose',
+            #'maxBytes': 1024 * 1024 * 5,  # 5 mb
+        },
+        'celery': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'celery.log'),
+            'formatter': 'simple',
+            #'maxBytes': 1024 * 1024 * 5,  # 5 mb
         },
     },
     'loggers': {
+        'celery': {
+            'handlers': ['celery'],
+            'level': 'INFO',
+        },
         'django': {
-            'handlers':['file'],
+            'handlers': ['file'],
             'propagate': True,
-            'level':'DEBUG',
+            'level': 'DEBUG',
         },
         'ebagis': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+        'drf_chunked_upload': {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
