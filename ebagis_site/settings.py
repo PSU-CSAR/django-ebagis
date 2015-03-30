@@ -176,14 +176,14 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'django.log'),
             'formatter': 'verbose',
-            'maxBytes': 1024 * 1024 * 5,  # 5 mb
+            #'maxBytes': 1024 * 1024 * 5,  # 5 mb
         },
         'celery': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'celery.log'),
             'formatter': 'simple',
-            'maxBytes': 1024 * 1024 * 5,  # 5 mb
+            #'maxBytes': 1024 * 1024 * 5,  # 5 mb
         },
     },
     'loggers': {
@@ -197,6 +197,10 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'ebagis': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+        'drf_chunked_upload': {
             'handlers': ['file'],
             'level': 'DEBUG',
         },
