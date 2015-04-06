@@ -131,7 +131,7 @@ in separate command prompt windows:
    for connections across a network. It is not secure.
 
 3. In the other window, run the command
-   `celery -A <name_of_project> worker -l info`. Celery should start
+   `celery -A ebagis_site worker -l info`. Celery should start
    running and will then be available for tasks.
 
 Better automation of this process is planned but not a priority.
