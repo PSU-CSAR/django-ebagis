@@ -20,7 +20,7 @@ from drf_chunked_upload.views import ChunkedUploadView
 
 from djcelery.models import TaskMeta
 
-# model objects`
+# model objects
 from django.contrib.auth.models import User, Group, Permission
 from .models import AOI, Surfaces, Layers, AOIdb, Prism, HRUZones, XML,\
     Vector, Raster, Table, MapDocument, Analysis, Geodatabase,\

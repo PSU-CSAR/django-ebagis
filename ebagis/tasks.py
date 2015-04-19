@@ -15,9 +15,10 @@ from .models import AOI, AOIdb, Surfaces, Layers, Prism, Analysis, HRUZones
 
 # Layer/File Classes
 from .models import Raster, Vector, XML, Table
+from .models import RasterData, VectorData, TableData, XMLData
 
 # Directory Classes
-from .models import Maps, CRS_WKID
+from .models import Maps
 
 from .models import AOIUpload
 
@@ -32,7 +33,7 @@ from .utilities import make_short_name, get_multipart_wkt_geometry,\
 
 from .serializers import AOIListSerializer
 
-from .settings import AOI_DIRECTORY, TEMP_DIRECTORY
+from .settings import AOI_DIRECTORY, TEMP_DIRECTORY, GEO_WKID
 
 # aoi gdb names, required layers, and optional layers
 REQUIRED_LAYERS = {}
@@ -98,69 +99,77 @@ class AOIError(Exception):
 
 # ************ FUNCTIONS **************
 
-def import_gdb(temp_aoi_path, aoi_dir, geodatabase_name, GDBClass, user, aoi):
+def import_gdb(temp_aoi_path, geodatabase_name, GDBClass, user, aoi):
     """
     """
     # get this GDB's content type
-    content_type = ContentType.objects.get_for_model(GDBClass)
-
-    # create directory in aoi_dir for aoi gdb layers
-    output_dir = os.path.join(aoi_dir, os.path.splitext(geodatabase_name)[0])
-    try:
-        os.mkdir(output_dir)
-    except:
-        raise AOIError("Failed to create the {} gdb directory."
-                       .format(os.path.splitext(geodatabase_name)[0]))
+    gdb_content_type = ContentType.objects.get_for_model(GDBClass)
+    raster_content_type = ContentType.objects.get_for_model(Raster)
+    vector_content_type = ContentType.objects.get_for_model(Vector)
+    table_content_type = ContentType.objects.get_for_model(Table)
 
     # create the django gdb object
-    gdb_obj = GDBClass(aoi=aoi, name=GDBClass.__name__, created_by=user)
+    gdb_obj = GDBClass(aoi=aoi, name=GDBClass.__name__)
     gdb_obj.save()
 
     created_at = gdb_obj.created_at.strftime("_%Y%m%d%H%M%S")
+    output_dir = gdb_obj.directory_path
 
     # get all geodatabase layers and copy to outdirectory
     gdb = Geodatabase.open_GDB(os.path.join(temp_aoi_path, geodatabase_name))
 
-    # copy rasters and create raster objects
+    # copy rasters and create raster and raster data objects
     for raster in gdb.rasterlayers:
         outraster = gdb.raster_layer_to_file(raster, output_dir,
                                              outname_to_use=raster+created_at)
         desc = arcpy.Describe(outraster)
-        Raster(name=raster,
-               filename=outraster,
-               object_id=gdb_obj.id,
-               content_type=content_type,
-               srs_wkt=desc.spatialReference.exportToString(),
-               resolution=desc.meanCellWidth,
-               created_by=user,
-               aoi=aoi).save()
+        raster_layer = Raster(name=raster,
+                              object_id=gdb_obj.id,
+                              content_type=gdb_content_type,
+                              aoi=aoi).save()
+        RasterData(filename=raster,
+                   filepath=outraster,
+                   object_id=raster_layer.id,
+                   content_type=raster_content_type,
+                   #srs_wkt=desc.spatialReference.exportToString(),
+                   #resolution=desc.meanCellWidth,
+                   created_by=user,
+                   aoi=aoi).save()
 
-    # copy vectors and create vector objects
+    # copy vectors and create vector and vetor data objects
     for vector in gdb.featureclasses:
         outvector = gdb.feature_class_to_shapefile(
             vector, output_dir, outname_to_use=vector+created_at
         )
         desc = arcpy.Describe(outvector)
-        Vector(name=vector,
-               filename=outvector,
-               object_id=gdb_obj.id,
-               content_type=content_type,
-               srs_wkt=desc.spatialReference.exportToString(),
-               geom_type=desc.shapeType,
-               created_by=user,
-               aoi=aoi).save()
+        vector_layer = Vector(name=vector,
+                              object_id=gdb_obj.id,
+                              content_type=gdb_content_type,
+                              aoi=aoi).save()
+        VectorData(filename=vector,
+                   filepath=outvector,
+                   object_id=vector_layer.id,
+                   content_type=vector_content_type,
+                   #srs_wkt=desc.spatialReference.exportToString(),
+                   #geom_type=desc.shapeType,
+                   created_by=user,
+                   aoi=aoi).save()
 
-    # copy tables and create table objects
+    # copy tables and create table and table data objects
     for table in gdb.tables:
         outtable = gdb.table_to_file(table, output_dir,
                                      outname_to_use=table+created_at)
         desc = arcpy.Describe(outtable)
-        Table(name=table,
-              filename=outtable,
-              object_id=gdb_obj.id,
-              content_type=content_type,
-              created_by=user,
-              aoi=aoi).save()
+        table_layer = Table(name=table,
+                            object_id=gdb_obj.id,
+                            content_type=gdb_content_type,
+                            aoi=aoi).save()
+        TableData(filename=table,
+                  filepath=outtable,
+                  object_id=table_layer.id,
+                  content_type=table_content_type,
+                  created_by=user,
+                  aoi=aoi).save()
 
     return gdb_obj
 
@@ -169,14 +178,6 @@ def import_gdb(temp_aoi_path, aoi_dir, geodatabase_name, GDBClass, user, aoi):
 def import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user):
     """
     """
-    # make AOI directory in AOIS_ROOT
-    aoi_dir = os.path.join(AOI_DIRECTORY, aoi_name)
-    try:
-        os.makedirs(aoi_dir)
-    except Exception as e:
-        print e
-        raise AOIError("Failed to create AOI directory on server.")
-
     # get multipolygon WKT from AOI Boundary Layer
     wkt, crs_wkt = get_multipart_wkt_geometry(os.path.join(temp_aoi_path,
                                                            AOI_GDB),
@@ -184,42 +185,41 @@ def import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user):
 
     crs = create_spatial_ref_from_wkt(crs_wkt)
 
-    if get_authority_code_from_spatial_ref(crs) != CRS_WKID:
-        dst_crs = create_spatial_ref_from_EPSG(CRS_WKID)
+    if get_authority_code_from_spatial_ref(crs) != GEO_WKID:
+        dst_crs = create_spatial_ref_from_EPSG(GEO_WKID)
         wkt = reproject_wkt(wkt, crs, dst_crs)
 
     aoi = AOI(name=aoi_name,
               shortname=aoi_shortname,
               boundary=wkt,
-              directory_path=aoi_dir,
               created_by=user)
 
     aoi.save()
 
     # TODO: convert GDB imports to use celery group or multiprocessing
     # import aoi.gdb
-    aoi.aoidb = import_gdb(temp_aoi_path, aoi_dir, AOI_GDB, AOIdb, user, aoi)
+    aoi.aoidb = import_gdb(temp_aoi_path, AOI_GDB, AOIdb, user, aoi)
     aoi.save()
 
     # import surfaces.gdb
-    aoi.surfaces = import_gdb(temp_aoi_path, aoi_dir, SURFACES_GDB,
+    aoi.surfaces = import_gdb(temp_aoi_path, SURFACES_GDB,
                               Surfaces, user, aoi)
     aoi.save()
 
     # import layers.gdb
-    aoi.layers = import_gdb(temp_aoi_path, aoi_dir, LAYERS_GDB,
+    aoi.layers = import_gdb(temp_aoi_path, LAYERS_GDB,
                             Layers, user, aoi)
     aoi.save()
 
     # import HRU GDBs in zones/
 
     # import analysis.gdb
-    aoi.analysis = import_gdb(temp_aoi_path, aoi_dir, ANALYSIS_GDB,
+    aoi.analysis = import_gdb(temp_aoi_path, ANALYSIS_GDB,
                               Analysis, user, aoi)
     aoi.save()
 
     # import prism.gdb
-    aoi.prism = import_gdb(temp_aoi_path, aoi_dir, PRISM_GDB, Prism, user, aoi)
+    aoi.prism = import_gdb(temp_aoi_path, PRISM_GDB, Prism, user, aoi)
     aoi.save()
 
     # import param.gdb
@@ -229,14 +229,9 @@ def import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user):
     # import param/paramdata.gdb
 
     # import map docs in maps directory
-    try:
-        os.mkdir(os.path.join(aoi_dir, MAPS_NAME))
-    except:
-        raise AOIError("Failed to create Maps directory.")
-
     maps = Maps(aoi=aoi, created_by=user, name=Maps.__name__)
     maps.save()
-
+    aoi.maps = maps
     aoi.save()
 
     return aoi

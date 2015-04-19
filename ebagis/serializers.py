@@ -10,7 +10,9 @@ from djcelery.models import TaskMeta
 from .models import AOI
 from .models import Surfaces, Layers, Prism, AOIdb, HRUZones, Analysis,\
     Geodatabase
-from .models import XML, Raster, Vector, Table, MapDocument
+from .models import File, XML, Raster, Vector, Table, MapDocument
+from .models import FileData, XMLData, RasterData, VectorData, TableData,\
+    MapDocumentData
 from .models import AOIUpload, UpdateUpload
 
 from .constants import URL_FILTER_QUERY_ARG_PREFIX
@@ -43,10 +45,56 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
 
 
+# ************ FILE DATA SERIALIZERS **************
+
+class FileDataSerializer(serializers.ModelSerializer):
+#    url = serializers.SerializerMethodField()
+#
+#    def get_url(self, obj):
+#        name_key = URL_FILTER_QUERY_ARG_PREFIX + "name__iexact"
+#
+#        kwargs = {
+#            URL_FILTER_QUERY_ARG_PREFIX + "aoi_id": obj.content_object.aoi_id,
+#            "pk": obj.id,
+#            name_key: obj.content_object.name.lower(),
+#        }
+#
+#        if kwargs[name_key] in MULTIPLE_GDBS:
+#            kwargs[URL_FILTER_QUERY_ARG_PREFIX + "__object_id"] = obj.object_id
+#
+#        return reverse('geodatabase-' + type(obj).__name__.lower() + '-detail',
+#                       kwargs=kwargs,
+#                       request=self.context['request'])
+
+    class Meta:
+        model = FileData
+
+
+class XMLDataSerializer(FileDataSerializer):
+    class Meta:
+        model = XMLData
+
+
+class VectorDataSerializer(FileDataSerializer):
+    class Meta:
+        model = VectorData
+
+
+class RasterDataSerializer(FileDataSerializer):
+    class Meta:
+        model = RasterData
+
+
+class TableDataSerializer(FileDataSerializer):
+    class Meta:
+        model = TableData
+
+
 # *************** FILE SERIALIZERS *****************
 
 class FileSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
+    versions = FileDataSerializer(read_only=True, many=True)
 
     def get_url(self, obj):
         name_key = URL_FILTER_QUERY_ARG_PREFIX + "name__iexact"
@@ -64,23 +112,34 @@ class FileSerializer(serializers.ModelSerializer):
                        kwargs=kwargs,
                        request=self.context['request'])
 
+    class Meta:
+        model = File
+
 
 class XMLSerializer(FileSerializer):
+    versions = XMLDataSerializer(read_only=True, many=True)
+
     class Meta:
         model = XML
 
 
 class VectorSerializer(FileSerializer):
+    versions = VectorDataSerializer(read_only=True, many=True)
+
     class Meta:
         model = Vector
 
 
 class RasterSerializer(FileSerializer):
+    versions = RasterDataSerializer(read_only=True, many=True)
+
     class Meta:
         model = Raster
 
 
 class TableSerializer(FileSerializer):
+    versions = TableDataSerializer(read_only=True, many=True)
+
     class Meta:
         model = Table
 
@@ -184,7 +243,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
     layers = LayersSerializer(read_only=True)
     aoidb = AOIdbSerializer(read_only=True)
     analysis = AnalysisSerializer(read_only=True)
-    prism = PrismSerializer(read_only=True)
+    prism = PrismSerializer(read_only=True, many=True)
     #maps = MapDocSerializer(read_only=True, many=True)
     #hruzones = HRUZonesSerializer(read_only=True, many=True)
 

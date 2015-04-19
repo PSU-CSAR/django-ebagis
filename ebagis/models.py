@@ -1,15 +1,21 @@
+from __future__ import absolute_import
+import os
+from logging import exception
+
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.base import ModelBase
+from django.utils import timezone
 
 from djcelery.models import TaskMeta
 
 from drf_chunked_upload.models import ChunkedUpload
 
+from .constants import NO_ARCHIVING, LAYER_ARCHIVING, GROUP_ARCHIVING,\
+    ARCHIVING_CHOICES
 
-#CRS_WKID = 102039
-CRS_WKID = 4326
+from .settings import AOI_DIRECTORY, GEO_WKID
 
 
 """
@@ -188,125 +194,335 @@ class RandomPrimaryIdModel(models.Model):
         abstract = True
 
 
-# this class is to allow a model to return
-# the subclass types from the name in the
-# table. That is, if you want a Surfaces geodatabase,
-# you'll get an instance of Surfaces, not an instance
-# of Geodatabase
+# ************** METACLASSES ***************
+
 class InheritanceMetaclass(ModelBase):
+    """Allows a model to return the subclass types from
+    the name field. That is, if you want a Surfaces geodatabase,
+    where Surfaces is a proxy of the Geodatabase class, you'll
+    get a Surfaces instance, not a Geodatabase instance.
+
+    Used with the ProxyMixin."""
     def __call__(cls, *args, **kwargs):
         obj = super(InheritanceMetaclass, cls).__call__(*args, **kwargs)
         return obj.get_object()
 
 
-# *************** ABSTRACT BASE CLASS NO NAME ***************
+# ***************** MIXINS *****************
 
-class ABCBaseModel_NoName(RandomPrimaryIdModel):
-    created_at = models.DateTimeField(auto_now_add=True)
-    removed_at = models.DateTimeField(null=True, blank=True)
-    created_by = models.ForeignKey(
-        User,
-        related_name="%(app_label)s_%(class)s_created_by"
-    )
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        get_latest_by = 'created_at'
-        abstract = True
-
-
-# *************** ABSTRACT BASE CLASS WITH NAME ***************
-
-class ABCBaseModel(ABCBaseModel_NoName):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        abstract = True
-
-
-# *************** ABSTRACT BASE CLASS WITH AOI ***************
-
-class ABCBaseModel_withAOI(ABCBaseModel):
+class AOIRelationMixin(models.Model):
+    """Generic mixin to provide a relation to the AOI model"""
     aoi = models.ForeignKey("AOI", related_name="%(class)s_related")
 
     class Meta:
         abstract = True
 
 
-# *************** FILE CLASSES ***************
+class DateMixin(models.Model):
+    created_at = models.DateTimeField(default=timezone.now)
+    removed_at = models.DateTimeField(null=True, blank=True)
 
-class File(ABCBaseModel_withAOI):
-    filename = models.CharField(max_length=1250)
-    encoding = models.CharField(max_length=20, null=True, blank=True)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
-    content_object = GenericForeignKey('content_type', 'object_id')
+    class Meta:
+        get_latest_by = 'created_at'
+        abstract = True
+
+
+class CreatedByMixin(models.Model):
+    created_by = models.ForeignKey(
+        User,
+        related_name="%(app_label)s_%(class)s_created_by"
+    )
 
     class Meta:
         abstract = True
 
 
+class NameMixin(models.Model):
+    """Generic Mixin to provide a standarized name field"""
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        """When getting the string representation of this
+        object in Django, use the name field"""
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class UniqueNameMixin(models.Model):
+    """Generic Mixin to provide a standarized
+    name field with unique constraint"""
+    name = models.CharField(max_length=100, unique=True)
+
+    def __unicode__(self):
+        """When getting the string representation of this
+        object in Django, use the name field"""
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class DirectoryMixin(DateMixin, NameMixin, models.Model):
+    """Mixin providing directory creation and deletion to
+    directory-type models."""
+    _directory_path = models.CharField(max_length=1000,
+                                       db_column="directory_path")
+    archiving_rule = models.CharField(max_length=5,
+                                      choices=ARCHIVING_CHOICES,
+                                      default=NO_ARCHIVING,
+                                      editable=False)
+    subdirectory_of = os.getcwd()
+
+    class Meta:
+        unique_together = ("subdirectory_of", "name")
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Overrides the default save method adding the following:
+
+         - if the object has not been saved (no pk set),
+           sets the created at time and calls for the directory_path
+           property to ensure a directory is created for the
+           GDB within its enclosing AOI"""
+        if not self.pk:
+            self.created_at = timezone.now()
+            self.directory_path
+        return super(DirectoryMixin, self).save(*args, **kwargs)
+
+    def delete(self, delete_file=True, *args, **kwargs):
+        """Overrides the default delete method adding the following:
+
+         - removes the directory at directory path from the file system"""
+        if delete_file:
+            import shutil
+            if os.path.exists(self.directory_path):
+                shutil.rmtree(self.directory_path)
+        return super(DirectoryMixin, self).delete(*args, **kwargs)
+
+    @property
+    def directory_path(self):
+        """On first run, creates the directory for a directory-using
+        model, returning the path of the created directory. If already
+        set, simply returns the directory path."""
+
+        # check to see if directory path property is set
+        if getattr(self, '_directory_path', None) is None:
+            # default path is simply the value of the name field
+            # inside the subdirectory_of path
+            path = os.path.join(self.subdirectory_of, self.name)
+
+            # if archiving rule set to group archiving, then the
+            # directory name need needs the date appended
+            if self.archiving_rule == GROUP_ARCHIVING:
+                path += self.created_at.strftime("_%Y%m%d%H%M%S")
+
+            # try to create the directory
+            try:
+                os.mkdir(path)
+            except:
+                exception("Failed create directory: {}".format(path))
+            else:
+                # set the value of the directory path field
+                self._directory_path = path
+
+        return self._directory_path
+
+
+class ProxyMixin(models.Model):
+    """Generic Mixin to provide full support to proxy classes
+    for returning and saving objects of subclasses to the base
+    class."""
+    __metaclass__ = InheritanceMetaclass
+    classname = models.CharField(max_length=40)
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Overrides the default save method to do the following:
+
+         - automatically assign the name based on the name of
+           the instance to be that of the class of which it is
+           an instance. In other words, a Maps instace
+           will be saved with the name of 'Maps'"""
+        if not self.classname:
+            self.classname = self._meta.model_name
+        return super(ProxyMixin, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_subclasses(cls):
+        """Finds all subclasses of the current object's class.
+        Used in the get_object method to return object as a
+        specific subclass object, if nessesary."""
+        return dict([(subclass.__name__, subclass)
+                     for subclass in cls.__subclasses__()])
+
+    def get_object(self):
+        """Ensures when getting an object, it will be of
+        the same type as it was created, e.g., the type
+        of directory as indicated by its name."""
+        subclasses = self.get_subclasses()
+        # check to see if the class name in the db is
+        # a subclass of the current class; if yes,
+        # change the class of the returned object to
+        # the subclass else return the current class
+        if self.__class__ in subclasses:
+            self.__class__ = subclasses[self.classname]
+        return self
+
+
+# *************** FILE CLASSES ***************
+
+class FileData(DateMixin, ProxyMixin, CreatedByMixin,
+               AOIRelationMixin, RandomPrimaryIdModel):
+    filepath = models.CharField(max_length=1024)
+    filename = models.CharField(max_length=255)
+    encoding = models.CharField(max_length=20, null=True, blank=True)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.CharField(max_length=10)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+# "Data" types must match their enclosing layer type, e.g., a vector
+# data instance can only relate to a vector layer instance. Thus,
+# each type needs to have the content type choices limited to
+# restrict allowable relations to the appropriate class.
+FileData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'file'}
+
+
+class XMLData(FileData):
+    class Meta:
+        proxy = True
+
+XMLData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'xml'}
+
+
+class VectorData(FileData):
+#    srs_wkt = models.CharField(max_length=1000)
+#    geom_type = models.CharField(max_length=50)
+
+    class Meta:
+        proxy = True
+
+VectorData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'vector'}
+
+
+class RasterData(FileData):
+    #srs_wkt = models.CharField(max_length=1000)
+    #resolution = models.FloatField()
+
+    class Meta:
+        proxy = True
+
+RasterData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'raster'}
+
+
+class TableData(FileData):
+    class Meta:
+        proxy = True
+
+TableData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'table'}
+
+
+class MapDocumentData(FileData):
+    class Meta:
+        proxy = True
+
+MapDocumentData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'mapdocument'}
+
+
+# ************* LAYER CLASSES **************
+
+class File(DateMixin, NameMixin, ProxyMixin, AOIRelationMixin,
+           RandomPrimaryIdModel):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.CharField(max_length=10)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    versions = GenericRelation(FileData)
+
+    class Meta:
+        unique_together = ("content_type", "object_id", "name")
+
+
 class XML(File):
-    pass
-
-
-class Vector(File):
-    srs_wkt = models.CharField(max_length=1000)
-    geom_type = models.CharField(max_length=50)
-
-
-class Raster(File):
-    srs_wkt = models.CharField(max_length=1000)
-    resolution = models.FloatField()
-
-
-class Table(File):
-    pass
-
-
-class MapDocument(File):
-    pass
-
-
-# *********** DIRECTORY CLASSES ************
-
-class Directory(ABCBaseModel_withAOI):
-    pass
-
-
-class Maps(Directory):
     class Meta:
         proxy = True
 
 
+class Vector(File):
+    class Meta:
+        proxy = True
+
+
+class Raster(File):
+    class Meta:
+        proxy = True
+
+
+class Table(File):
+    class Meta:
+        proxy = True
+
+
+class MapDocument(File):
+    class Meta:
+        proxy = True
+
+
+# *********** DIRECTORY CLASSES ************
+
+class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
+#    def get_object(self):
+#        """Ensures when getting an object, it will be of
+#        the same type as it was created, e.g., the type
+#        of directory as indicated by its name."""
+#        if self.name in SUBCLASSES_OF_DIRECTORY:
+#            self.__class__ = SUBCLASSES_OF_DIRECTORY[self.name]
+#        return self
+
+    class Meta:
+        abstract = True
+
+
+class HRUZones(Directory):
+    xml = models.OneToOneField(XML, related_name="hru_xml")
+    hruzones = models.OneToOneField("HRUZonesGDB", related_name="hru_hruGDB")
+
+
+class Maps(Directory):
+    maps = GenericRelation(MapDocument)
+
+
+# used for the lookup of geodatabase types with specific models
+#SUBCLASSES_OF_DIRECTORY = dict([(cls.__name__, cls)
+#                                  for cls in Directory.__subclasses__()])
+
+
 # *********** GEODATABASE CLASSES ************
 
-class Geodatabase(ABCBaseModel_withAOI):
-    __metaclass__ = InheritanceMetaclass
+class Geodatabase(ProxyMixin, Directory):
     rasters = GenericRelation(Raster)
     vectors = GenericRelation(Vector)
     tables = GenericRelation(Table)
-    xmls = GenericRelation(XML)
 
-    # this will automatically assign the name to the
-    # geodatabase instance to be that of the class
-    # of which it is an instance. In other words,
-    # a Surfaces instace will be saved with the name of
-    # Surfaces.
-    def save(self, *args, **kwargs):
-        if not self.name:
-            self.name = self._meta.model_name
-        super(Geodatabase, self).save(*args, **kwargs)
+    @property
+    def subdirectory_of(self):
+        return self.aoi.directory_path
 
-    # this ensures that when getting an object, it will be
-    # of the same type as it was created, e.g., the type of
-    # geodatabase as indicated by its name
-    def get_object(self):
-        if self.name in SUBCLASSES_OF_GEODATABASE:
-            self.__class__ = SUBCLASSES_OF_GEODATABASE[self.name]
-        return self
+#    def get_object(self):
+#        """Ensures when getting an object, it will be of
+#        the same type as it was created, e.g., the type
+#        of geodatabase as indicated by its name."""
+#        if self.name in SUBCLASSES_OF_GEODATABASE:
+#            self.__class__ = SUBCLASSES_OF_GEODATABASE[self.name]
+#        return self
 
 
 class Surfaces(Geodatabase):
@@ -315,6 +531,12 @@ class Surfaces(Geodatabase):
 
 
 class Layers(Geodatabase):
+    def __init__(self, *args, **kwargs):
+        # override the default NO_ARCHIVING rule from the
+        # Geodatabase class with LAYER_ARCHIVING rule
+        self._meta.get_field('archiving_rule').default = LAYER_ARCHIVING
+        super(Layers, self).__init__(*args, **kwargs)
+
     class Meta:
         proxy = True
 
@@ -325,16 +547,31 @@ class AOIdb(Geodatabase):
 
 
 class Prism(Geodatabase):
+    def __init__(self, *args, **kwargs):
+        # override default NO_ARCHIVING with GROUP_ARCHIVING rule
+        self._meta.get_field('archiving_rule').default = GROUP_ARCHIVING
+        super(Prism, self).__init__(*args, **kwargs)
+
     class Meta:
         proxy = True
 
 
 class Analysis(Geodatabase):
+    def __init__(self, *args, **kwargs):
+        # override default NO_ARCHIVING with LAYER_ARCHIVING rule
+        self._meta.get_field('archiving_rule').default = LAYER_ARCHIVING
+        super(Analysis, self).__init__(*args, **kwargs)
+
     class Meta:
         proxy = True
 
 
-class HRUZones(Geodatabase):
+class HRUZonesGDB(Geodatabase):
+    def __init__(self, *args, **kwargs):
+        # override default NO_ARCHIVING with LAYER_ARCHIVING rule
+        self._meta.get_field('archiving_rule').default = LAYER_ARCHIVING
+        super(HRUZones, self).__init__(*args, **kwargs)
+
     class Meta:
         proxy = True
 
@@ -346,27 +583,28 @@ SUBCLASSES_OF_GEODATABASE = dict([(cls.__name__, cls)
 
 # *************** AOI CLASS ***************
 
-class AOI(ABCBaseModel_NoName):
-    name = models.CharField(max_length=100, unique=True)
+class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
     shortname = models.CharField(max_length=25)
-    directory_path = models.CharField(max_length=1000)
-    boundary = models.MultiPolygonField(srid=CRS_WKID)
+    boundary = models.MultiPolygonField(srid=GEO_WKID)
     objects = models.GeoManager()
-    surfaces = models.OneToOneField(Geodatabase, related_name="aoi_surfaces",
+    surfaces = models.OneToOneField(Surfaces, related_name="aoi_surfaces",
                                     null=True, blank=True)
-    layers = models.OneToOneField(Geodatabase, related_name="aoi_layers",
+    layers = models.OneToOneField(Layers, related_name="aoi_layers",
                                   null=True, blank=True)
-    aoidb = models.OneToOneField(Geodatabase, related_name="aoi_aoidb",
+    aoidb = models.OneToOneField(AOIdb, related_name="aoi_aoidb",
                                  null=True, blank=True)
-    prism = models.OneToOneField(Geodatabase, related_name="aoi_prism",
-                                 null=True, blank=True)
-    analysis = models.OneToOneField(Geodatabase, related_name="aoi_analysis",
+    prism = models.ManyToManyField(Prism, related_name="aoi_prism",
+                                   null=True, blank=True)
+    analysis = models.OneToOneField(Analysis, related_name="aoi_analysis",
                                     null=True, blank=True)
-    maps = models.ManyToManyField(MapDocument, related_name="aoi_maps",
-                                  null=True, blank=True)
-    hruzones = models.ManyToManyField(Geodatabase, related_name="aoi_hruzones",
+    maps = models.OneToOneField(Maps, related_name="aoi_maps",
+                                null=True, blank=True)
+    hruzones = models.ManyToManyField(HRUZones, related_name="aoi_hruzones",
                                       null=True, blank=True)
+    subdirectory_of = AOI_DIRECTORY
 
+    class Meta:
+        unique_together = ("name",)
 
 # *************** UPLOAD MODELS ***************
 #
