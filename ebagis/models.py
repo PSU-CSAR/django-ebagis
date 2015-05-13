@@ -308,7 +308,7 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         set, simply returns the directory path."""
 
         # check to see if directory path property is set
-        if getattr(self, '_directory_path', None) is None:
+        if not getattr(self, '_directory_path', None):
             # default path is simply the value of the name field
             # inside the subdirectory_of path
             path = os.path.join(self.subdirectory_of, self.name)
@@ -320,9 +320,10 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
 
             # try to create the directory
             try:
-                os.mkdir(path)
-            except:
-                exception("Failed create directory: {}".format(path))
+                os.makedirs(path)
+            except Exception as e:
+                print "Failed create directory: {}".format(path)
+                raise e
             else:
                 # set the value of the directory path field
                 self._directory_path = path
@@ -330,15 +331,29 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         return self._directory_path
 
 
+class ProxyManager(models.Manager):
+    def get_queryset(self):
+        classes = [subclass.__name__ for subclass in self.model.__subclasses__()]
+        classes.append(self.model._meta.object_name)
+        return super(ProxyManager, self).get_queryset().filter(classname__in=classes)
+
+
 class ProxyMixin(models.Model):
     """Generic Mixin to provide full support to proxy classes
     for returning and saving objects of subclasses to the base
-    class."""
+    class.
+
+    NOTE: Using the proxy mixin requires that it be the first
+    class inherited from in any subclasses. Failing to follow
+    this requirement will likely break the custom manager class
+    such that the correct class types will not be returned."""
     __metaclass__ = InheritanceMetaclass
     classname = models.CharField(max_length=40)
+    objects = ProxyManager()
 
     class Meta:
         abstract = True
+
 
     def save(self, *args, **kwargs):
         """Overrides the default save method to do the following:
@@ -348,7 +363,7 @@ class ProxyMixin(models.Model):
            an instance. In other words, a Maps instace
            will be saved with the name of 'Maps'"""
         if not self.classname:
-            self.classname = self._meta.model_name
+            self.classname = self.__class__.__name__
         return super(ProxyMixin, self).save(*args, **kwargs)
 
     @classmethod
@@ -368,14 +383,14 @@ class ProxyMixin(models.Model):
         # a subclass of the current class; if yes,
         # change the class of the returned object to
         # the subclass else return the current class
-        if self.__class__ in subclasses:
+        if self.classname in subclasses:
             self.__class__ = subclasses[self.classname]
         return self
 
 
 # *************** FILE CLASSES ***************
 
-class FileData(DateMixin, ProxyMixin, CreatedByMixin,
+class FileData(ProxyMixin, DateMixin, CreatedByMixin,
                AOIRelationMixin, RandomPrimaryIdModel):
     filepath = models.CharField(max_length=1024)
     filename = models.CharField(max_length=255)
@@ -440,12 +455,12 @@ MapDocumentData._meta.get_field('content_type').limit_choices_to =\
 
 # ************* LAYER CLASSES **************
 
-class File(DateMixin, NameMixin, ProxyMixin, AOIRelationMixin,
+class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
            RandomPrimaryIdModel):
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
-    versions = GenericRelation(FileData)
+    versions = GenericRelation(FileData, for_concrete_model=False)
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")
@@ -495,9 +510,17 @@ class HRUZones(Directory):
     xml = models.OneToOneField(XML, related_name="hru_xml")
     hruzones = models.OneToOneField("HRUZonesGDB", related_name="hru_hruGDB")
 
+    @property
+    def subdirectory_of(self):
+        return self.aoi.directory_path
+
 
 class Maps(Directory):
-    maps = GenericRelation(MapDocument)
+    maps = GenericRelation(MapDocument, for_concrete_model=False)
+
+    @property
+    def subdirectory_of(self):
+        return self.aoi.directory_path
 
 
 # used for the lookup of geodatabase types with specific models
@@ -508,9 +531,9 @@ class Maps(Directory):
 # *********** GEODATABASE CLASSES ************
 
 class Geodatabase(ProxyMixin, Directory):
-    rasters = GenericRelation(Raster)
-    vectors = GenericRelation(Vector)
-    tables = GenericRelation(Table)
+    rasters = GenericRelation(Raster, for_concrete_model=False)
+    vectors = GenericRelation(Vector, for_concrete_model=False)
+    tables = GenericRelation(Table, for_concrete_model=False)
 
     @property
     def subdirectory_of(self):

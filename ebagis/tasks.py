@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 from celery import shared_task
 import os
+import shutil
+
+from logging import exception
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
@@ -9,6 +12,8 @@ from django.db import transaction
 import arcpy
 
 from .constants import RASTER_EXT, FC_EXT, TABLE_EXT
+
+from .exceptions import AOIError
 
 # Geodatabase Classes
 from .models import AOI, AOIdb, Surfaces, Layers, Prism, Analysis, HRUZones
@@ -93,20 +98,16 @@ ZONES_NAME = "Zones"
 MAPS_NAME = "Maps"
 
 
-class AOIError(Exception):
-    pass
-
-
 # ************ FUNCTIONS **************
 
 def import_gdb(temp_aoi_path, geodatabase_name, GDBClass, user, aoi):
     """
     """
     # get this GDB's content type
-    gdb_content_type = ContentType.objects.get_for_model(GDBClass)
-    raster_content_type = ContentType.objects.get_for_model(Raster)
-    vector_content_type = ContentType.objects.get_for_model(Vector)
-    table_content_type = ContentType.objects.get_for_model(Table)
+    gdb_content_type = ContentType.objects.get_for_model(GDBClass, for_concrete_model=False)
+    raster_content_type = ContentType.objects.get_for_model(Raster, for_concrete_model=False)
+    vector_content_type = ContentType.objects.get_for_model(Vector, for_concrete_model=False)
+    table_content_type = ContentType.objects.get_for_model(Table, for_concrete_model=False)
 
     # create the django gdb object
     gdb_obj = GDBClass(aoi=aoi, name=GDBClass.__name__)
@@ -126,7 +127,8 @@ def import_gdb(temp_aoi_path, geodatabase_name, GDBClass, user, aoi):
         raster_layer = Raster(name=raster,
                               object_id=gdb_obj.id,
                               content_type=gdb_content_type,
-                              aoi=aoi).save()
+                              aoi=aoi)
+        raster_layer.save()
         RasterData(filename=raster,
                    filepath=outraster,
                    object_id=raster_layer.id,
@@ -145,7 +147,8 @@ def import_gdb(temp_aoi_path, geodatabase_name, GDBClass, user, aoi):
         vector_layer = Vector(name=vector,
                               object_id=gdb_obj.id,
                               content_type=gdb_content_type,
-                              aoi=aoi).save()
+                              aoi=aoi)
+        vector_layer.save()
         VectorData(filename=vector,
                    filepath=outvector,
                    object_id=vector_layer.id,
@@ -163,7 +166,8 @@ def import_gdb(temp_aoi_path, geodatabase_name, GDBClass, user, aoi):
         table_layer = Table(name=table,
                             object_id=gdb_obj.id,
                             content_type=gdb_content_type,
-                            aoi=aoi).save()
+                            aoi=aoi)
+        table_layer.save()
         TableData(filename=table,
                   filepath=outtable,
                   object_id=table_layer.id,
@@ -178,61 +182,69 @@ def import_gdb(temp_aoi_path, geodatabase_name, GDBClass, user, aoi):
 def import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user):
     """
     """
-    # get multipolygon WKT from AOI Boundary Layer
-    wkt, crs_wkt = get_multipart_wkt_geometry(os.path.join(temp_aoi_path,
-                                                           AOI_GDB),
-                                              layername=AOI_BOUNDARY_LAYER)
+    try:
+        # get multipolygon WKT from AOI Boundary Layer
+        wkt, crs_wkt = get_multipart_wkt_geometry(os.path.join(temp_aoi_path,
+                                                               AOI_GDB),
+                                                  layername=AOI_BOUNDARY_LAYER)
 
-    crs = create_spatial_ref_from_wkt(crs_wkt)
+        crs = create_spatial_ref_from_wkt(crs_wkt)
 
-    if get_authority_code_from_spatial_ref(crs) != GEO_WKID:
-        dst_crs = create_spatial_ref_from_EPSG(GEO_WKID)
-        wkt = reproject_wkt(wkt, crs, dst_crs)
+        if get_authority_code_from_spatial_ref(crs) != GEO_WKID:
+            dst_crs = create_spatial_ref_from_EPSG(GEO_WKID)
+            wkt = reproject_wkt(wkt, crs, dst_crs)
 
-    aoi = AOI(name=aoi_name,
-              shortname=aoi_shortname,
-              boundary=wkt,
-              created_by=user)
+        aoi = AOI(name=aoi_name,
+                  shortname=aoi_shortname,
+                  boundary=wkt,
+                  created_by=user)
 
-    aoi.save()
+        aoi.save()
 
-    # TODO: convert GDB imports to use celery group or multiprocessing
-    # import aoi.gdb
-    aoi.aoidb = import_gdb(temp_aoi_path, AOI_GDB, AOIdb, user, aoi)
-    aoi.save()
+        # TODO: convert GDB imports to use celery group or multiprocessing
+        # import aoi.gdb
+        aoi.aoidb = import_gdb(temp_aoi_path, AOI_GDB, AOIdb, user, aoi)
+        aoi.save()
 
-    # import surfaces.gdb
-    aoi.surfaces = import_gdb(temp_aoi_path, SURFACES_GDB,
-                              Surfaces, user, aoi)
-    aoi.save()
+        # import surfaces.gdb
+        aoi.surfaces = import_gdb(temp_aoi_path, SURFACES_GDB,
+                                  Surfaces, user, aoi)
+        aoi.save()
 
-    # import layers.gdb
-    aoi.layers = import_gdb(temp_aoi_path, LAYERS_GDB,
-                            Layers, user, aoi)
-    aoi.save()
+        # import layers.gdb
+        aoi.layers = import_gdb(temp_aoi_path, LAYERS_GDB,
+                                Layers, user, aoi)
+        aoi.save()
 
-    # import HRU GDBs in zones/
+        # import HRU GDBs in zones/
 
-    # import analysis.gdb
-    aoi.analysis = import_gdb(temp_aoi_path, ANALYSIS_GDB,
-                              Analysis, user, aoi)
-    aoi.save()
+        # import analysis.gdb
+        aoi.analysis = import_gdb(temp_aoi_path, ANALYSIS_GDB,
+                                  Analysis, user, aoi)
+        aoi.save()
 
-    # import prism.gdb
-    aoi.prism = import_gdb(temp_aoi_path, PRISM_GDB, Prism, user, aoi)
-    aoi.save()
+        # import prism.gdb
+        aoi.prism.add(import_gdb(temp_aoi_path, PRISM_GDB, Prism, user, aoi))
+        aoi.save()
 
-    # import param.gdb
+        # import param.gdb
 
-    # import loose files in param/
+        # import loose files in param/
 
-    # import param/paramdata.gdb
+        # import param/paramdata.gdb
 
-    # import map docs in maps directory
-    maps = Maps(aoi=aoi, created_by=user, name=Maps.__name__)
-    maps.save()
-    aoi.maps = maps
-    aoi.save()
+        # import map docs in maps directory
+        maps = Maps(aoi=aoi, name=Maps.__name__)
+        maps.save()
+        aoi.maps = maps
+        aoi.save()
+    except Exception as e:
+        try:
+            if aoi.directory_path:
+                shutil.rmtree(aoi.directory_path)
+        except:
+            exception("Failed to remove AOI directory on import error.")
+        raise e
 
     return aoi
 

@@ -264,7 +264,7 @@ class AOIGeoSerializer(GeoFeatureModelSerializer):
     layers = LayersSerializer(read_only=True)
     aoidb = AOIdbSerializer(read_only=True)
     analysis = AnalysisSerializer(read_only=True)
-    prism = PrismSerializer(read_only=True)
+    prism = PrismSerializer(read_only=True, many=True)
     #maps = MapDocSerializer(read_only=True, many=True)
     #hruzones = HRUZonesSerializer(read_only=True, many=True)
 
