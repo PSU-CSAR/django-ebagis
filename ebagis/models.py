@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import shutil
 from logging import exception
 
 from django.contrib.auth.models import User
@@ -330,6 +331,9 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
 
         return self._directory_path
 
+    def export(self):
+        raise NotImplementedError
+
 
 class ProxyManager(models.Manager):
     def get_queryset(self):
@@ -399,6 +403,9 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    def export(self, output_dir):
+        shutil.copy2(self.filepath, os.path.join(output_dir, self.filename))
+
 # "Data" types must match their enclosing layer type, e.g., a vector
 # data instance can only relate to a vector layer instance. Thus,
 # each type needs to have the content type choices limited to
@@ -422,6 +429,10 @@ class VectorData(FileData):
     class Meta:
         proxy = True
 
+    def export(self, output_dir):
+        from arcpy.management import CopyFeatures
+        CopyFeatures(self.filepath, os.path.join(output_dir, self.filename))
+
 VectorData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'vector'}
 
@@ -433,6 +444,10 @@ class RasterData(FileData):
     class Meta:
         proxy = True
 
+    def export(self, output_dir):
+        from arcpy.management import CopyRaster
+        CopyRaster(self.filepath, os.path.join(output_dir, self.filename))
+
 RasterData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'raster'}
 
@@ -440,6 +455,11 @@ RasterData._meta.get_field('content_type').limit_choices_to =\
 class TableData(FileData):
     class Meta:
         proxy = True
+
+
+    def export(self, output_dir):
+        from arcpy.management import CopyRows
+        CopyRows(self.filepath, os.path.join(output_dir, self.filename))
 
 TableData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'table'}
@@ -464,6 +484,12 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")
+
+    def export(self, output_dir, version_id=None):
+        if version_id:
+            return self.versions.get(id=version_id).export(output_dir)
+        else:
+            return self.versions.latest("created_at").export(output_dir)
 
 
 class XML(File):
@@ -514,6 +540,12 @@ class HRUZones(Directory):
     def subdirectory_of(self):
         return self.aoi.directory_path
 
+    def export(self, output_dir):
+        outpath = os.path.join(output_dir, self.name)
+        os.mkdir(outpath)
+        self.xml.export(outpath)
+        self.hruzones.export(outpath)
+
 
 class Maps(Directory):
     maps = GenericRelation(MapDocument, for_concrete_model=False)
@@ -521,6 +553,12 @@ class Maps(Directory):
     @property
     def subdirectory_of(self):
         return self.aoi.directory_path
+
+    def export(self, output_dir):
+        outpath = os.path.join(output_dir, self.name)
+        os.mkdir(outpath)
+        for mapdoc in self.maps.all():
+            mapdoc.export(outpath)
 
 
 # used for the lookup of geodatabase types with specific models
@@ -539,13 +577,16 @@ class Geodatabase(ProxyMixin, Directory):
     def subdirectory_of(self):
         return self.aoi.directory_path
 
-#    def get_object(self):
-#        """Ensures when getting an object, it will be of
-#        the same type as it was created, e.g., the type
-#        of geodatabase as indicated by its name."""
-#        if self.name in SUBCLASSES_OF_GEODATABASE:
-#            self.__class__ = SUBCLASSES_OF_GEODATABASE[self.name]
-#        return self
+    def export(self, output_dir):
+        from arcpy.management import CreateFileGDB
+        result = CreateFileGDB(output_dir, self.name)
+        outpath = result.getOutput(0)
+        for raster in self.rasters.all():
+            raster.export(outpath)
+        for vector in self.vectors.all():
+            vector.export(outpath)
+        for table in self.tables.all():
+            table.export(outpath)
 
 
 class Surfaces(Geodatabase):
@@ -628,6 +669,21 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
 
     class Meta:
         unique_together = ("name",)
+
+    def export(self, output_dir):
+        outpath = os.path.join(output_dir, self.name)
+        os.mkdir(outpath)
+
+        self.surfaces.export(outpath)
+        self.layers.export(outpath)
+        self.aoidb.export(outpath)
+        self.prism.latest("created_at").export(outpath)
+        self.analysis.export(outpath)
+        self.maps.export(outpath)
+
+        for hruzone in self.hruzones.all():
+            hruzone.export(outpath)
+
 
 # *************** UPLOAD MODELS ***************
 #
