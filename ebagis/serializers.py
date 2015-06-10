@@ -9,18 +9,15 @@ from djcelery.models import TaskMeta
 
 from .models import AOI
 from .models import Surfaces, Layers, Prism, AOIdb, HRUZones, Analysis,\
-    Geodatabase
+    Geodatabase, PrismDir
 from .models import File, XML, Raster, Vector, Table, MapDocument
 from .models import FileData, XMLData, RasterData, VectorData, TableData,\
     MapDocumentData
-from .models import AOIUpload, UpdateUpload
+from .models import AOIUpload, UpdateUpload, Download
 
 from .constants import URL_FILTER_QUERY_ARG_PREFIX
 
 from .utilities import validate_path
-
-
-MULTIPLE_GDBS = ["hru"]
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -106,7 +103,7 @@ class FileSerializer(serializers.ModelSerializer):
         }
 
         if kwargs[name_key] in MULTIPLE_GDBS:
-            kwargs[URL_FILTER_QUERY_ARG_PREFIX + "__object_id"] = obj.object_id
+            kwargs[URL_FILTER_QUERY_ARG_PREFIX + "id"] = obj.object_id
 
         return reverse('geodatabase-' + type(obj).__name__.lower() + '-detail',
                        kwargs=kwargs,
@@ -160,6 +157,8 @@ class MapDocSerializer(serializers.ModelSerializer):
 
 # *************** GEODATABASE SERIALIZERS *****************
 
+MULTIPLE_GDBS = ["hru", "prism"]
+
 class GeodatabaseSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     rasters = RasterSerializer(read_only=True, many=True)
@@ -197,6 +196,17 @@ class LayersSerializer(GeodatabaseSerializer):
 
 
 class PrismSerializer(GeodatabaseSerializer):
+
+    def get_url(self, obj):
+        kwargs = {}
+        objtype = type(obj).__name__.lower()
+        view_name = "aoi-prism-detail"
+        kwargs["pk"] = obj.id
+        kwargs["FILTER__aoi_id"] = obj.aoi_id
+        return reverse(view_name,
+                       kwargs=kwargs,
+                       request=self.context['request'])
+
     class Meta:
         model = Prism
 
@@ -214,6 +224,22 @@ class AnalysisSerializer(GeodatabaseSerializer):
 class HRUZonesSerializer(GeodatabaseSerializer):
     class Meta:
         model = HRUZones
+
+
+class PrismDirSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+    versions = PrismSerializer(read_only=True, many=True)
+
+    def get_url(self, obj):
+        kwargs = {}
+        view_name = "aoi-prism-list"
+        kwargs["pk"] = obj.aoi_id
+        return reverse(view_name,
+                       kwargs=kwargs,
+                       request=self.context['request'])
+
+    class Meta:
+        model = PrismDir
 
 
 # *************** AOI SERIALIZERS *****************
@@ -243,7 +269,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
     layers = LayersSerializer(read_only=True)
     aoidb = AOIdbSerializer(read_only=True)
     analysis = AnalysisSerializer(read_only=True)
-    prism = PrismSerializer(read_only=True, many=True)
+    prism = PrismDirSerializer(read_only=True)
     #maps = MapDocSerializer(read_only=True, many=True)
     #hruzones = HRUZonesSerializer(read_only=True, many=True)
 
@@ -264,7 +290,7 @@ class AOIGeoSerializer(GeoFeatureModelSerializer):
     layers = LayersSerializer(read_only=True)
     aoidb = AOIdbSerializer(read_only=True)
     analysis = AnalysisSerializer(read_only=True)
-    prism = PrismSerializer(read_only=True, many=True)
+    prism = PrismDirSerializer(read_only=True)
     #maps = MapDocSerializer(read_only=True, many=True)
     #hruzones = HRUZonesSerializer(read_only=True, many=True)
 
@@ -328,3 +354,14 @@ class UpdateUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = UpdateUpload
         read_only_fields = ('status', 'completed_at', 'processed')
+
+
+class DownloadSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="download-detail")
+    user = serializers.HyperlinkedRelatedField(view_name="user-detail",
+                                               read_only=True)
+    task = AOITaskSerializer(read_only=True)
+
+    class Meta:
+        model = Download
+        read_only_fields = ('status', 'completed_at', 'task')

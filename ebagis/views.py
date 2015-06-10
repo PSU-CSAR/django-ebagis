@@ -1,5 +1,6 @@
 import logging
 
+from django.http import HttpResponse
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import viewsets, views
@@ -24,7 +25,7 @@ from djcelery.models import TaskMeta
 from django.contrib.auth.models import User, Group, Permission
 from .models import AOI, Surfaces, Layers, AOIdb, Prism, HRUZones, XML,\
     Vector, Raster, Table, MapDocument, Analysis, Geodatabase,\
-    AOIUpload, UpdateUpload
+    AOIUpload, UpdateUpload, Download, PrismDir
 
 # serializers
 from .serializers import AOISerializer, SurfacesSerializer, LayersSerializer,\
@@ -32,20 +33,21 @@ from .serializers import AOISerializer, SurfacesSerializer, LayersSerializer,\
     VectorSerializer, RasterSerializer, TableSerializer, MapDocSerializer,\
     UserSerializer, GroupSerializer, AnalysisSerializer, AOIListSerializer,\
     AOIGeoListSerializer, GeodatabaseSerializer, AOIGeoSerializer,\
-    AOIUploadSerializer, UpdateUploadSerializer, PermissionSerializer
+    AOIUploadSerializer, UpdateUploadSerializer, PermissionSerializer,\
+    DownloadSerializer, PrismDirSerializer
 
 
-from .tasks import add_aoi
+from .tasks import add_aoi, export_data
 from .constants import URL_FILTER_QUERY_ARG_PREFIX
 
 
-geodatabases = {
-    'surfaces': {'model': Surfaces, 'serializers': SurfacesSerializer},
-    'layers': {'model': Layers, 'serializer': LayersSerializer},
-    'analysis': {'model': Analysis, 'serializer': AnalysisSerializer},
-    'aoi': {'model': AOIdb, 'serializer': AOIdbSerializer},
-    'prism': {'model': Prism, 'serializer': PrismSerializer},
-}
+#geodatabases = {
+#    'surfaces': {'model': Surfaces, 'serializers': SurfacesSerializer},
+#    'layers': {'model': Layers, 'serializer': LayersSerializer},
+#    'analysis': {'model': Analysis, 'serializer': AnalysisSerializer},
+#    'aoi': {'model': AOIdb, 'serializer': AOIdbSerializer},
+#    'prism': {'model': Prism, 'serializer': PrismSerializer},
+#}
 
 
 class GeoJSONRenderer(JSONRenderer):
@@ -81,9 +83,44 @@ class APIRoot(APIView):
         return Response({
             'AOIs': reverse('aoi-list', request=request),
             'AOI Uploads': reverse('aoiupload-list', request=request),
+            'Downloads': reverse('download-list', request=request),
             'Users': reverse('user-list', request=request),
             'Groups': reverse('group-list', request=request),
         })
+
+
+class DownloadViewSet(viewsets.ModelViewSet):
+    queryset = Download.objects.all()
+    serializer_class = DownloadSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        import os
+
+        instance = self.get_object()
+
+        if instance.file:
+            response = HttpResponse(instance.file,
+                                    content_type='application/zip')
+            name = os.path.basename(instance.file.file.name)
+            response['Content-Disposition'] = \
+                'attachment; filename="' + name + '"'
+            return response
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def download(self, request, content_type, object_id):
+        download = Download(user=request.user,
+                            content_type=content_type,
+                            object_id=object_id)
+        download.save()
+        result = export_data.delay(download.id)
+        download.task, created = \
+            TaskMeta.objects.get_or_create(task_id=result.task_id)
+        download.save()
+        serializer = self.serializer_class(download,
+                                           context={'request': request})
+        return Response(serializer.data)
 
 
 class AOIUploadView(ChunkedUploadView):
@@ -137,7 +174,6 @@ class AOIViewSet(MultiSerializerViewSet):
     }
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
     parser_classes = (
-        #FileUploadParser,
         JSONParser,
         FormParser,
         MultiPartParser,
@@ -166,12 +202,9 @@ class AOIViewSet(MultiSerializerViewSet):
                                           context={'request': request}
                                           )
         else:
-            serializer = self.get_serializer(instance,
-                                             #context={'request': request
-                                             )
+            serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    #@list_route()
     def create(self, request, *args, **kwargs):
         logging.info(request.data)
         upload_view = AOIUploadView()
@@ -209,15 +242,37 @@ class AOIViewSet(MultiSerializerViewSet):
     @detail_route()
     def prism(self, request, *args, **kwargs):
         prism = self.get_object().prism
-        serializer = PrismSerializer(prism, context={'request': request})
+        serializer = PrismDirSerializer(prism, context={'request': request})
         return Response(serializer.data)
+
+    @detail_route()
+    def download(self, request, *args, **kwargs):
+        aoi = self.get_object()
+        download_view = DownloadViewSet()
+        if request.method == 'GET':
+            return download_view.download(
+                request,
+                ContentType.objects.get_for_model(aoi.__class__),
+                aoi.id
+            )
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PrismViewSet(viewsets.ModelViewSet):
+    serializer_class = PrismSerializer
+
+    def get_queryset(self):
+        query_dict = get_queryset_arguments(self)
+        print query_dict
+        return PrismDir.objects.get(**query_dict).versions
 
 
 class HRUZonesViewSet(viewsets.ModelViewSet):
     serializer_class = HRUZonesSerializer
 
     def get_queryset(self):
-        query_dict = query_dict = get_queryset_arguments(self)
+        query_dict = get_queryset_arguments(self)
         return HRUZones.objects.get(**query_dict)
 
 
@@ -225,7 +280,7 @@ class GeodatabaseXMLViewSet(viewsets.ModelViewSet):
     serializer_class = XMLSerializer
 
     def get_queryset(self):
-        query_dict = query_dict = get_queryset_arguments(self)
+        query_dict = get_queryset_arguments(self)
         return Geodatabase.objects.get(**query_dict).xmls.all()
 
 
@@ -233,7 +288,7 @@ class GeodatabaseTableViewSet(viewsets.ModelViewSet):
     serializer_class = TableSerializer
 
     def get_queryset(self):
-        query_dict = query_dict = get_queryset_arguments(self)
+        query_dict = get_queryset_arguments(self)
         return Geodatabase.objects.get(**query_dict).tables.all()
 
 
@@ -241,7 +296,7 @@ class GeodatabaseVectorViewSet(viewsets.ModelViewSet):
     serializer_class = VectorSerializer
 
     def get_queryset(self):
-        query_dict = query_dict = get_queryset_arguments(self)
+        query_dict = get_queryset_arguments(self)
         return Geodatabase.objects.get(**query_dict).vectors.all()
 
 
@@ -340,4 +395,3 @@ def get_queryset_arguments(obj):
             query_dict[query_lookup] = query_value
 
     return query_dict
-

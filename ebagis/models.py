@@ -13,10 +13,13 @@ from djcelery.models import TaskMeta
 
 from drf_chunked_upload.models import ChunkedUpload
 
-from .constants import NO_ARCHIVING, LAYER_ARCHIVING, GROUP_ARCHIVING,\
-    ARCHIVING_CHOICES
+from arcpy_extensions.geodatabase import Geodatabase as arcpyGeodatabase
+#from arcpy_extensions.layer import Layer as arcpyLayer
 
-from .settings import AOI_DIRECTORY, GEO_WKID
+from . import constants, utilities
+
+from .settings import AOI_DIRECTORY, GEO_WKID, DOWNLOADS_DIRECTORY,\
+                      EXPIRATION_DELTA
 
 
 """
@@ -268,11 +271,11 @@ class UniqueNameMixin(models.Model):
 class DirectoryMixin(DateMixin, NameMixin, models.Model):
     """Mixin providing directory creation and deletion to
     directory-type models."""
-    _directory_path = models.CharField(max_length=1000,
-                                       db_column="directory_path")
-    archiving_rule = models.CharField(max_length=5,
-                                      choices=ARCHIVING_CHOICES,
-                                      default=NO_ARCHIVING,
+    _path = models.CharField(max_length=1000,
+                             db_column="path")
+    archiving_rule = models.CharField(max_length=10,
+                                      choices=constants.ARCHIVING_CHOICES,
+                                      default=constants.NO_ARCHIVING,
                                       editable=False)
     subdirectory_of = os.getcwd()
 
@@ -284,39 +287,39 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         """Overrides the default save method adding the following:
 
          - if the object has not been saved (no pk set),
-           sets the created at time and calls for the directory_path
+           sets the created at time and calls for the path
            property to ensure a directory is created for the
            GDB within its enclosing AOI"""
         if not self.pk:
             self.created_at = timezone.now()
-            self.directory_path
+            self.path
         return super(DirectoryMixin, self).save(*args, **kwargs)
 
     def delete(self, delete_file=True, *args, **kwargs):
         """Overrides the default delete method adding the following:
 
-         - removes the directory at directory path from the file system"""
+         - removes the directory at the path from the file system"""
         if delete_file:
             import shutil
-            if os.path.exists(self.directory_path):
-                shutil.rmtree(self.directory_path)
+            if os.path.exists(self.path):
+                shutil.rmtree(self.path)
         return super(DirectoryMixin, self).delete(*args, **kwargs)
 
     @property
-    def directory_path(self):
+    def path(self):
         """On first run, creates the directory for a directory-using
         model, returning the path of the created directory. If already
         set, simply returns the directory path."""
 
-        # check to see if directory path property is set
-        if not getattr(self, '_directory_path', None):
+        # check to see if path property is set
+        if not getattr(self, '_path', None):
             # default path is simply the value of the name field
             # inside the subdirectory_of path
             path = os.path.join(self.subdirectory_of, self.name)
 
             # if archiving rule set to group archiving, then the
             # directory name need needs the date appended
-            if self.archiving_rule == GROUP_ARCHIVING:
+            if self.archiving_rule == constants.GROUP_ARCHIVING:
                 path += self.created_at.strftime("_%Y%m%d%H%M%S")
 
             # try to create the directory
@@ -327,19 +330,39 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
                 raise e
             else:
                 # set the value of the directory path field
-                self._directory_path = path
+                self._path = path
 
-        return self._directory_path
+        return self._path
 
-    def export(self):
+    # I hate this name but what are you going to do--can't use import
+    @classmethod
+    def create(cls, *args, **kwargs):
+        raise NotImplementedError
+        # I think this can be a generic function for the class...
+        # No, it can't, as arcpy functions must be used in geodatabases...
+        # I may implement it here and then override it in the geodatabase...
+        # name should default to the name of the directory, but geodatabases
+        # will need to strip the .gdb...
+        # With more thought, this really is as complex and specific as the
+        # export methods -- need to implement each subclass individually.
+
+    def export(self, *args, **kwargs):
         raise NotImplementedError
 
 
 class ProxyManager(models.Manager):
     def get_queryset(self):
-        classes = [subclass.__name__ for subclass in self.model.__subclasses__()]
-        classes.append(self.model._meta.object_name)
-        return super(ProxyManager, self).get_queryset().filter(classname__in=classes)
+        classes = [cls.__name__ for cls in _get_subclasses(self.model,
+                                                           [self.model])]
+        queryset = super(ProxyManager, self).get_queryset()
+        return queryset.filter(classname__in=classes)
+
+
+def _get_subclasses(Class, list_of_subclasses=[]):
+    for subclass in Class.__subclasses__():
+        list_of_subclasses.append(subclass)
+        list_of_subclasses = _get_subclasses(subclass, list_of_subclasses)
+    return list_of_subclasses
 
 
 class ProxyMixin(models.Model):
@@ -358,14 +381,13 @@ class ProxyMixin(models.Model):
     class Meta:
         abstract = True
 
-
     def save(self, *args, **kwargs):
         """Overrides the default save method to do the following:
 
-         - automatically assign the name based on the name of
-           the instance to be that of the class of which it is
-           an instance. In other words, a Maps instace
-           will be saved with the name of 'Maps'"""
+         - automatically assign the classname of the instance
+           to be that of the class of which it is an
+           instance. In other words, a Maps instance
+           will be saved with the classname 'Maps'"""
         if not self.classname:
             self.classname = self.__class__.__name__
         return super(ProxyMixin, self).save(*args, **kwargs)
@@ -376,7 +398,7 @@ class ProxyMixin(models.Model):
         Used in the get_object method to return object as a
         specific subclass object, if nessesary."""
         return dict([(subclass.__name__, subclass)
-                     for subclass in cls.__subclasses__()])
+                     for subclass in _get_subclasses(cls)])
 
     def get_object(self):
         """Ensures when getting an object, it will be of
@@ -394,17 +416,49 @@ class ProxyMixin(models.Model):
 
 # *************** FILE CLASSES ***************
 
-class FileData(ProxyMixin, DateMixin, CreatedByMixin,
+class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
                AOIRelationMixin, RandomPrimaryIdModel):
-    filepath = models.CharField(max_length=1024)
-    filename = models.CharField(max_length=255)
+    path = models.CharField(max_length=1024, unique=True)
     encoding = models.CharField(max_length=20, null=True, blank=True)
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    # TODO Finish this method and those for the sub classes
+    # TODO Review all other class create methods -- finish GDB methods
+    @classmethod
+    @transaction.atomic
+    def create(cls, input_file, File, user):
+        content_type = ContentType.objects.get_for_model(
+            File.__class__,
+            for_concrete_model=False
+        )
+
+        now = timezone.now()
+        name, ext = os.path.splitext(os.path.basename(input_file))
+        path = os.path.join(File.content_object.path,
+                            name + now.strftime("_%Y%m%d%H%M%S") + ext)
+        shutil.copy(input_file, path)
+
+        try:
+            data_obj = cls(aoi=File.aoi,
+                           content_type=content_type,
+                           object_id=File.id,
+                           path=path,
+                           name=name+ext,
+                           created_by=user,
+                           created_at=now)
+            data_obj.save()
+        except:
+            try:
+                os.remove(path)
+            except:
+                exception("Failed to remove File Data on create error.")
+            raise
+        return data_obj
+
     def export(self, output_dir):
-        shutil.copy2(self.filepath, os.path.join(output_dir, self.filename))
+        shutil.copy(self.path, os.path.join(output_dir, self.name))
 
 # "Data" types must match their enclosing layer type, e.g., a vector
 # data instance can only relate to a vector layer instance. Thus,
@@ -422,7 +476,53 @@ XMLData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'xml'}
 
 
-class VectorData(FileData):
+class MapDocumentData(FileData):
+    class Meta:
+        proxy = True
+
+MapDocumentData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'mapdocument'}
+
+
+class LayerData(FileData):
+    class Meta:
+        proxy = True
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, arcpy_ext_layer, File, user):
+        content_type = ContentType.objects.get_for_model(
+            File.__class__,
+            for_concrete_model=False
+        )
+
+        now = timezone.now()
+        output_dir = File.content_object.path
+        output_name = arcpy_ext_layer.name + now.strftime("_%Y%m%d%H%M%S")
+        newlyr = arcpy_ext_layer.copy_to_file(output_dir, outname=output_name)
+
+        print cls
+
+        try:
+            data_obj = cls(aoi=File.aoi,
+                           content_type=content_type,
+                           object_id=File.id,
+                           path=newlyr.path,
+                           name=arcpy_ext_layer.name,
+                           created_by=user,
+                           created_at=now)
+            data_obj.save()
+        except:
+            try:
+                from arcpy.management import Delete
+                Delete(newlyr.path)
+            except:
+                exception("Failed to remove File Data on create error.")
+            raise
+        return data_obj
+
+
+class VectorData(LayerData):
 #    srs_wkt = models.CharField(max_length=1000)
 #    geom_type = models.CharField(max_length=50)
 
@@ -431,13 +531,13 @@ class VectorData(FileData):
 
     def export(self, output_dir):
         from arcpy.management import CopyFeatures
-        CopyFeatures(self.filepath, os.path.join(output_dir, self.filename))
+        CopyFeatures(self.path, os.path.join(output_dir, self.name))
 
 VectorData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'vector'}
 
 
-class RasterData(FileData):
+class RasterData(LayerData):
     #srs_wkt = models.CharField(max_length=1000)
     #resolution = models.FloatField()
 
@@ -446,31 +546,31 @@ class RasterData(FileData):
 
     def export(self, output_dir):
         from arcpy.management import CopyRaster
-        CopyRaster(self.filepath, os.path.join(output_dir, self.filename))
+        CopyRaster(self.path, os.path.join(output_dir, self.name))
 
 RasterData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'raster'}
 
 
-class TableData(FileData):
+class TableData(LayerData):
     class Meta:
         proxy = True
 
-
     def export(self, output_dir):
         from arcpy.management import CopyRows
-        CopyRows(self.filepath, os.path.join(output_dir, self.filename))
+        CopyRows(self.path, os.path.join(output_dir, self.name))
 
 TableData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'table'}
 
 
-class MapDocumentData(FileData):
-    class Meta:
-        proxy = True
-
-MapDocumentData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'mapdocument'}
+# used in the Layer class below to find the proper data class to go
+# with a given layer data type
+LAYER_DATA_CLASSES = {
+    constants.FC_TYPECODE: VectorData,
+    constants.RASTER_TYPECODE: RasterData,
+    constants.TABLE_TYPECODE: TableData,
+}
 
 
 # ************* LAYER CLASSES **************
@@ -485,34 +585,88 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
     class Meta:
         unique_together = ("content_type", "object_id", "name")
 
-    def export(self, output_dir, version_id=None):
-        if version_id:
-            return self.versions.get(id=version_id).export(output_dir)
-        else:
-            return self.versions.latest("created_at").export(output_dir)
+    @classmethod
+    @transaction.atomic
+    def create(cls, input_file, containing_object, user, data_class=FileData):
+        content_type = ContentType.objects.get_for_model(
+            containing_object.__class__,
+            for_concrete_model=False
+        )
+        file_name = os.path.splitext(os.path.basename(input_file))[0]
+        file_obj = cls(aoi=containing_object.aoi,
+                       content_type=content_type,
+                       object_id=containing_object.id,
+                       name=file_name)
+        file_obj.save()
+        data_class.create(input_file, file_obj, user)
+        return file_obj
+
+    def export(self, output_dir, querydate=timezone.now()):
+        print querydate
+        query = self.versions.filter(created_at__lte=querydate)
+        print query, len(query)
+        return query.latest("created_at").export(output_dir)
 
 
 class XML(File):
     class Meta:
         proxy = True
 
-
-class Vector(File):
-    class Meta:
-        proxy = True
-
-
-class Raster(File):
-    class Meta:
-        proxy = True
-
-
-class Table(File):
-    class Meta:
-        proxy = True
+    @classmethod
+    @transaction.atomic
+    def create(cls, input_file, containing_object, user):
+        return super(XML, cls).create(input_file,
+                                      containing_object,
+                                      user,
+                                      data_class=XMLData)
 
 
 class MapDocument(File):
+    class Meta:
+        proxy = True
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, input_file, containing_object, user):
+        return super(MapDocument, cls).create(input_file,
+                                              containing_object,
+                                              user,
+                                              data_class=MapDocumentData)
+
+
+class Layer(File):
+    class Meta:
+        proxy = True
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, arcpy_ext_layer, geodatabase, user):
+        content_type = ContentType.objects.get_for_model(
+            geodatabase.__class__,
+            for_concrete_model=False
+        )
+        file_obj = cls(aoi=geodatabase.aoi,
+                       content_type=content_type,
+                       object_id=geodatabase.id,
+                       name=arcpy_ext_layer.name)
+        file_obj.save()
+        LAYER_DATA_CLASSES[arcpy_ext_layer.type].create(arcpy_ext_layer,
+                                                        file_obj,
+                                                        user)
+        return file_obj
+
+
+class Vector(Layer):
+    class Meta:
+        proxy = True
+
+
+class Raster(Layer):
+    class Meta:
+        proxy = True
+
+
+class Table(Layer):
     class Meta:
         proxy = True
 
@@ -520,31 +674,117 @@ class MapDocument(File):
 # *********** DIRECTORY CLASSES ************
 
 class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
-#    def get_object(self):
-#        """Ensures when getting an object, it will be of
-#        the same type as it was created, e.g., the type
-#        of directory as indicated by its name."""
-#        if self.name in SUBCLASSES_OF_DIRECTORY:
-#            self.__class__ = SUBCLASSES_OF_DIRECTORY[self.name]
-#        return self
-
     class Meta:
         abstract = True
 
+    @classmethod
+    @transaction.atomic
+    def create(cls, aoi, name=None):
+        if not name:
+            name = cls.__name__.lower()
+        dir_obj = cls(aoi=aoi, name=name)
+        dir_obj.save()
+        return dir_obj
 
-class HRUZones(Directory):
+
+class HRUZonesData(CreatedByMixin, Directory):
     xml = models.OneToOneField(XML, related_name="hru_xml")
-    hruzones = models.OneToOneField("HRUZonesGDB", related_name="hru_hruGDB")
+    hruzonesgdb = models.OneToOneField("HRUZonesGDB",
+                                       related_name="hru_hruGDB")
+    hruzones = models.ForeignKey("HRUZones", related_name="versions")
+
+    def __init__(self, *args, **kwargs):
+        # override default NO_ARCHIVING with GROUP_ARCHIVING rule
+        self._meta.get_field('archiving_rule').default = \
+            constants.GROUP_ARCHIVING
+        super(HRUZones, self).__init__(*args, **kwargs)
 
     @property
     def subdirectory_of(self):
-        return self.aoi.directory_path
+        return self.hru.path
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, temp_hru_path, hruzones, user):
+        hruzonesdata_obj = HRUZones(aoi=hruzones.aoi,
+                                    name=hruzones.name,
+                                    hruzones=hruzones,
+                                    created_by=user)
+        hruzonesdata_obj.save()
+        hru_gdb_path = os.path.join(temp_hru_path,
+                                    hruzones.name,
+                                    constants.GDB_EXT)
+        hruzonesdata_obj.hruzonesgdb = HRUZonesGDB.create(hru_gdb_path,
+                                                          hruzones.aoi,
+                                                          user)
+        hru_XML_path = os.path.join(temp_hru_path, constants.HRU_LOG_FILE)
+        hruzonesdata_obj.xml = XML.create(hru_XML_path,
+                                          hruzonesdata_obj,
+                                          hruzones.aoi,
+                                          user)
+        hruzonesdata_obj.save()
+        return hruzonesdata_obj
 
     def export(self, output_dir):
+        self.xml.export(output_dir)
+        self.hruzones.export(output_dir)
+
+
+class HRUZones(Directory):
+    zones = models.ForeignKey("Zones", related_name="hruzones")
+
+    @property
+    def subdirectory_of(self):
+        return self.zones.path
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, temp_zone_path, zones, user):
+        hruzones_obj = HRUZones(aoi=zones.aoi,
+                                name=hru_name,
+                                zones=zones)
+        hruzones_obj.save()
+        HRUZonesData.create(os.path.join(temp_zones_dir, hru_name),
+                            hruzones_obj,
+                            user)
+        return hruzones_obj
+
+    def export(self, output_dir, querydate=timezone.now()):
         outpath = os.path.join(output_dir, self.name)
         os.mkdir(outpath)
-        self.xml.export(outpath)
-        self.hruzones.export(outpath)
+        versions = self.versions.filter(created_at__lt=querydate)
+        latest = versions.latest("created_at")
+        latest.xml.export(outpath)
+        latest.hruzones.export(outpath)
+        return outpath
+
+
+class Zones(Directory):
+    @property
+    def subdirectory_of(self):
+        return self.aoi.path
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, input_zones_dir, user, aoi):
+        zones_obj = super(Zones, cls).create(aoi)
+        hruzones = [d for d in os.listdir(input_zones_dir) if os.path.isdir(d)]
+
+        for hruzone in hruzones:
+            HRUZones.create(os.path.join(input_zones_dir, hruzone),
+                            zones_obj,
+                            user)
+
+        return zones_obj
+
+    def export(self, output_dir, querydate=timezone.now()):
+        outpath = os.path.join(output_dir, self.name)
+        os.mkdir(outpath)
+
+        for hruzone in self.hruzones.all():
+            hruzone.export(outpath, querydate)
+
+        return outpath
 
 
 class Maps(Directory):
@@ -552,18 +792,14 @@ class Maps(Directory):
 
     @property
     def subdirectory_of(self):
-        return self.aoi.directory_path
+        return self.aoi.path
 
-    def export(self, output_dir):
+    def export(self, output_dir, querydate=timezone.now()):
         outpath = os.path.join(output_dir, self.name)
         os.mkdir(outpath)
         for mapdoc in self.maps.all():
-            mapdoc.export(outpath)
-
-
-# used for the lookup of geodatabase types with specific models
-#SUBCLASSES_OF_DIRECTORY = dict([(cls.__name__, cls)
-#                                  for cls in Directory.__subclasses__()])
+            mapdoc.export(outpath, querydate=querydate)
+        return outpath
 
 
 # *********** GEODATABASE CLASSES ************
@@ -575,74 +811,132 @@ class Geodatabase(ProxyMixin, Directory):
 
     @property
     def subdirectory_of(self):
-        return self.aoi.directory_path
+        return self.aoi.path
 
-    def export(self, output_dir):
+    @classmethod
+    @transaction.atomic
+    def create(cls, geodatabase_path, user, aoi):
+        gdb_obj = super(Geodatabase, cls).create(aoi)
+
+        # get all geodatabase layers and copy to outdirectory
+        gdb = arcpyGeodatabase.Open(geodatabase_path)
+
+        # copy rasters and create raster and raster data objects
+        for raster in gdb.rasters:
+            Raster.create(raster, gdb_obj, user)
+
+        # copy vectors and create vector and vetor data objects
+        for vector in gdb.featureclasses:
+            Vector.create(vector, gdb_obj, user)
+
+        # copy tables and create table and table data objects
+        for table in gdb.tables:
+            Table.create(table, gdb_obj, user)
+
+        return gdb_obj
+
+    def export(self, output_dir, querydate=timezone.now()):
         from arcpy.management import CreateFileGDB
         result = CreateFileGDB(output_dir, self.name)
         outpath = result.getOutput(0)
         for raster in self.rasters.all():
-            raster.export(outpath)
+            raster.export(outpath, querydate=querydate)
         for vector in self.vectors.all():
-            vector.export(outpath)
+            vector.export(outpath, querydate=querydate)
         for table in self.tables.all():
-            table.export(outpath)
+            table.export(outpath, querydate=querydate)
+        return outpath
 
 
-class Surfaces(Geodatabase):
-    class Meta:
-        proxy = True
-
-
-class Layers(Geodatabase):
+class Geodatabase_IndividualArchive(Geodatabase):
     def __init__(self, *args, **kwargs):
         # override the default NO_ARCHIVING rule from the
-        # Geodatabase class with LAYER_ARCHIVING rule
-        self._meta.get_field('archiving_rule').default = LAYER_ARCHIVING
-        super(Layers, self).__init__(*args, **kwargs)
+        # directory class with INDIVIDUAL_ARCHIVING rule
+        self._meta.get_field('archiving_rule').default = \
+            constants.INDIVIDUAL_ARCHIVING
+        super(Geodatabase_IndividualArchive, self).__init__(*args, **kwargs)
 
     class Meta:
         proxy = True
 
 
-class AOIdb(Geodatabase):
-    class Meta:
-        proxy = True
-
-
-class Prism(Geodatabase):
+class Geodatabase_GroupArchive(Geodatabase):
     def __init__(self, *args, **kwargs):
         # override default NO_ARCHIVING with GROUP_ARCHIVING rule
-        self._meta.get_field('archiving_rule').default = GROUP_ARCHIVING
-        super(Prism, self).__init__(*args, **kwargs)
+        self._meta.get_field('archiving_rule').default = \
+            constants.GROUP_ARCHIVING
+        super(Geodatabase_GroupArchive, self).__init__(*args, **kwargs)
 
     class Meta:
         proxy = True
 
 
-class Analysis(Geodatabase):
+class Geodatabase_ReadOnly(Geodatabase):
     def __init__(self, *args, **kwargs):
-        # override default NO_ARCHIVING with LAYER_ARCHIVING rule
-        self._meta.get_field('archiving_rule').default = LAYER_ARCHIVING
-        super(Analysis, self).__init__(*args, **kwargs)
+        # override default NO_ARCHIVING with READ_ONLY rule
+        self._meta.get_field('archiving_rule').default = constants.READ_ONLY
+        super(Geodatabase_ReadOnly, self).__init__(*args, **kwargs)
 
+    class Meta:
+        proxy = True
+
+
+class Surfaces(Geodatabase_ReadOnly):
+    class Meta:
+        proxy = True
+
+
+class Layers(Geodatabase_IndividualArchive):
+    class Meta:
+        proxy = True
+
+
+class AOIdb(Geodatabase_ReadOnly):
+    class Meta:
+        proxy = True
+
+
+class Prism(Geodatabase_GroupArchive):
+    @property
+    def subdirectory_of(self):
+        return self.aoi.prism.path
+
+    class Meta:
+        proxy = True
+
+
+class Analysis(Geodatabase_IndividualArchive):
     class Meta:
         proxy = True
 
 
 class HRUZonesGDB(Geodatabase):
-    def __init__(self, *args, **kwargs):
-        # override default NO_ARCHIVING with LAYER_ARCHIVING rule
-        self._meta.get_field('archiving_rule').default = LAYER_ARCHIVING
-        super(HRUZones, self).__init__(*args, **kwargs)
-
     class Meta:
         proxy = True
 
 
-# used for the lookup of geodatabase types with specific models
-SUBCLASSES_OF_GEODATABASE = dict([(cls.__name__, cls)
-                                  for cls in Geodatabase.__subclasses__()])
+class PrismDir(Directory):
+    versions = models.ManyToManyField(Prism, related_name="prismdir")
+
+    @property
+    def subdirectory_of(self):
+        return self.aoi.path
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, aoi):
+        prismdir_obj = super(PrismDir, cls).create(
+            aoi, name=constants.PRISM_DIR_NAME
+        )
+
+        return prismdir_obj
+
+    def add_prism(self, path, user, aoi):
+        self.versions.add(Prism.create(path, user, aoi))
+
+    def export(self, output_dir, querydate=timezone.now()):
+        filtered = self.versions.filter(created_at__lt=querydate)
+        return filtered.latest("created_at").export(output_dir)
 
 
 # *************** AOI CLASS ***************
@@ -651,64 +945,173 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
     objects = models.GeoManager()
+
+    # data
     surfaces = models.OneToOneField(Surfaces, related_name="aoi_surfaces",
                                     null=True, blank=True)
     layers = models.OneToOneField(Layers, related_name="aoi_layers",
                                   null=True, blank=True)
     aoidb = models.OneToOneField(AOIdb, related_name="aoi_aoidb",
                                  null=True, blank=True)
-    prism = models.ManyToManyField(Prism, related_name="aoi_prism",
-                                   null=True, blank=True)
+    prism = models.OneToOneField(PrismDir, related_name="aoi_prism",
+                                 null=True, blank=True)
     analysis = models.OneToOneField(Analysis, related_name="aoi_analysis",
                                     null=True, blank=True)
     maps = models.OneToOneField(Maps, related_name="aoi_maps",
                                 null=True, blank=True)
-    hruzones = models.ManyToManyField(HRUZones, related_name="aoi_hruzones",
-                                      null=True, blank=True)
+    zones = models.OneToOneField(Zones, related_name="aoi_zones",
+                                 null=True, blank=True)
+
+    # for making file system changes
     subdirectory_of = AOI_DIRECTORY
 
     class Meta:
         unique_together = ("name",)
 
-    def export(self, output_dir):
-        outpath = os.path.join(output_dir, self.name)
+    def _valid_querydate(self, querydate):
+        if querydate < self.created_at:
+            raise Exception(
+                "AOI was created after query date." +
+                " Cannot export AOI state for the given query date."
+            )
+
+        if querydate > timezone.now():
+            raise Exception(
+                "Woah, dude, your query date is like totally in the future." +
+                " That is most excellent, but my name isn't Bill nor Ted," +
+                " so I don't know the future, brah."
+            )
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path):
+        # get multipolygon WKT from AOI Boundary Layer
+        wkt, crs_wkt = utilities.get_multipart_wkt_geometry(
+            os.path.join(temp_aoi_path, constants.AOI_GDB),
+            layername=constants.AOI_BOUNDARY_LAYER
+        )
+
+        crs = utilities.create_spatial_ref_from_wkt(crs_wkt)
+
+        if utilities.get_authority_code_from_spatial_ref(crs) != GEO_WKID:
+            dst_crs = utilities.create_spatial_ref_from_EPSG(GEO_WKID)
+            wkt = utilities.reproject_wkt(wkt, crs, dst_crs)
+
+        aoi = cls(name=aoi_name,
+                  shortname=aoi_shortname,
+                  boundary=wkt,
+                  created_by=user)
+        try:
+            print 2
+            aoi.save()
+
+            print 3
+            # TODO: convert GDB imports to use celery group or multiprocessing
+            # import aoi.gdb
+            aoi.aoidb = AOIdb.create(
+                os.path.join(temp_aoi_path,
+                             constants.AOI_GDB),
+                user,
+                aoi,
+            )
+            print 4
+            aoi.save()
+
+            # import surfaces.gdb
+            aoi.surfaces = Surfaces.create(
+                os.path.join(temp_aoi_path,
+                             constants.SURFACES_GDB),
+                user,
+                aoi,
+            )
+            aoi.save()
+
+            # import layers.gdb
+            aoi.layers = Layers.create(
+                os.path.join(temp_aoi_path,
+                             constants.LAYERS_GDB),
+                user,
+                aoi,
+            )
+            aoi.save()
+
+            # import HRU Zones
+            aoi.zones = Zones.create(
+                os.path.join(temp_aoi_path,
+                             constants.ZONES_DIR_NAME),
+                user,
+                aoi,
+            )
+
+            # import analysis.gdb
+            aoi.analysis = Analysis.create(
+                os.path.join(temp_aoi_path,
+                             constants.ANALYSIS_GDB),
+                user,
+                aoi,
+            )
+            aoi.save()
+
+            # import prism.gdb -- need to add dir first, then add prism to it
+            aoi.prism = PrismDir.create(
+                aoi,
+            )
+            aoi.save()
+            aoi.prism.add_prism(
+                os.path.join(temp_aoi_path,
+                             constants.PRISM_GDB),
+                user,
+                aoi,
+            )
+
+            # import param.gdb
+
+            # import loose files in param/
+
+            # import param/paramdata.gdb
+
+            # import map docs in maps directory
+            aoi.maps = Maps.create(aoi=aoi, name=constants.MAPS_DIR_NAME)
+            aoi.save()
+
+        except:
+            try:
+                if aoi.path:
+                    shutil.rmtree(aoi.path)
+            except:
+                exception("Failed to remove AOI directory on import error.")
+            raise
+
+        return aoi
+
+    def export(self, output_dir, querydate=timezone.now(), outname=None):
+        self._valid_querydate(querydate)
+
+        # if no outname provided, use the AOI name
+        # as the name of the output AOI directory
+        if not outname:
+            outname = self.name
+
+        # make the AOI directory in the specified loaction
+        outpath = os.path.join(output_dir, outname)
         os.mkdir(outpath)
 
-        self.surfaces.export(outpath)
-        self.layers.export(outpath)
-        self.aoidb.export(outpath)
-        self.prism.latest("created_at").export(outpath)
-        self.analysis.export(outpath)
-        self.maps.export(outpath)
+        # make the metadata file for versioning
+        # TODO
 
-        for hruzone in self.hruzones.all():
-            hruzone.export(outpath)
+        # export each part of the AOI
+        self.surfaces.export(outpath, querydate=querydate)
+        self.layers.export(outpath, querydate=querydate)
+        self.aoidb.export(outpath, querydate=querydate)
+        self.prism.export(outpath, querydate=querydate)
+        self.analysis.export(outpath, querydate=querydate)
+        self.maps.export(outpath, querydate=querydate)
+        self.zones.export(outpath, querydate=querydate)
+
+        return outpath
 
 
 # *************** UPLOAD MODELS ***************
-#
-#class ChunkedUpload(_ChunkedUpload):
-#    __metaclass__ = InheritanceMetaclass
-#    type = models.CharField(max_length=25)
-#
-#    # this will automatically assign the type to the
-#    # upload instance to be that of the class
-#    # of which it is an instance. In other words,
-#    # a n AOIUpload instace will be saved with the type of
-#    # AOIUpload.
-#    def save(self, *args, **kwargs):
-#        if not self.type:
-#            self.type = self._meta.model_name
-#        super(ChunkedUpload, self).save(*args, **kwargs)
-#
-#    # this ensures that when getting an object, it will be
-#    # of the same type as it was created, e.g., the type of
-#    # upload as indicated by its type
-#    def get_object(self):
-#        if self.type in SUBCLASSES_OF_GEODATABASE:
-#            self.__class__ = SUBCLASSES_OF_GEODATABASE[self.type]
-#        return self
-
 
 class AOIUpload(ChunkedUpload):
     task = models.ForeignKey(TaskMeta, related_name='aoi_upload',
@@ -722,6 +1125,31 @@ class UpdateUpload(ChunkedUpload):
     processed = models.TextField(default="No")
 
 
-## used for the lookup of geodatabase types with specific models
-#SUBCLASSES_OF_UPLOAD = dict([(cls.__name__, cls)
-#                             for cls in ChunkedUpload.__subclasses__()])
+# *************** DOWNLOAD MODELS ***************
+
+class Download(DateMixin, RandomPrimaryIdModel):
+    user = models.ForeignKey(User,
+                             related_name="%(class)s",
+                             editable=False)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.CharField(max_length=10)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    task = models.ForeignKey(TaskMeta, related_name='download',
+                             null=True, blank=True)
+    file = models.FileField(max_length=255, null=True, blank=True)
+    # TODO: need a way to pass in a date to this
+    querydate = models.DateTimeField(default=timezone.now)
+
+    @property
+    def expires_at(self):
+        return self.created_at + EXPIRATION_DELTA
+
+    @property
+    def expired(self):
+        return self.expires_at <= timezone.now()
+
+    def delete(self, remove_file=True, *args, **kwargs):
+        super(Download, self).delete(*args, **kwargs)
+        if remove_file:
+            shutil.rmtree(os.path.join(DOWNLOADS_DIRECTORY,
+                                       self.id))

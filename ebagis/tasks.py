@@ -11,7 +11,7 @@ from django.db import transaction
 
 import arcpy
 
-from .constants import RASTER_EXT, FC_EXT, TABLE_EXT
+from .constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
 
 from .exceptions import AOIError
 
@@ -25,77 +25,19 @@ from .models import RasterData, VectorData, TableData, XMLData
 # Directory Classes
 from .models import Maps
 
-from .models import AOIUpload
+from .models import AOIUpload, Download
 
-from arcpy_extensions.constants import RASTER_TYPECODE, FC_TYPECODE,\
-    TABLE_TYPECODE
 from arcpy_extensions.geodatabase import Geodatabase
 
 from .utilities import make_short_name, get_multipart_wkt_geometry,\
     tempdirectory, create_spatial_ref_from_EPSG, reproject_wkt,\
     get_authority_code_from_spatial_ref, create_spatial_ref_from_wkt,\
-    validate_path
+    validate_path, zip_directory
 
 from .serializers import AOIListSerializer
 
-from .settings import AOI_DIRECTORY, TEMP_DIRECTORY, GEO_WKID
-
-# aoi gdb names, required layers, and optional layers
-REQUIRED_LAYERS = {}
-#OPTIONAL_LAYERS = {}
-
-AOI_GDB = "aoi.gdb"
-AOI_RASTER_LAYER = (["aoi", "aoibagis"], RASTER_TYPECODE)
-REQUIRED_LAYERS[AOI_GDB] = [("aoi_v", FC_TYPECODE),
-                            ("aoib", RASTER_TYPECODE),
-                            ("aoib_v", FC_TYPECODE),
-                            ("p_aoi", RASTER_TYPECODE),
-                            ("p_aoi_v", FC_TYPECODE),
-                            ("pourpoint", FC_TYPECODE)
-                            ]
-
-SURFACES_GDB = "surfaces.gdb"
-REQUIRED_LAYERS[SURFACES_GDB] = [("aspect", RASTER_TYPECODE),
-                                 #("dem", RASTER_TYPECODE),
-                                 ("dem_filled", RASTER_TYPECODE),
-                                 ("flow_accumulation", RASTER_TYPECODE),
-                                 ("flow_direction", RASTER_TYPECODE),
-                                 #("hillshade", RASTER_TYPECODE),
-                                 ("slope", RASTER_TYPECODE)
-                                 ]
-
-LAYERS_GDB = "layers.gdb"
-REQUIRED_LAYERS[LAYERS_GDB] = []
-
-ANALYSIS_GDB = "analysis.gdb"
-REQUIRED_LAYERS[ANALYSIS_GDB] = []
-
-PRISM_GDB = "prism.gdb"
-REQUIRED_LAYERS[PRISM_GDB] = [('Jan', RASTER_TYPECODE),
-                              ('Feb', RASTER_TYPECODE),
-                              ('Mar', RASTER_TYPECODE),
-                              ('Apr', RASTER_TYPECODE),
-                              ('May', RASTER_TYPECODE),
-                              ('Jun', RASTER_TYPECODE),
-                              ('Jul', RASTER_TYPECODE),
-                              ('Aug', RASTER_TYPECODE),
-                              ('Sep', RASTER_TYPECODE),
-                              ('Oct', RASTER_TYPECODE),
-                              ('Nov', RASTER_TYPECODE),
-                              ('Dec', RASTER_TYPECODE),
-                              ('Q1', RASTER_TYPECODE),
-                              ('Q2', RASTER_TYPECODE),
-                              ('Q3', RASTER_TYPECODE),
-                              ('Q4', RASTER_TYPECODE),
-                              ('Annual', RASTER_TYPECODE)]
-
-
-# name of layer from which to get postgis geometry
-AOI_BOUNDARY_LAYER = "aoi_v"
-
-# directory names
-ZONES_NAME = "Zones"
-MAPS_NAME = "Maps"
+from .settings import AOI_DIRECTORY, TEMP_DIRECTORY, GEO_WKID,\
+    DOWNLOADS_DIRECTORY
 
 
 # ************ FUNCTIONS **************
@@ -383,7 +325,9 @@ def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user):
                 errormsg += "\n\t{}".format(error)
             raise AOIError(errormsg)
 
-        return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
+        #return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
+
+        return AOI.create(aoi_name, aoi_shortname, user, temp_aoi_path)
 
 
 @shared_task
@@ -415,3 +359,29 @@ def add_aoi_manually(aoi_zip_path, aoi_name, user_id, aoi_shortname=None):
     user = User.objects.get(pk=user_id)
 
     extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user)
+
+
+@shared_task
+def export_data(download_id):
+    download = Download.objects.get(pk=download_id)
+    out_dir = os.path.join(DOWNLOADS_DIRECTORY, download_id)
+    os.makedirs(out_dir)
+
+    print download.querydate
+
+    with tempdirectory(prefix="AOI_", dir=TEMP_DIRECTORY) as tempdir:
+        temp_aoi_dir = download.content_object.export(
+            tempdir,
+            querydate=download.querydate
+        )
+
+        zip_dir = os.path.join(out_dir,
+                               os.path.basename(temp_aoi_dir) + ".zip")
+
+        download.file = zip_directory(temp_aoi_dir, zip_dir)
+
+    download.save()
+    return download.id
+
+
+#def export_aoi_manually(output_directory, )

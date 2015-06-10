@@ -65,6 +65,10 @@ aoi_detail = views.AOIViewSet.as_view({
     'delete': 'destroy',
 })
 
+aoi_download = views.AOIViewSet.as_view({
+    'get': 'download',
+})
+
 aoi_surfaces = views.AOIViewSet.as_view({
     'get': 'surfaces'
 })
@@ -81,8 +85,16 @@ aoi_analysis = views.AOIViewSet.as_view({
     'get': 'analysis'
 })
 
-aoi_prism = views.AOIViewSet.as_view({
-    'get': 'prism'
+
+aoi_prism_list = views.AOIViewSet.as_view({
+    'get': 'prism',
+    #'post': 'create'
+})
+aoi_prism_detail = views.PrismViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
 })
 
 
@@ -141,6 +153,13 @@ geodatabase_raster_detail = views.GeodatabaseRasterViewSet.as_view({
     'delete': 'destroy'
 })
 
+download_list = views.DownloadViewSet.as_view({
+    'get': 'list',
+})
+download_detail = views.DownloadViewSet.as_view({
+    'get': 'retrieve',
+})
+
 
 urlpatterns = patterns(
     '',
@@ -183,9 +202,15 @@ urlpatterns = patterns(
         name='updateupload-detail'),
 
 
+    # download URLs
+    url(r'^downloads/$', download_list, name='download-list'),
+    url(r'^downloads/(?P<pk>[^/.]+)/$', download_detail, name='download-detail'),
+
+
     # AOI URLs
     url(r'^aois/$', aoi_list, name='aoi-list'),
     url(r'^aois/(?P<pk>[^/.]+)/$', aoi_detail, name='aoi-detail'),
+    url(r'^aois/(?P<pk>[^/.]+)/download/$', aoi_download, name='aoi-download'),
 
 
     # AOI Geodatabases
@@ -193,7 +218,9 @@ urlpatterns = patterns(
     url(r'^aois/(?P<pk>[^/.]+)/layers/$', aoi_layers, name='aoi-layers'),
     url(r'^aois/(?P<pk>[^/.]+)/aoidb/$', aoi_aoidb, name='aoi-aoidb'),
     url(r'^aois/(?P<pk>[^/.]+)/analysis/$', aoi_analysis, name='aoi-analysis'),
-    url(r'^aois/(?P<pk>[^/.]+)/prism/$', aoi_prism, name='aoi-prism'),
+
+    url(r'^aois/(?P<pk>[^/.]+)/prism/$', aoi_prism_list, name='aoi-prism-list'),
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/prism/(?P<pk>[^/.]+)/$', aoi_prism_detail, name='aoi-prism-detail'),
 
     url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/$', hruzones_list, name='hruzones-list'),
     url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<pk>[^/.]+)/$', hruzones_detail, name='hruzones-detail'),
@@ -211,4 +238,17 @@ urlpatterns = patterns(
 
     url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/rasters/$', geodatabase_raster_list, name='geodatabase-raster-list'),
     url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/rasters/(?P<pk>[^/.]+)/$', geodatabase_raster_detail, name='geodatabase-raster-detail'),
+
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/vectors/$', geodatabase_vector_list, name='geodatabase-vector-list'),
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/vectors/(?P<pk>[^/.]+)/$', geodatabase_vector_detail, name='geodatabase-vector-detail'),
+
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/tables/$', geodatabase_table_list, name='geodatabase-table-list'),
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/tables/(?P<pk>[^/.]+)/$', geodatabase_table_detail, name='geodatabase-table-detail'),
+
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/xmls/$', geodatabase_xml_list, name='geodatabase-xml-list'),
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/xmls/(?P<pk>[^/.]+)/$', geodatabase_xml_detail, name='geodatabase-xml-detail'),
+
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/rasters/$', geodatabase_raster_list, name='geodatabase-raster-list'),
+    url(r'^aois/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'aoi_id>[^/.]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'name__iexact>[a-z]+)/(?P<' + URL_FILTER_QUERY_ARG_PREFIX + 'id>[^/.]+)/rasters/(?P<pk>[^/.]+)/$', geodatabase_raster_detail, name='geodatabase-raster-detail'),
+
 )

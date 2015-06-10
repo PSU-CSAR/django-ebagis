@@ -198,6 +198,16 @@ def validate_path(path, allow_whitespace=False,
     return path
 
 
+def zip_directory(directory_path, zip_path):
+    import os
+    import zipfile
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
+        for root, dirs, files in os.walk(directory_path):
+            for f in files:
+                zipf.write(os.path.join(root, f))
+    return zip_path
+
+
 @contextmanager
 def tempdirectory(suffix="", prefix="", dir=None):
     """A context manager for creating and then
