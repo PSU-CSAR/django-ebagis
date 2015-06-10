@@ -117,8 +117,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 
 # media/upload settings
-MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
-DRF_CHUNKED_UPLOAD_PATH = MEDIA_ROOT + "/%Y/%m/%d"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+DRF_CHUNKED_UPLOAD_PATH = MEDIA_ROOT + "uploads" + "/%Y/%m/%d"
 
 
 # AOI storage/temp unzip location
