@@ -201,10 +201,18 @@ def validate_path(path, allow_whitespace=False,
 def zip_directory(directory_path, zip_path):
     import os
     import zipfile
-    with zipfile.ZipFile(zip_path, 'w') as zipf:
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(directory_path):
             for f in files:
-                zipf.write(os.path.join(root, f))
+                rel_dir = os.path.relpath(root, directory_path)
+                # first arg is file to zip, second arg is archive name
+                # (second arg is path realtive to the root of the AOI
+                # to keep whole higher level directory structure from
+                # getting zipped)
+                zipf.write(os.path.join(root, f), os.path.join(rel_dir, f))
+            # NEED TO USE THIS FOR EMPTY DIRS
+            #for d in dirs:
+              #  zips.writestr(zipfile.ZipInfo('empty/'), '')
     return zip_path
 
 
