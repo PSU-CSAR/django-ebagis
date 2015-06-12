@@ -768,12 +768,15 @@ class Zones(Directory):
     @transaction.atomic
     def create(cls, input_zones_dir, user, aoi):
         zones_obj = super(Zones, cls).create(aoi)
-        hruzones = [d for d in os.listdir(input_zones_dir) if os.path.isdir(d)]
 
-        for hruzone in hruzones:
-            HRUZones.create(os.path.join(input_zones_dir, hruzone),
-                            zones_obj,
-                            user)
+        if os.path.exists(input_zones_dir):
+            hruzones = [d for d in os.listdir(input_zones_dir)
+                        if os.path.isdir(d)]
+
+            for hruzone in hruzones:
+                HRUZones.create(os.path.join(input_zones_dir, hruzone),
+                                zones_obj,
+                                user)
 
         return zones_obj
 
