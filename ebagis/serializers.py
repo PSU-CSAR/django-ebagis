@@ -249,6 +249,7 @@ class PrismDirSerializer(serializers.ModelSerializer):
 class AOIListSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
                                                read_only=True)
+    created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = AOI
@@ -271,15 +272,15 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
     aoidb = AOIdbSerializer(read_only=True)
     analysis = AnalysisSerializer(read_only=True)
     prism = PrismDirSerializer(read_only=True)
-    #maps = MapDocSerializer(read_only=True, many=True)
-    #hruzones = HRUZonesSerializer(read_only=True, many=True)
+    maps = MapDocSerializer(read_only=True, many=True)
+    hruzones = HRUZonesSerializer(read_only=True, many=True)
 
     class Meta:
         model = AOI
         fields = ("url", "name", "created_by", "created_at", "removed_at",
-                  "surfaces", "layers", "aoidb", "analysis", "prism", #"maps",
-                  #"hruzones",
-        )
+                  "surfaces", "layers", "aoidb", "analysis", "prism", "maps",
+                  "hruzones",
+                  )
 
 
 class AOIGeoSerializer(GeoFeatureModelSerializer):
@@ -295,8 +296,8 @@ class AOIGeoSerializer(GeoFeatureModelSerializer):
     aoidb = AOIdbSerializer(read_only=True)
     analysis = AnalysisSerializer(read_only=True)
     prism = PrismDirSerializer(read_only=True)
-    #maps = MapDocSerializer(read_only=True, many=True)
-    #hruzones = HRUZonesSerializer(read_only=True, many=True)
+    maps = MapDocSerializer(read_only=True, many=True)
+    hruzones = HRUZonesSerializer(read_only=True, many=True)
 
     class Meta:
         model = AOI
