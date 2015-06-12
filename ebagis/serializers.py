@@ -23,7 +23,7 @@ from .utilities import validate_path
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-
+        fields = ('url', 'username')
 
 class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
