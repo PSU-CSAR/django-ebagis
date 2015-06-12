@@ -63,6 +63,8 @@ class FileDataSerializer(serializers.ModelSerializer):
 #                       kwargs=kwargs,
 #                       request=self.context['request'])
 
+    created_by = UserSerializer(read_only=True)
+
     class Meta:
         model = FileData
 
@@ -263,8 +265,7 @@ class AOIGeoListSerializer(GeoFeatureModelSerializer):
 class AOISerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
                                                read_only=True)
-    created_by = serializers.HyperlinkedRelatedField(view_name='user-detail',
-                                                     read_only=True)
+    created_by = UserSerializer(read_only=True)
     surfaces = SurfacesSerializer(read_only=True)
     layers = LayersSerializer(read_only=True)
     aoidb = AOIdbSerializer(read_only=True)
@@ -284,8 +285,11 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 class AOIGeoSerializer(GeoFeatureModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
                                                read_only=True)
-    created_by = serializers.HyperlinkedRelatedField(view_name='user-detail',
-                                                     read_only=True)
+    #created_by = serializers.HyperlinkedRelatedField(view_name='user-detail',
+    #                                                 read_only=True)
+
+    created_by = UserSerializer(read_only=True)
+
     surfaces = SurfacesSerializer(read_only=True)
     layers = LayersSerializer(read_only=True)
     aoidb = AOIdbSerializer(read_only=True)
