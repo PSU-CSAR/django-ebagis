@@ -278,8 +278,8 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AOI
         fields = ("url", "name", "created_by", "created_at", "removed_at",
-                  "surfaces", "layers", "aoidb", "analysis", "prism", "maps",
-                  "hruzones",
+                  "surfaces", "layers", "aoidb", "analysis", "prism", #"maps",
+                  #"hruzones",
                   )
 
 
