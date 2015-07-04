@@ -23,18 +23,23 @@ from djcelery.models import TaskMeta
 
 # model objects
 from django.contrib.auth.models import User, Group, Permission
-from .models import AOI, Surfaces, Layers, AOIdb, Prism, HRUZones, XML,\
-    Vector, Raster, Table, MapDocument, Analysis, Geodatabase,\
-    AOIUpload, UpdateUpload, Download, PrismDir
+
+from .models.aoi import AOI
+from .models.geodatabase import HRUZones, Geodatabase
+from .models.directory import PrismDir
+from .models.upload import AOIUpload, UpdateUpload
+from .models.download import Download
 
 # serializers
-from .serializers import AOISerializer, SurfacesSerializer, LayersSerializer,\
-    PrismSerializer, AOIdbSerializer, HRUZonesSerializer, XMLSerializer,\
-    VectorSerializer, RasterSerializer, TableSerializer, MapDocSerializer,\
-    UserSerializer, GroupSerializer, AnalysisSerializer, AOIListSerializer,\
-    AOIGeoListSerializer, GeodatabaseSerializer, AOIGeoSerializer,\
-    AOIUploadSerializer, UpdateUploadSerializer, PermissionSerializer,\
-    DownloadSerializer, PrismDirSerializer
+from .serializers import (
+    AOISerializer, SurfacesSerializer, LayersSerializer,
+    PrismSerializer, AOIdbSerializer, HRUZonesSerializer, XMLSerializer,
+    VectorSerializer, RasterSerializer, TableSerializer, MapDocSerializer,
+    UserSerializer, GroupSerializer, AnalysisSerializer, AOIListSerializer,
+    AOIGeoListSerializer, GeodatabaseSerializer, AOIGeoSerializer,
+    AOIUploadSerializer, UpdateUploadSerializer, PermissionSerializer,
+    DownloadSerializer, PrismDirSerializer,
+)
 
 
 from .tasks import add_aoi, export_data

@@ -7,13 +7,17 @@ from rest_framework.reverse import reverse
 
 from djcelery.models import TaskMeta
 
-from .models import AOI
-from .models import Surfaces, Layers, Prism, AOIdb, HRUZones, Analysis,\
-    Geodatabase, PrismDir
-from .models import File, XML, Raster, Vector, Table, MapDocument
-from .models import FileData, XMLData, RasterData, VectorData, TableData,\
-    MapDocumentData
-from .models import AOIUpload, UpdateUpload, Download
+from .models.aoi import AOI
+from .models.geodatabase import (
+    Surfaces, Layers, Prism, AOIdb, HRUZones, Analysis, Geodatabase,
+)
+from .models.directory import PrismDir
+from .models.file import File, XML, Raster, Vector, Table, MapDocument
+from .models.file_data import (
+    FileData, XMLData, RasterData, VectorData, TableData, MapDocumentData,
+)
+from .models.upload import AOIUpload, UpdateUpload
+from .models.download import Download
 
 from .constants import URL_FILTER_QUERY_ARG_PREFIX
 
@@ -24,6 +28,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username')
+
 
 class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -16,16 +16,17 @@ from .constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
 from .exceptions import AOIError
 
 # Geodatabase Classes
-from .models import AOI, AOIdb, Surfaces, Layers, Prism, Analysis, HRUZones
+from .models.geodatabase import AOI, AOIdb, Surfaces, Layers, Prism, Analysis
 
 # Layer/File Classes
-from .models import Raster, Vector, XML, Table
-from .models import RasterData, VectorData, TableData, XMLData
+from .models.file import Raster, Vector, XML, Table
+from .models.file_data import RasterData, VectorData, TableData, XMLData
 
 # Directory Classes
-from .models import Maps
+from .models.directory import Maps
 
-from .models import AOIUpload, Download
+from .models.upload import AOIUpload
+from .models.download import Download
 
 from arcpy_extensions.geodatabase import Geodatabase
 
