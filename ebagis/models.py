@@ -230,6 +230,23 @@ class DateMixin(models.Model):
         get_latest_by = 'created_at'
         abstract = True
 
+    def _valid_querydate(self, querydate):
+        if querydate < self.created_at:
+            raise Exception(
+                "AOI was created after query date." +
+                " Cannot export AOI state for the given query date."
+            )
+
+        if querydate > timezone.now():
+            raise Exception(
+                "Woah, dude, your query date is like totally in the future." +
+                " That is most excellent, but my name isn't Bill nor Ted," +
+                " so I don't know the future, brah."
+            )
+
+    def export(self, output_dir, querydate, *args, **kwargs):
+        self._valid_querydate(querydate)
+
 
 class CreatedByMixin(models.Model):
     created_by = models.ForeignKey(
@@ -346,8 +363,11 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         # With more thought, this really is as complex and specific as the
         # export methods -- need to implement each subclass individually.
 
-    def export(self, *args, **kwargs):
-        raise NotImplementedError
+    def export(self, output_dir, querydate, *args, **kwargs):
+        super(DirectoryMixin, self).export(output_dir,
+                                           querydate,
+                                           *args,
+                                           **kwargs)
 
 
 class ProxyManager(models.Manager):
@@ -602,6 +622,7 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
         return file_obj
 
     def export(self, output_dir, querydate=timezone.now()):
+        super(File, self).export(output_dir, querydate)
         print querydate
         query = self.versions.filter(created_at__lte=querydate)
         print query, len(query)
@@ -739,17 +760,18 @@ class HRUZones(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, temp_zone_path, zones, user):
+    def create(cls, temp_zones_path, hru_name, zones, user):
         hruzones_obj = HRUZones(aoi=zones.aoi,
                                 name=hru_name,
                                 zones=zones)
         hruzones_obj.save()
-        HRUZonesData.create(os.path.join(temp_zones_dir, hru_name),
+        HRUZonesData.create(os.path.join(temp_zones_path, hru_name),
                             hruzones_obj,
                             user)
         return hruzones_obj
 
     def export(self, output_dir, querydate=timezone.now()):
+        super(HRUZones, self).export(output_dir, querydate)
         outpath = os.path.join(output_dir, self.name)
         os.mkdir(outpath)
         versions = self.versions.filter(created_at__lt=querydate)
@@ -774,13 +796,15 @@ class Zones(Directory):
                         if os.path.isdir(d)]
 
             for hruzone in hruzones:
-                HRUZones.create(os.path.join(input_zones_dir, hruzone),
+                HRUZones.create(input_zones_dir,
+                                hruzone,
                                 zones_obj,
                                 user)
 
         return zones_obj
 
     def export(self, output_dir, querydate=timezone.now()):
+        super(Zones, self).export(output_dir, querydate)
         outpath = os.path.join(output_dir, self.name)
         os.mkdir(outpath)
 
@@ -798,6 +822,7 @@ class Maps(Directory):
         return self.aoi.path
 
     def export(self, output_dir, querydate=timezone.now()):
+        super(Maps, self).export(output_dir, querydate)
         outpath = os.path.join(output_dir, self.name)
         os.mkdir(outpath)
         for mapdoc in self.maps.all():
@@ -839,6 +864,7 @@ class Geodatabase(ProxyMixin, Directory):
         return gdb_obj
 
     def export(self, output_dir, querydate=timezone.now()):
+        super(Geodatabase, self).export(output_dir, querydate)
         from arcpy.management import CreateFileGDB
         result = CreateFileGDB(output_dir, self.name)
         outpath = result.getOutput(0)
@@ -938,8 +964,10 @@ class PrismDir(Directory):
         self.versions.add(Prism.create(path, user, aoi))
 
     def export(self, output_dir, querydate=timezone.now()):
+        super(PrismDir, self).export(output_dir, querydate)
         filtered = self.versions.filter(created_at__lt=querydate)
-        return filtered.latest("created_at").export(output_dir)
+        return filtered.latest("created_at").export(output_dir,
+                                                    querydate=querydate)
 
 
 # *************** AOI CLASS ***************
@@ -971,20 +999,6 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
     class Meta:
         unique_together = ("name",)
 
-    def _valid_querydate(self, querydate):
-        if querydate < self.created_at:
-            raise Exception(
-                "AOI was created after query date." +
-                " Cannot export AOI state for the given query date."
-            )
-
-        if querydate > timezone.now():
-            raise Exception(
-                "Woah, dude, your query date is like totally in the future." +
-                " That is most excellent, but my name isn't Bill nor Ted," +
-                " so I don't know the future, brah."
-            )
-
     @classmethod
     @transaction.atomic
     def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path):
@@ -1005,10 +1019,8 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
                   boundary=wkt,
                   created_by=user)
         try:
-            print 2
             aoi.save()
 
-            print 3
             # TODO: convert GDB imports to use celery group or multiprocessing
             # import aoi.gdb
             aoi.aoidb = AOIdb.create(
@@ -1017,7 +1029,7 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
                 user,
                 aoi,
             )
-            print 4
+
             aoi.save()
 
             # import surfaces.gdb
@@ -1088,7 +1100,7 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
         return aoi
 
     def export(self, output_dir, querydate=timezone.now(), outname=None):
-        self._valid_querydate(querydate)
+        super(AOI, self).export(output_dir, querydate)
 
         # if no outname provided, use the AOI name
         # as the name of the output AOI directory
