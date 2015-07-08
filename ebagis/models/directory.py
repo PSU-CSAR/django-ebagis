@@ -14,6 +14,8 @@ from .file import MapDocument
 
 
 class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
+    _path_name = None
+
     class Meta:
         abstract = True
 
@@ -21,7 +23,7 @@ class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
     @transaction.atomic
     def create(cls, aoi, name=None):
         if not name:
-            name = cls.__name__.lower()
+            name = cls._path_name if cls._path_name else cls.__name__.lower()
         dir_obj = cls(aoi=aoi, name=name)
         dir_obj.save()
         return dir_obj

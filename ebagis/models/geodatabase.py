@@ -103,6 +103,8 @@ class Layers(Geodatabase_IndividualArchive):
 
 
 class AOIdb(Geodatabase_ReadOnly):
+    _path_name = "aoi"
+
     class Meta:
         proxy = True
 
