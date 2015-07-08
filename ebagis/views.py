@@ -25,7 +25,8 @@ from djcelery.models import TaskMeta
 from django.contrib.auth.models import User, Group, Permission
 
 from .models.aoi import AOI
-from .models.geodatabase import HRUZones, Geodatabase
+from .models.geodatabase import Geodatabase
+from .models.zones import HRUZones
 from .models.directory import PrismDir
 from .models.upload import AOIUpload, UpdateUpload
 from .models.download import Download

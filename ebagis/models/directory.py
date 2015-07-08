@@ -8,9 +8,9 @@ from django.db import transaction
 
 from ebagis import constants
 
-from . import (
-    DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel, MapDocument
-)
+from .mixins import DirectoryMixin, AOIRelationMixin
+from .base import RandomPrimaryIdModel
+from .file import MapDocument
 
 
 class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):

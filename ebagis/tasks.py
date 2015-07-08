@@ -15,8 +15,10 @@ from .constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
 
 from .exceptions import AOIError
 
+from .models.aoi import AOI
+
 # Geodatabase Classes
-from .models.geodatabase import AOI, AOIdb, Surfaces, Layers, Prism, Analysis
+from .models.geodatabase import AOIdb, Surfaces, Layers, Prism, Analysis
 
 # Layer/File Classes
 from .models.file import Raster, Vector, XML, Table

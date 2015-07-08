@@ -9,8 +9,9 @@ from djcelery.models import TaskMeta
 
 from .models.aoi import AOI
 from .models.geodatabase import (
-    Surfaces, Layers, Prism, AOIdb, HRUZones, Analysis, Geodatabase,
+    Surfaces, Layers, Prism, AOIdb, HRUZonesGDB, Analysis, Geodatabase,
 )
+from .models.zones import HRUZones
 from .models.directory import PrismDir
 from .models.file import File, XML, Raster, Vector, Table, MapDocument
 from .models.file_data import (

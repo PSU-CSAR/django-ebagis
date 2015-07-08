@@ -10,7 +10,7 @@ from django.contrib.gis.db import models
 from django.db import transaction
 
 from .base import RandomPrimaryIdModel
-from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
+from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
 from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
 
 
