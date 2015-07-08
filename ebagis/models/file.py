@@ -42,9 +42,7 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
 
     def export(self, output_dir, querydate=timezone.now()):
         super(File, self).export(output_dir, querydate)
-        print querydate
         query = self.versions.filter(created_at__lte=querydate)
-        print query, len(query)
         return query.latest("created_at").export(output_dir)
 
 
