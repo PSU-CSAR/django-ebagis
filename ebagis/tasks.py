@@ -310,7 +310,8 @@ def validate_shortname(shortname):
     return shortname
 
 
-def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user):
+def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user,
+                           comment=""):
     with tempdirectory(prefix="AOI_", dir=TEMP_DIRECTORY) as tempdir:
         print "Extracting AOI to {}.".format(tempdir)
         unzip_AOI(aoi_zip_path, tempdir)
@@ -330,7 +331,8 @@ def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user):
 
         #return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
 
-        return AOI.create(aoi_name, aoi_shortname, user, temp_aoi_path)
+        return AOI.create(aoi_name, aoi_shortname, user, temp_aoi_path,
+                          comment=comment)
 
 
 @shared_task
@@ -343,8 +345,11 @@ def add_aoi(aoiupload_id):
     user = aoiupload.user
     aoi_zip_path = aoiupload.file
 
-    aoi = extract_and_import_aoi(aoi_zip_path, aoi_name,
-                                 aoi_shortname, user)
+    aoi = extract_and_import_aoi(aoi_zip_path,
+                                 aoi_name,
+                                 aoi_shortname,
+                                 user,
+                                 comment=aoiupload.comment)
 
     return aoi.id
 

@@ -259,7 +259,7 @@ class AOIListSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AOI
-        fields = ('url', 'name', 'created_at', 'created_by')
+        fields = ('url', 'name', 'created_at', 'created_by', "comment")
 
 
 class AOIGeoListSerializer(GeoFeatureModelSerializer):
@@ -283,8 +283,9 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AOI
-        fields = ("url", "name", "created_by", "created_at", "removed_at",
-                  "surfaces", "layers", "aoidb", "analysis", "prism", #"maps",
+        fields = ("url", "name", "created_by", "created_at", "comment",
+                  "surfaces", "layers", "aoidb", "analysis", "prism",
+                  #"maps",
                   #"hruzones",
                   )
 

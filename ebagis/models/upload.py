@@ -10,6 +10,7 @@ from drf_chunked_upload.models import ChunkedUpload
 
 
 class AOIUpload(ChunkedUpload):
+    comment = models.TextField(blank=True)
     task = models.ForeignKey(TaskMeta, related_name='aoi_upload',
                              null=True, blank=True)
 

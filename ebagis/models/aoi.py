@@ -22,6 +22,7 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
     objects = models.GeoManager()
+    comment = models.TextField(blank=True)
 
     # data
     surfaces = models.OneToOneField(Surfaces, related_name="aoi_surfaces",
@@ -47,7 +48,7 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path):
+    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path, comment=""):
         # get multipolygon WKT from AOI Boundary Layer
         wkt, crs_wkt = utilities.get_multipart_wkt_geometry(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
@@ -63,7 +64,8 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
         aoi = cls(name=aoi_name,
                   shortname=aoi_shortname,
                   boundary=wkt,
-                  created_by=user)
+                  created_by=user,
+                  comment=comment)
         try:
             aoi.save()
 
