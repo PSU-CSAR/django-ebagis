@@ -7,7 +7,7 @@ from django.db import transaction
 from arcpy_extensions.geodatabase import Geodatabase as arcpyGeodatabase
 #from arcpy_extensions.layer import Layer as arcpyLayer
 
-from ebagis import constants
+from .. import constants
 
 from .mixins import ProxyMixin
 from .directory import Directory

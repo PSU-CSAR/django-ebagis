@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.gis.db import models
 
-from ebagis import constants
+from .. import constants
 
 from .metaclass import InheritanceMetaclass
 

@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 from django.utils import timezone
 from django.db import transaction
 
-from ebagis import constants
+from .. import constants
 
 from .mixins import DirectoryMixin, AOIRelationMixin
 from .base import RandomPrimaryIdModel

@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from ebagis import constants
+from .. import constants
 
 from .directory import Directory
 from .mixins import CreatedByMixin

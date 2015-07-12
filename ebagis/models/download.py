@@ -10,7 +10,7 @@ from django.contrib.gis.db import models
 
 from djcelery.models import TaskMeta
 
-from ebagis.settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
+from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 
 from .base import RandomPrimaryIdModel
 from .mixins import DateMixin

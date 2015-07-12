@@ -7,9 +7,9 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from ebagis import constants, utilities
+from .. import constants, utilities
 
-from ebagis.settings import AOI_DIRECTORY, GEO_WKID
+from ..settings import AOI_DIRECTORY, GEO_WKID
 
 from .base import RandomPrimaryIdModel
 from .mixins import CreatedByMixin, DirectoryMixin
