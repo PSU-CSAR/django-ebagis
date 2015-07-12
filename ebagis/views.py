@@ -32,17 +32,28 @@ from .models.upload import AOIUpload, UpdateUpload
 from .models.download import Download
 
 # serializers
-from .serializers import (
-    AOISerializer, SurfacesSerializer, LayersSerializer,
-    PrismSerializer, AOIdbSerializer, HRUZonesSerializer, XMLSerializer,
-    VectorSerializer, RasterSerializer, TableSerializer, MapDocSerializer,
-    UserSerializer, GroupSerializer, AnalysisSerializer, AOIListSerializer,
-    AOIGeoListSerializer, GeodatabaseSerializer, AOIGeoSerializer,
-    AOIUploadSerializer, UpdateUploadSerializer, PermissionSerializer,
-    DownloadSerializer, PrismDirSerializer,
+from .serializers.aoi import (
+    AOIListSerializer, AOIGeoListSerializer, AOISerializer, AOIGeoSerializer,
 )
+from .serializers.download import DownloadSerializer
+from .serializers.file import (
+    RasterSerializer, VectorSerializer, TableSerializer, XMLSerializer,
+    MapDocSerializer
+)
+from .serializers.file_data import (
+    FileDataSerializer, XMLDataSerializer, VectorDataSerializer,
+    RasterDataSerializer, TableDataSerializer,
+)
+from .serializers.geodatabase import (
+    SurfacesSerializer, LayersSerializer, AOIdbSerializer, AnalysisSerializer,
+    PrismDirSerializer, GeodatabaseSerializer, HRUZonesSerializer,
+    PrismSerializer,
+)
+from .serializers.task import AOITaskSerializer
+from .serializers.upload import AOIUploadSerializer, UpdateUploadSerializer
+from .serializers.user import UserSerializer, GroupSerializer, PermissionSerializer
 
-
+# other
 from .tasks import add_aoi, export_data
 from .constants import URL_FILTER_QUERY_ARG_PREFIX
 
