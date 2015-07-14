@@ -9,51 +9,74 @@ from .. import constants
 
 from .directory import Directory
 from .mixins import CreatedByMixin
-from .geodatabase import HRUZonesGDB
+from .geodatabase import HRUZonesGDB, ParamGDB
 from .file import XML
 
 
 class HRUZonesData(CreatedByMixin, Directory):
-    xml = models.OneToOneField(XML, related_name="hru_xml")
-    hruzonesgdb = models.OneToOneField("HRUZonesGDB",
-                                       related_name="hru_hruGDB")
+    xml = models.OneToOneField(XML, related_name="hru_xml", null=True)
+    hruzonesgdb = models.OneToOneField(HRUZonesGDB,
+                                       related_name="hru_hruGDB",
+                                       null=True)
+    paramgdb = models.OneToOneField(ParamGDB,
+                                    related_name="hru_paramGDB",
+                                    null=True)
     hruzones = models.ForeignKey("HRUZones", related_name="versions")
 
     def __init__(self, *args, **kwargs):
         # override default NO_ARCHIVING with GROUP_ARCHIVING rule
+        # that is, everything in the HRUZonesData directory will be
+        # versioned if one file changes
         self._meta.get_field('archiving_rule').default = \
             constants.GROUP_ARCHIVING
-        super(HRUZones, self).__init__(*args, **kwargs)
+        super(HRUZonesData, self).__init__(*args, **kwargs)
 
     @property
     def subdirectory_of(self):
-        return self.hru.path
+        return self.hruzones.path
 
     @classmethod
     @transaction.atomic
     def create(cls, temp_hru_path, hruzones, user):
-        hruzonesdata_obj = HRUZones(aoi=hruzones.aoi,
-                                    name=hruzones.name,
-                                    hruzones=hruzones,
-                                    created_by=user)
+        # create a new HRUZonesData instance and save it
+        hruzonesdata_obj = HRUZonesData(aoi=hruzones.aoi,
+                                        name=hruzones.name,
+                                        hruzones=hruzones,
+                                        created_by=user)
         hruzonesdata_obj.save()
+
+        # import the .gdb for this HRUZonesData instance
         hru_gdb_path = os.path.join(temp_hru_path,
-                                    hruzones.name,
-                                    constants.GDB_EXT)
+                                    hruzones.name + constants.GDB_EXT)
         hruzonesdata_obj.hruzonesgdb = HRUZonesGDB.create(hru_gdb_path,
+                                                          user,
                                                           hruzones.aoi,
-                                                          user)
+                                                          hruzonesdata_obj)
+
+        # now import the param.gdb for this HRUZonesData instance
+        param_gdb_path = os.path.join(
+            temp_hru_path,
+            constants.HRU_PARAM_GDB_NAME + constants.GDB_EXT,
+        )
+        hruzonesdata_obj.paramgdb = ParamGDB.create(param_gdb_path,
+                                                    user,
+                                                    hruzones.aoi,
+                                                    hruzonesdata_obj)
+
+        # lastly import the HRU's xml log file
         hru_XML_path = os.path.join(temp_hru_path, constants.HRU_LOG_FILE)
         hruzonesdata_obj.xml = XML.create(hru_XML_path,
                                           hruzonesdata_obj,
-                                          hruzones.aoi,
                                           user)
+
+        # save the changes to this HRUZonesData instance and return it
         hruzonesdata_obj.save()
         return hruzonesdata_obj
 
-    def export(self, output_dir):
-        self.xml.export(output_dir)
-        self.hruzones.export(output_dir)
+    def export(self, output_dir, querydate=timezone.now()):
+        self.xml.export(output_dir, querydate)
+        self.hruzonesgdb.export(output_dir, querydate)
+        self.paramgdb.export(output_dir, querydate)
 
 
 class HRUZones(Directory):
@@ -81,8 +104,7 @@ class HRUZones(Directory):
         os.mkdir(outpath)
         versions = self.versions.filter(created_at__lt=querydate)
         latest = versions.latest("created_at")
-        latest.xml.export(outpath)
-        latest.hruzones.export(outpath)
+        latest.export(outpath, querydate)
         return outpath
 
 
@@ -98,7 +120,7 @@ class Zones(Directory):
 
         if os.path.exists(input_zones_dir):
             hruzones = [d for d in os.listdir(input_zones_dir)
-                        if os.path.isdir(d)]
+                        if os.path.isdir(os.path.join(input_zones_dir, d))]
 
             for hruzone in hruzones:
                 HRUZones.create(input_zones_dir,

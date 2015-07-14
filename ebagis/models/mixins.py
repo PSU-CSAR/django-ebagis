@@ -21,6 +21,9 @@ class AOIRelationMixin(models.Model):
 
 
 class DateMixin(models.Model):
+    """Generic mixin to provide a created and removed datetime tracking
+    to a model. Also implements a a querydate validation function for
+    date-related export functions."""
     created_at = models.DateTimeField(default=timezone.now)
     removed_at = models.DateTimeField(null=True, blank=True)
 
@@ -30,9 +33,10 @@ class DateMixin(models.Model):
 
     def _valid_querydate(self, querydate):
         if querydate < self.created_at:
+            name = self.__class__.__name__
             raise Exception(
-                "AOI was created after query date." +
-                " Cannot export AOI state for the given query date."
+                "{} was created after query date.".format(name) +
+                " Cannot export {} with the given query date.".format(name)
             )
 
         if querydate > timezone.now():
@@ -47,6 +51,7 @@ class DateMixin(models.Model):
 
 
 class CreatedByMixin(models.Model):
+    """Generic mixin to provide user tracking to a model."""
     created_by = models.ForeignKey(
         User,
         related_name="%(app_label)s_%(class)s_created_by"
@@ -169,17 +174,36 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
 
 
 class ProxyManager(models.Manager):
+    """Model manager class used by the ProxyMixin"""
     def get_queryset(self):
+        # build a list of all the subclasses of the class,
+        # including itself
         classes = [cls.__name__ for cls in _get_subclasses(self.model,
                                                            [self.model])]
         queryset = super(ProxyManager, self).get_queryset()
         return queryset.filter(classname__in=classes)
 
 
-def _get_subclasses(Class, list_of_subclasses=[]):
+def _get_subclasses(Class, list_of_subclasses=[], depth=None):
+    """Function used to find all subclasses of a class. An optional
+    depth parameter can be supplied to limit recursion to x number
+    of layers below the inital. That is, a value of 0 will only
+    return the direct subclasses of a class, whereas a value of 2
+    will go up to layers below the first. The default value of the
+    depth parameter is None, which has the effect of recursing through
+    all subclass layers to find every subclass of the class. Returns
+    a list containing all of the found subclasses."""
     for subclass in Class.__subclasses__():
         list_of_subclasses.append(subclass)
-        list_of_subclasses = _get_subclasses(subclass, list_of_subclasses)
+        if depth is None or depth > 0:
+            try:
+                depth = depth - 1
+            except:
+                pass
+
+            list_of_subclasses = _get_subclasses(subclass,
+                                                 list_of_subclasses,
+                                                 depth=depth)
     return list_of_subclasses
 
 

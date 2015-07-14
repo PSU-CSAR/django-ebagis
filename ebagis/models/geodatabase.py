@@ -14,6 +14,24 @@ from .directory import Directory
 from .file import Raster, Vector, Table
 
 
+def import_rasters(geodatabase, geodatabase_obj, user, filter=None):
+    for raster in geodatabase.rasters:
+        if filter is None or raster.name in filter:
+            Raster.create(raster, geodatabase_obj, user)
+
+
+def import_vectors(geodatabase, geodatabase_obj, user, filter=None):
+    for vector in geodatabase.featureclasses:
+        if filter is None or vector.name in filter:
+            Vector.create(vector, geodatabase_obj, user)
+
+
+def import_tables(geodatabase, geodatabase_obj, user, filter=None):
+    for table in geodatabase.tables:
+        if filter is None or table.name in filter:
+            Table.create(table, geodatabase_obj, user)
+
+
 class Geodatabase(ProxyMixin, Directory):
     rasters = GenericRelation(Raster, for_concrete_model=False)
     vectors = GenericRelation(Vector, for_concrete_model=False)
@@ -28,20 +46,17 @@ class Geodatabase(ProxyMixin, Directory):
     def create(cls, geodatabase_path, user, aoi):
         gdb_obj = super(Geodatabase, cls).create(aoi)
 
-        # get all geodatabase layers and copy to outdirectory
+        # get all geodatabase layers
         gdb = arcpyGeodatabase.Open(geodatabase_path)
 
         # copy rasters and create raster and raster data objects
-        for raster in gdb.rasters:
-            Raster.create(raster, gdb_obj, user)
+        import_rasters(gdb, gdb_obj, user)
 
         # copy vectors and create vector and vetor data objects
-        for vector in gdb.featureclasses:
-            Vector.create(vector, gdb_obj, user)
+        import_vectors(gdb, gdb_obj, user)
 
         # copy tables and create table and table data objects
-        for table in gdb.tables:
-            Table.create(table, gdb_obj, user)
+        import_tables(gdb, gdb_obj, user)
 
         return gdb_obj
 
@@ -85,7 +100,8 @@ class Geodatabase_GroupArchive(Geodatabase):
 class Geodatabase_ReadOnly(Geodatabase):
     def __init__(self, *args, **kwargs):
         # override default NO_ARCHIVING with READ_ONLY rule
-        self._meta.get_field('archiving_rule').default = constants.READ_ONLY
+        self._meta.get_field('archiving_rule').default = \
+            constants.READ_ONLY
         super(Geodatabase_ReadOnly, self).__init__(*args, **kwargs)
 
     class Meta:
@@ -123,6 +139,92 @@ class Analysis(Geodatabase_IndividualArchive):
         proxy = True
 
 
-class HRUZonesGDB(Geodatabase):
+class HRUZonesGDB(Geodatabase_ReadOnly):
+    @property
+    def subdirectory_of(self):
+        return self.hru_hruGDB.path
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, geodatabase_path, user, aoi, hruzonedata):
+        # specifically calling super on geodatabase as need to get to
+        # create method on directory class, not the create method
+        # on the goedatabase class, from which HRUZonesGDB inherits
+        # also, need to not save on create as subdirectory_of won't work
+        gdb_obj = super(Geodatabase, cls).create(
+            aoi,
+            name=hruzonedata.name,
+            save=False,
+        )
+
+        # this has a one-to-one relation with its containing model
+        # that has not been created yet, so we need to "force" the
+        # relation on this end to make the subdirectory_of property
+        # actually be calculable and allow saving HRUZonesGDB instance
+        gdb_obj.hru_hruGDB = hruzonedata
+        gdb_obj.save()
+
+        # get all geodatabase layers
+        gdb = arcpyGeodatabase.Open(geodatabase_path)
+
+        # copy required rasters and create raster and raster data objects
+        import_rasters(
+            gdb,
+            gdb_obj,
+            user,
+            filter=constants.HRU_GDB_LAYERS_TO_SAVE[constants.RASTER_TYPECODE]
+        )
+
+        # copy vectors and create vector and vetor data objects
+        import_vectors(
+            gdb,
+            gdb_obj,
+            user,
+            filter=constants.HRU_GDB_LAYERS_TO_SAVE[constants.FC_TYPECODE]
+        )
+
+        # no tables required from HRU GDB
+
+        return gdb_obj
+
+    class Meta:
+        proxy = True
+
+
+class ParamGDB(Geodatabase_ReadOnly):
+    _path_name = constants.HRU_PARAM_GDB_NAME
+
+    @property
+    def subdirectory_of(self):
+        return self.hru_paramGDB.path
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, geodatabase_path, user, aoi, hruzonedata):
+        # specifically calling super on geodatabase as need to get to
+        # create method on directory class, not the create method
+        # on the goedatabase class, from which ParamGDB inherits
+        # also, need to not save on create as subdirectory_of won't work
+        gdb_obj = super(Geodatabase, cls).create(
+            aoi,
+            save=False,
+        )
+
+        # this has a one-to-one relation with its containing model
+        # that has not been created yet, so we need to "force" the
+        # relation on this end to make the subdirectory_of property
+        # actually be calculable and allow saving ParamGDB instance
+        gdb_obj.hru_paramGDB = hruzonedata
+        gdb_obj.save()
+
+        # get all geodatabase layers
+        gdb = arcpyGeodatabase.Open(geodatabase_path)
+
+        # should only need the tables as nothing else should be in gdb
+        # copy tables and create table and table data objects
+        import_tables(gdb, gdb_obj, user)
+
+        return gdb_obj
+
     class Meta:
         proxy = True

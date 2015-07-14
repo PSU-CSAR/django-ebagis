@@ -21,11 +21,12 @@ class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi, name=None):
+    def create(cls, aoi, name=None, save=True):
         if not name:
             name = cls._path_name if cls._path_name else cls.__name__.lower()
         dir_obj = cls(aoi=aoi, name=name)
-        dir_obj.save()
+        if save:
+            dir_obj.save()
         return dir_obj
 
 

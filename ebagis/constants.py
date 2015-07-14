@@ -24,8 +24,11 @@ ARCHIVING_CHOICES = (
 
 # HRUZones Directory Name from AOI Directory Structure
 ZONES_DIR_NAME = "zones"
-
+HRU_PARAM_GDB_NAME = "param"
 HRU_LOG_FILE = "log.xml"
+
+HRU_GDB_LAYERS_TO_SAVE = {RASTER_TYPECODE: ("grid", ),
+                          FC_TYPECODE: ("grid_v", "grid_zones_v")}
 
 
 # aoi gdb names, required layers, and optional layers
@@ -59,23 +62,23 @@ ANALYSIS_GDB = "analysis.gdb"
 REQUIRED_LAYERS[ANALYSIS_GDB] = []
 
 PRISM_GDB = "prism.gdb"
-REQUIRED_LAYERS[PRISM_GDB] = [('Jan', RASTER_TYPECODE),
-                              ('Feb', RASTER_TYPECODE),
-                              ('Mar', RASTER_TYPECODE),
-                              ('Apr', RASTER_TYPECODE),
-                              ('May', RASTER_TYPECODE),
-                              ('Jun', RASTER_TYPECODE),
-                              ('Jul', RASTER_TYPECODE),
-                              ('Aug', RASTER_TYPECODE),
-                              ('Sep', RASTER_TYPECODE),
-                              ('Oct', RASTER_TYPECODE),
-                              ('Nov', RASTER_TYPECODE),
-                              ('Dec', RASTER_TYPECODE),
-                              ('Q1', RASTER_TYPECODE),
-                              ('Q2', RASTER_TYPECODE),
-                              ('Q3', RASTER_TYPECODE),
-                              ('Q4', RASTER_TYPECODE),
-                              ('Annual', RASTER_TYPECODE)]
+REQUIRED_LAYERS[PRISM_GDB] = [("Jan", RASTER_TYPECODE),
+                              ("Feb", RASTER_TYPECODE),
+                              ("Mar", RASTER_TYPECODE),
+                              ("Apr", RASTER_TYPECODE),
+                              ("May", RASTER_TYPECODE),
+                              ("Jun", RASTER_TYPECODE),
+                              ("Jul", RASTER_TYPECODE),
+                              ("Aug", RASTER_TYPECODE),
+                              ("Sep", RASTER_TYPECODE),
+                              ("Oct", RASTER_TYPECODE),
+                              ("Nov", RASTER_TYPECODE),
+                              ("Dec", RASTER_TYPECODE),
+                              ("Q1", RASTER_TYPECODE),
+                              ("Q2", RASTER_TYPECODE),
+                              ("Q3", RASTER_TYPECODE),
+                              ("Q4", RASTER_TYPECODE),
+                              ("Annual", RASTER_TYPECODE)]
 
 
 # name of layer from which to get postgis geometry
