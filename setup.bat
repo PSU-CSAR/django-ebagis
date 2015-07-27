@@ -66,7 +66,9 @@ echo.
 echo Use this script to install or update an instance of the
 echo django-ebagis-site project. The script will perform all
 echo setup tasks if not already done, including pulling and
-echo installing django-ebagis.
+echo installing django-ebagis. Adding the optional argument
+echo --IIS will link this instance with IIS to make it
+echo publically accessible on the server vis HTTPS.
 echo.
 echo Note that pulling django-ebagis with write-access
 echo requires working SSH authorization for github. HTTPS
@@ -122,6 +124,8 @@ echo.
 echo To run, simply use the command below:
 echo.
 echo ebagis.bat remove[--all]
+echo.
+echo NOTE: --all option is currently not implemented.
 GOTO :EOF
 
 
@@ -179,6 +183,7 @@ GOTO :EOF
 ::        -- %~1: name of the project instance
 ::        -- %~2: database/rabbitmq user
 ::        -- %~3: database/rabbitmq user password
+::        -- %~4: option to use for IIS linking
     SETLOCAL
         IF [%~1]==[] GOTO :show_help_install
         IF [%~2]==[] GOTO :show_help_install
@@ -192,6 +197,7 @@ GOTO :EOF
         call:install_site_dependencies
         call:create_secret_file %name%,%user%,%pass%
         call:create_database %name%,%user%,%pass%
+        IF %~4==--IIS call:link_to_IIS %name%
         :end_install
     ENDLOCAL
 GOTO :EOF
@@ -233,10 +239,14 @@ GOTO :EOF
     SETLOCAL
         IF %~1==help GOTO :show_help_remove
         call:parse_secret_file name,user,pass
+        call:rabbitmq_remove %name%
+        call:remove_env %name%
+        call:remove_ebagis
+        call:remove_database %name%,%user%,%pass%
 	echo
         REM The following line is to delete the whole django-ebagis-site directory
-        REM IF %~1==--all ((goto) 2>nul & del "%~dp0")
-	IF %~1==--all echo NOTICE: Remove all not implemented.
+        REM IF %~1==--all ((goto) 2>nul & rmdir /s /q "%~dp0")
+	IF %~1==--all echo NOTICE: Remove --all not implemented.
         :end_remove
     ENDLOCAL
 GOTO :EOF
@@ -267,6 +277,25 @@ GOTO :EOF
 GOTO :EOF
 
 
+:rabbitmq_remove  -- remove RabbitMQ vhost and user for site instance
+::                -- %~1: name of vhost/user to create
+    SETLOCAL
+        set name=%~1
+        set found=False
+        FOR /F %%i IN ('rabbitmqctl list_vhosts') DO (
+            IF %%i==%name% (
+        set found=True
+            )
+        )
+        IF %found%==True (
+            rabbitmqctl delete_vhost %name%
+            rabbitmqctl delete_user %name%
+        )
+        REM popd
+    ENDLOCAL
+GOTO :EOF
+
+
 :set_env     -- activate env, creating env, installing conda packages, and linking arcpy if required
 ::           -- %~1: name for the environment
     SETLOCAL
@@ -276,6 +305,16 @@ GOTO :EOF
             call activate %name%
             call:create_arcpy_pthfile
         )
+    ENDLOCAL
+GOTO :EOF
+
+
+:remove_env  -- remove a conda env
+::           -- %~1: name for the environment
+    SETLOCAL
+        set name=%~1
+        call deactivate %name%
+        conda env remove -n %name% python -y
     ENDLOCAL
 GOTO :EOF
 
@@ -340,6 +379,13 @@ GOTO :EOF
                 git clone https://github.com/PSU-CSAR/django-ebagis.git ../django-ebagis && call:install_ebagis
             )    
         )
+    ENDLOCAL
+GOTO :EOF
+
+
+:remove_ebagis
+    SETLOCAL
+        rmdir /q /s ../django-ebagis
     ENDLOCAL
 GOTO :EOF
 
@@ -467,15 +513,38 @@ GOTO :EOF
 ::                  -- %~3: return variable for database user password
     SETLOCAL
         FOR /f "tokens=1,2 skip=3 delims=,:' " %%A IN (ebagis_site\secret.py) DO (
-            echo %%A
             IF %%A==NAME set name=%%B
             IF %%A==USER set user=%%B
             IF %%A==PASSWORD set pass=%%B
         )
-        echo %name%, %user%, %pass%
     (ENDLOCAL & REM -- RETURN VALUES
         IF "%~1" NEQ "" SET %~1=%name%
         IF "%~2" NEQ "" SET %~2=%user%
         IF "%~3" NEQ "" SET %~3=%pass%
     )
+GOTO :EOF
+
+
+:link_to_IIS  -- link this instance ot IIS
+::            -- %~1: instance name used for IIS site name
+    SETLOCAL
+        set name=%~1
+        call activate %name%
+        python manage.py collectstatic
+        set static_config=static\web.config
+        IF NOT EXIST %static_config% (
+            @echo ^<?xml version="1.0" encoding="UTF-8"?^>> %static_config%
+            @echo ^<configuration^>>> %static_config%
+            @echo   ^<system.webServer^>>> %static_config%
+            @echo     ^<!-- this configuration overrides the FastCGI handler to let IIS serve the static files --^>>> %static_config%
+            @echo     ^<handlers^>>> %static_config%
+            @echo     ^<clear/^>>> %static_config%
+            @echo       ^<add name="StaticFile" path="*" verb="*" modules="StaticFileModule" resourceType="File" requireAccess="Read" /^>>> %static_config%
+            @echo     ^</handlers^>>> %static_config%
+            @echo   ^</system.webServer^>>> %static_config%
+            @echo ^</configuration^>>> %static_config%
+        )
+        set touch_file=%~dp0touch_this_to_update_cgi.txt
+        python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
+    ENDLOCAL
 GOTO :EOF
