@@ -2,57 +2,127 @@
 Setlocal EnableDelayedExpansion
 
 
+:: ---------------------------------------------------------------------------
 ::
-::                    SCRIPT OVERVIEW
-::                    ===============
+:: ebagis.bat -- commands for ebagis administration
+:: Authored July 26, 2015 by Jarrett Keifer
 ::
-:: Use this script to install or update an instance of the
-:: django-ebagis-site project. The script will perform all
-:: setup task if not already done, including pulling and
-:: installing django-ebagis. If run successively, this
-:: script will pull updates to ebagis and update the data-
-:: base.
+:: Last revision 7/26/2015
 ::
-:: The required arguments for this script are as follows:
+:: To see how to use this script, please run it from the command line like so:
+:: ebagis.bat help
 ::
-::   1) instance name -- used for database name et al
-::   2) database username -- used to create and access DB
-::   3) database password -- same as above
-::
-:: These three args must be entered into the command line
-:: in the same order listed above.
-::
-::
-::                 SCRIPT PREREQUESITES
-::                 ====================
-::
-:: This script requires the following for proper operation:
-::
-::   - django-ebagis-site django project exists and this
-::     script is run within it (this script does not clone
-::     its own repo itself)
-::   - git is installed and on the system PATH
-::   - RabbitMQ is installed (requires Erlang) and
-::     rabbitmqctl is on the system PATH (in /sbin)
-::   - Anaconda 32-bit is installed and on the system PATH
-::   - ArcGIS Desktop is installed (for 32-bit arcpy) and
-::     its python is NOT on the system PATH
-::   - Geodjango dependencies have been installed; see
-::     https://docs.djangoproject.com/en/1.8/ref/contrib/gis/install/
-::   - Postgres /bin dir is on the system PATH (see above
-::     and also ArcGIS docs regarding compatible PG versions)
-::
-:: Also note that pulling django-ebagis with write-access
-:: requires working SSH authorization for github--HTTPS
-:: authentication is not currently supported.
-::
-::
-::                      TODO ITEMS
-::                      ==========
-::
-:: Future refactoring will bring multiple named operations
-:: such as install, update, reset, and remove.
-::
+:: ---------------------------------------------------------------------------
+
+GOTO :BEGIN
+
+::--------------------------------------------------------
+::                     HELP MESSAGES
+::--------------------------------------------------------
+
+:show_info
+echo.
+echo - TOOL OVERVIEW -
+echo.
+echo This tool provides administrative operations for ebagis.
+echo.
+echo.
+echo - TOOL PREREQUESITES -
+echo.
+echo This tool requires the following for proper operation:
+echo.
+echo   - django-ebagis-site django project exists and this
+echo     script is run within it (this script does not clone
+echo     its own repo itself)
+echo   - git is installed and on the system PATH
+echo   - RabbitMQ is installed (requires Erlang) and
+echo     rabbitmqctl is on the system PATH (in /sbin)
+echo   - Anaconda 32-bit is installed and on the system PATH
+echo   - ArcGIS Desktop is installed (for 32-bit arcpy) and
+echo     its python is NOT on the system PATH
+echo   - Geodjango dependencies have been installed; see
+echo     https://docs.djangoproject.com/en/1.8/ref/contrib/gis/install/
+echo   - Postgres /bin dir is on the system PATH (see above
+echo     and also ArcGIS docs regarding compatible PG versions)
+GOTO:EOF
+
+
+:show_commands
+echo Available commands:
+echo -------------------
+echo.
+echo ebagis.bat help -- show full help message
+echo ebagis.bat install -- run the installation steps to setup an ebagis instance
+echo ebagis.bat upgrade -- pull updates to dependencies and upgrade the database schema
+echo ebagis.bat reset -- re-initialize the project instance
+echo ebagis.bat remove -- reverse the installation steps and completely remove all dependencies
+echo.
+echo All of these commands also have specific help messages.
+GOTO:EOF
+
+
+:show_help_install
+echo.
+echo Use this script to install or update an instance of the
+echo django-ebagis-site project. The script will perform all
+echo setup tasks if not already done, including pulling and
+echo installing django-ebagis.
+echo.
+echo Note that pulling django-ebagis with write-access
+echo requires working SSH authorization for github. HTTPS
+echo authentication is not currently supported.
+echo.
+echo Install command syntax:
+echo.
+echo ebagis.bat install instance_name postgres_user postgres_user_password
+echo.
+echo The instance name will be used for the database et al names.
+echo The postgres user must be an andmin user and will be the database owner.
+echo The password is for the databasue user. This password will also be used
+echo as the password for the RabbitMQ user created for this instance.
+echo.
+echo These arguments must be entered in the same order shown above.
+GOTO :EOF
+
+
+:show_help_upgrade
+echo.
+echo This command will pull any updates to django-ebagis-site,
+echo and django-ebagis. Additionally, all dependencies are upgraded
+echo per the requirements.txt files. Lastly, any databse changes
+echo are migrated.
+echo.
+echo To run, simply use the command below:
+echo.
+echo ebagis.bat upgrade
+GOTO :EOF
+
+
+:show_help_reset
+echo.
+echo This command will flush the database and load any fixtures.
+echo The optional --hard flag can be used to delete and recreate
+echo the database from scratch, if required.
+echo.
+echo To run, simply use the command below:
+echo.
+echo ebagis.bat reset [--hard]
+GOTO :EOF
+
+
+:show_help_remove
+echo.
+echo This command reverses the install process, deleting the
+echo RabbitMQ vhost and user, the database, the conda env,
+echo and the django-ebagis. The command will ask for confirmation
+echo before executing. Add the --all flag to also remove the
+echo directory containing this script (for complete uninstall of
+echo django-ebagis-site).
+echo.
+echo To run, simply use the command below:
+echo.
+echo ebagis.bat remove[--all]
+GOTO :EOF
 
 
 ::--------------------------------------------------------
@@ -66,23 +136,111 @@ set arc_install_folder="C:\Program Files (x86)\ArcGIS\"
 ::                      SCRIPT MAIN
 ::--------------------------------------------------------
 
+:BEGIN
 pushd %~dp0
 
-call:rabbitmq_setup %1,%3
-call:set_env %1
-call:get_ebagis
-call:install_site_dependencies
-call:create_secret_file %1,%2,%3
-call:create_database %1,%2,%3
+IF [%1]==[] (
+    call:show_commands
+    GOTO :END
+)
+IF %1==help (
+    call:show_info
+    echo.
+    call:show_commands
+    GOTO :END
+)
+IF %1==install (
+    call:install %2,%3,%4
+    GOTO :END
+)
+IF %1==upgrade (
+    call:upgrade %2
+    GOTO :END
+)
+IF %1==reset (
+    call:upgrade %2
+    GOTO :END
+)
+IF %1==remove (
+    call:upgrade %2
+    GOTO :END
+)
 
+:END
 popd
-
-GOTO:EOF
+GOTO :EOF
 
 
 ::--------------------------------------------------------
 ::                       FUNCTIONS
 ::--------------------------------------------------------
+
+:install  -- run installation steps
+::        -- %~1: name of the project instance
+::        -- %~2: database/rabbitmq user
+::        -- %~3: database/rabbitmq user password
+    SETLOCAL
+        IF [%~1]==[] GOTO :show_help_install
+        IF [%~2]==[] GOTO :show_help_install
+        IF [%~3]==[] GOTO :show_help_install
+        set name=%~1
+        set user=%~2
+        set pass=%~3
+        call:rabbitmq_setup %name%,%pass%
+        call:set_env %name%
+        call:get_ebagis
+        call:install_site_dependencies
+        call:create_secret_file %name%,%user%,%pass%
+        call:create_database %name%,%user%,%pass%
+        :end_install
+    ENDLOCAL
+GOTO :EOF
+
+
+:upgrade  -- run upgrade steps
+::        -- %~1: optional help argument
+    SETLOCAL
+        IF %~1==help GOTO :show_help_upgrade
+        git pull
+        call:parse_secret_file name,user,pass
+        call:set_env %name%
+        call:get_ebagis
+        call:install_site_dependencies
+        call:migrate_database
+        call:load_database
+        :end_upgrade
+    ENDLOCAL
+GOTO :EOF
+
+
+:reset  -- reset database
+::        -- %~1: optional argument for help/hard reset
+    SETLOCAL
+        IF %~1==help GOTO :show_help_reset
+        call:parse_secret_file name,user,pass
+        IF %~1==--hard (
+            call:remove_database %name%,%user%,%pass%
+            call:create_database %name%,%user%,%pass%
+        ) ELSE call:reset_database
+        call:load_database
+        :end_reset
+    ENDLOCAL
+GOTO :EOF
+
+
+:remove  -- reverse installation steps
+::        -- %~1: optional help argument
+    SETLOCAL
+        IF %~1==help GOTO :show_help_remove
+        call:parse_secret_file name,user,pass
+	echo
+        REM The following line is to delete the whole django-ebagis-site directory
+        REM IF %~1==--all ((goto) 2>nul & del "%~dp0")
+	IF %~1==--all echo NOTICE: Remove all not implemented.
+        :end_remove
+    ENDLOCAL
+GOTO :EOF
+
 
 :rabbitmq_setup  -- create RabbitMQ vhost and user for site instance
 ::               -- %~1: name of vhost/user to create
@@ -106,7 +264,7 @@ GOTO:EOF
         )
         REM popd
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
 
 
 :set_env     -- activate env, creating env, installing conda packages, and linking arcpy if required
@@ -119,7 +277,7 @@ GOTO:EOF
             call:create_arcpy_pthfile
         )
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
 
 
 :create_arcpy_pthfile  -- create the pth file to link anaconda env and arcpy lib
@@ -133,7 +291,7 @@ GOTO:EOF
         @echo %arcgis_path%\ArcPy>>%pthfile%
         @echo %arcgis_path%\ArcToolBox\Scripts>>%pthfile%
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
 
 
 :arcgis_version  -- find the major version of arc installed for creating paths to libs
@@ -152,7 +310,7 @@ GOTO:EOF
     (ENDLOCAL & REM -- RETURN VALUES
         IF "%~1" NEQ "" SET %~1=%arcgis_version%
     )
-GOTO:EOF
+GOTO :EOF
 
 
 :find_anaconda_dir  -- determine path to the anaconda install directory
@@ -164,7 +322,7 @@ GOTO:EOF
     (ENDLOCAL & REM -- RETURN VALUES
         IF "%~1" NEQ "" SET %~1=%anaconda_path%
     )
-GOTO:EOF
+GOTO :EOF
 
 
 :get_ebagis  -- pull or clone and install the django-bagis repo
@@ -183,7 +341,7 @@ GOTO:EOF
             )    
         )
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
 
 
 :install_ebagis  -- install django-ebagis to current env in development mode
@@ -191,12 +349,12 @@ GOTO:EOF
     REM pip install -r requirements.txt
     pip install -e .
     popd
-GOTO:EOF
+GOTO :EOF
 
 
 :install_site_dependencies
-    pip install -r requirements.txt
-GOTO:EOF
+    pip install --upgrade -r requirements.txt
+GOTO :EOF
 
 
 :create_secret_file -- create the secret file with secret info for django site
@@ -223,7 +381,7 @@ GOTO:EOF
             @echo BROKER_URL = 'amqp://%name%:%pass%$@localhost:5672/%name%'>> %secretfile%
         )
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
 
 
 :create_secret_key  -- create the secret key for the site secret file
@@ -234,7 +392,7 @@ GOTO:EOF
     (ENDLOCAL & REM -- RETURN VALUES
         IF "%~1" NEQ "" SET %~1=%secret_key%
     )
-GOTO:EOF
+GOTO :EOF
 
 
 :create_database  -- check for database and create if not present
@@ -255,12 +413,14 @@ GOTO:EOF
         REM if found is false, then we need to create the database
         if %found%==False (
             psql -d "user=%user% password=%pass% host=localhost port=5432" -c "CREATE DATABASE %name% WITH OWNER %user% TEMPLATE postgis_21 TABLESPACE gis_data"
+            call:migrate_database
             call:load_database
         )
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
 
-:load_database  -- load all site fixtures into the database
+
+:migrate_database  -- migrate database schema changes
     SETLOCAL
         python manage.py makemigrations
         python manage.py migrate
@@ -268,7 +428,29 @@ GOTO:EOF
         FOR %%i in (*) do python manage.py loaddata %%i
         popd
     ENDLOCAL
-GOTO:EOF
+GOTO :EOF
+
+
+:load_database  -- load all site fixtures into the database
+    SETLOCAL
+        pushd ebagis_site\fixtures\
+        FOR %%i in (*) do python manage.py loaddata %%i
+        popd
+    ENDLOCAL
+GOTO :EOF
+
+
+:remove_database  -- check for database and remove if present
+::                -- %~1: name of the database for which to remove
+::                -- %~2: admin database user to use as owner
+::                -- %~3: admin database user password
+    SETLOCAL
+        set name=%~1
+        set user=%~2
+        set pass=%~3
+        psql -d "user=%user% password=%pass% host=localhost port=5432" -c "DROP DATABASE IF EXISTS %name%"
+    ENDLOCAL
+GOTO :EOF
 
 
 :reset_database
@@ -276,4 +458,24 @@ GOTO:EOF
     python manage.py flush
     call:load_database
   ENDLOCAL
-GOTO:EOF
+GOTO :EOF
+
+
+:parse_secret_file  -- extract the instance name, database username, and DB user password from secret file
+::                  -- %~1: return variable for instance name
+::                  -- %~2: return variable for database user
+::                  -- %~3: return variable for database user password
+    SETLOCAL
+        FOR /f "tokens=1,2 skip=3 delims=,:' " %%A IN (ebagis_site\secret.py) DO (
+            echo %%A
+            IF %%A==NAME set name=%%B
+            IF %%A==USER set user=%%B
+            IF %%A==PASSWORD set pass=%%B
+        )
+        echo %name%, %user%, %pass%
+    (ENDLOCAL & REM -- RETURN VALUES
+        IF "%~1" NEQ "" SET %~1=%name%
+        IF "%~2" NEQ "" SET %~2=%user%
+        IF "%~3" NEQ "" SET %~3=%pass%
+    )
+GOTO :EOF
