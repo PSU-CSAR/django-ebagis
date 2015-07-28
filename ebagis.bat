@@ -7,8 +7,6 @@ Setlocal EnableDelayedExpansion
 :: ebagis.bat -- commands for ebagis administration
 :: Authored July 26, 2015 by Jarrett Keifer
 ::
-:: Last revision 7/26/2015
-::
 :: To see how to use this script, please run it from the command line like so:
 :: ebagis.bat help
 ::
