@@ -239,6 +239,7 @@ GOTO :EOF
     SETLOCAL
         IF %~1==help GOTO :show_help_remove
         call:parse_secret_file name,user,pass
+        call:delink_to_IIS %name%
         call:rabbitmq_remove %name%
         call:remove_env %name%
         call:remove_ebagis
@@ -546,5 +547,19 @@ GOTO :EOF
         )
         set touch_file=%~dp0touch_this_to_update_cgi.txt
         python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
+    ENDLOCAL
+GOTO :EOF
+
+
+:delink_to_IIS  -- remove a site on IIS
+::              -- %~1: name of IIS site to be removed
+    SETLOCAL
+        set name=%~1
+        set iis_command=%windir%\system32\inetsrv\appcmd
+        set found=False
+        FOR /f "tokens=2" %%A IN ('%iis_command% list site') DO (
+            IF %%A=="%name%" set found=True
+        )
+        IF %found%=True %iis_command% delete site %name%
     ENDLOCAL
 GOTO :EOF
