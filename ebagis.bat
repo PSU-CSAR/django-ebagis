@@ -386,7 +386,8 @@ GOTO :EOF
 
 :remove_ebagis
     SETLOCAL
-        rmdir /q /s ../django-ebagis
+        echo WARNING: Any uncommitted changed to the local django-ebagis will be lost if you proceed!
+        rmdir /s ../django-ebagis
     ENDLOCAL
 GOTO :EOF
 
