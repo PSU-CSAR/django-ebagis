@@ -167,6 +167,7 @@ IF %1==remove (
     call:upgrade %2
     GOTO :END
 )
+CALL :show_commands
 
 :END
 popd
@@ -183,9 +184,9 @@ GOTO :EOF
 ::        -- %~3: database/rabbitmq user password
 ::        -- %~4: option to use for IIS linking
     SETLOCAL
-        IF [%~1]==[] GOTO :show_help_install
-        IF [%~2]==[] GOTO :show_help_install
-        IF [%~3]==[] GOTO :show_help_install
+        IF [%~1]==[] call:show_help_install GOTO :END
+        IF [%~2]==[] call:show_help_install GOTO :END
+        IF [%~3]==[] call:show_help_install GOTO :END
         set name=%~1
         set user=%~2
         set pass=%~3
@@ -204,7 +205,7 @@ GOTO :EOF
 :upgrade  -- run upgrade steps
 ::        -- %~1: optional help argument
     SETLOCAL
-        IF %~1==help GOTO :show_help_upgrade
+        IF %~1==help call:show_help_upgrade GOTO :END
         git pull
         call:parse_secret_file name,user,pass
         call:set_env %name%
@@ -220,7 +221,7 @@ GOTO :EOF
 :reset  -- reset database
 ::        -- %~1: optional argument for help/hard reset
     SETLOCAL
-        IF %~1==help GOTO :show_help_reset
+        IF %~1==help call:show_help_reset GOTO :END
         call:parse_secret_file name,user,pass
         IF %~1==--hard (
             call:remove_database %name%,%user%,%pass%
@@ -235,7 +236,7 @@ GOTO :EOF
 :remove  -- reverse installation steps
 ::        -- %~1: optional help argument
     SETLOCAL
-        IF %~1==help GOTO :show_help_remove
+        IF %~1==help call:show_help_remove GOTO :END
         call:parse_secret_file name,user,pass
         call:delink_to_IIS %name%
         call:rabbitmq_remove %name%
