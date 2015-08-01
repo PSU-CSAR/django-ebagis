@@ -231,7 +231,9 @@ GOTO :EOF
         call:get_ebagis %name%
         call:install_site_dependencies %name%
         call:migrate_database %name%
-        call:load_database %name%
+        REM call:load_database %name%
+        call:restart_celery_task %name%
+        call:touch_file
         :end_upgrade
     ENDLOCAL
 GOTO :EOF
@@ -467,7 +469,9 @@ GOTO :EOF
 
         :: cannot make this into a function because of something
         :: stupid about batch regarding delayed expansion but oh well
-        set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace('\'', '').replace('\\', ''))) for i in range(50)])"'
+        set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace
+
+('\'', '').replace('\\', ''))) for i in range(50)])"'
         FOR /F %%i in (%command%) do set secret_key=%%i
 
         @echo SECRET_KEY = '!secret_key!'> %secretfile%
@@ -479,7 +483,7 @@ GOTO :EOF
         @echo         'PASSWORD': '%pass%',>> %secretfile%
         @echo     }>> %secretfile%
         @echo }>> %secretfile%
-        @echo BROKER_URL = 'amqp://%name%:%pass%$@localhost:5672/%name%'>> %secretfile%
+        @echo BROKER_URL = 'amqp://%name%:%pass%@localhost:5672/%name%'>> %secretfile%
     ENDLOCAL
 GOTO :EOF
 
@@ -492,14 +496,14 @@ GOTO :EOF
         set name=%~1
         set user=%~2
         set pass=%~3
-        REM first we need to list the local databases and check for an existing one
+        :: first we need to list the local databases and check for an existing one
         set found=False
         FOR /F "usebackq skip=3 tokens=1" %%i IN (`psql -d "user=%user% password=%pass% host=localhost port=5432" -c "\l"`) DO (
             IF %%i==%name% (
                 set found=True
             )
         )
-        REM if found is false, then we need to create the database
+        :: if found is false, then we need to create the database
         if %found%==False (
             psql -d "user=%user% password=%pass% host=localhost port=5432" -c "CREATE DATABASE %name% WITH OWNER %user% TEMPLATE postgis_21 TABLESPACE gis_data"
             call:migrate_database %name%
@@ -579,9 +583,41 @@ GOTO :EOF
 ::            -- %~1: instance name used for IIS site name
     SETLOCAL
         set name=%~1
+        call:setup_static_assets %name%
+
+        :: add the site to IIS using the django-windows-tools command
+        set touch_file=%~dp0touch_this_to_update_cgi.txt
+        call activate %name%
+        python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
+
+        :: add max upload setting of 1GB to web.config file 
+        set cfg_str='    ^<security^>\n      ^<requestFiltering^>\n         ^<requestLimits maxAllowedContentLength=\"1024000000\"/^>\n      ^</requestFiltering^>\n    
+
+^</security^>\n'
+        set cfg='web.config'
+        python -c "f=open(%cfg%); content=[l for l in f]; f.close(); content.insert(3, %cfg_str%); f=open(%cfg%,'w'); f.write(''.join(content)); f.close()"
+
+        :: set permissions on the django-ebagis-site directory for IIS site user
+        pushd ..
+        ICACLS django-ebagis-site /t  /grant "IIS AppPool\%name%":F
+        popd
+
+        :: link celery script to system task
+        call:create_celery_task %name%
+    ENDLOCAL
+GOTO :EOF
+
+
+:setup_static_assets  -- collect the static assets and create config file
+::                    -- %~1: name of the python env for the project instance
+    SETLOCAL
+        set name=%~1
+
+        :: collect the static assets for the site
         call activate %name%
         python manage.py collectstatic
 
+        :: add a configuration file to the static asset dir for IIS
         set static_config=static\web.config
         IF NOT EXIST %static_config% (
             @echo ^<?xml version="1.0" encoding="UTF-8"?^>> %static_config%
@@ -595,12 +631,6 @@ GOTO :EOF
             @echo   ^</system.webServer^>>> %static_config%
             @echo ^</configuration^>>> %static_config%
         )
-
-        set touch_file=%~dp0touch_this_to_update_cgi.txt
-        python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
-        pushd ..
-        ICACLS django-ebagis-site /t  /grant "IIS AppPool\%name%":F
-        popd
     ENDLOCAL
 GOTO :EOF
 
@@ -611,7 +641,65 @@ GOTO :EOF
         set name=%~1
         call activate %name%
         python manage.py winfcgi_install --delete --site-name %name%
-        :: delete the static assets directory
+        call:remove_celery_task %name%
         rmdir /q /s static\
+    ENDLOCAL
+GOTO :EOF     
+
+
+:create_celery_bat  -- creates the bat file for launching celery
+::                  -- %~1: name of the anaconda env to activate
+    SETLOCAL
+        set name=%~1
+        set celery_bat=start_celery.bat
+        @echo @echo off> %celery_bat%
+        @echo pushd %~dp0>> %celery_bat%
+        @echo call activate %name%>> %celery_bat%
+        @echo celery -A ebagis_site worker -l info --logfile %%~dp0\celery.log --pidfile %%~dp0\celery.pid>> celery_bat
+    ENDLOCAL
+GOTO :EOF
+
+
+:remove_celery_bat  -- removes the bat file for launching celery
+    SETLOCAL
+        del start_celery.bat
+    ENDLOCAL
+GOTO :EOF
+
+
+:create_celery_task  -- link the celery bat file to a scheduled task
+::                   -- %~1: name of project instance (for task name)
+    SETLOCAL
+        set name=%~1
+        set celery_bat=start_celery.bat
+        schtasks /create /tn %name%_celery /tr %~dp0%celery_bat% /sc onstart /ru SYSTEM
+        schtasks /run /tn %name%
+    ENDLOCAL
+GOTO :EOF
+
+
+:remove_celery_task  -- remove the task running celery for an IIS site
+::                   -- %~1: name of task to remove
+    SETLOCAL
+        set name=%~1
+        schtasks /end /tn %name%
+        schtasks /delete /f /tn %name%
+    ENDLOCAL
+GOTO :EOF
+
+
+:restart_celery_task  -- restart a system celery task if it exists
+::                    -- %~1: the name of the project instance
+    SETLOCAL
+       set name=%~1
+       schtasks /end /tn %name%
+       schtasks /run /tn %name%
+    ENDLOCAL
+GOTO :EOF
+
+
+:touch_file
+    SETLOCAL
+        echo. 2>touch_this_to_update_cgi.txt
     ENDLOCAL
 GOTO :EOF
