@@ -205,6 +205,7 @@ GOTO :EOF
         set user=%~2
         set pass=%~3
         call:set_env %name%
+        call:create_celery_bat %name%
         call:get_ebagis %name%
         call:install_site_dependencies %name%
         call:create_secret_file %name%,%user%,%pass%
@@ -266,6 +267,7 @@ GOTO :EOF
         )
         call:parse_secret_file name,user,pass
         call:delink_to_IIS %name%
+        call:remove_celery_bat
         call:remove_env %name%
         call:remove_ebagis
         call:remove_database %name%,%user%,%pass%
