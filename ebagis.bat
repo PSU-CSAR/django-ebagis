@@ -650,9 +650,9 @@ GOTO :EOF
         set name=%~1
         set celery_bat=start_celery.bat
         @echo @echo off> %celery_bat%
-        @echo pushd %~dp0>> %celery_bat%
+        @echo pushd %%~dp0>> %celery_bat%
         @echo call activate %name%>> %celery_bat%
-        @echo celery -A ebagis_site worker -l info --logfile %%~dp0\celery.log --pidfile %%~dp0\celery.pid>> celery_bat
+        @echo celery -A ebagis_site worker -l info --logfile %%~dp0\celery.log --pidfile %%~dp0\celery.pid>> %celery_bat%
     ENDLOCAL
 GOTO :EOF
 
