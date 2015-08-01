@@ -127,18 +127,19 @@ echo NOTE: --all option is currently not implemented.
 GOTO :EOF
 
 
+:BEGIN
+
 ::--------------------------------------------------------
 ::                       CONSTANTS
 ::--------------------------------------------------------
 
-set arc_install_folder="C:\Program Files (x86)\ArcGIS\"
+set arc_install_folder=C:\Program Files (x86)\ArcGIS\
 
 
 ::--------------------------------------------------------
 ::                      SCRIPT MAIN
 ::--------------------------------------------------------
 
-:BEGIN
 pushd %~dp0
 
 IF [%1]==[] (
@@ -152,7 +153,7 @@ IF %1==help (
     GOTO :END
 )
 IF %1==install (
-    call:install %2,%3,%4
+    call:install %2,%3,%4,%5
     GOTO :END
 )
 IF %1==upgrade (
@@ -160,11 +161,11 @@ IF %1==upgrade (
     GOTO :END
 )
 IF %1==reset (
-    call:upgrade %2
+    call:reset %2
     GOTO :END
 )
 IF %1==remove (
-    call:upgrade %2
+    call:remove %2
     GOTO :END
 )
 CALL :show_commands
@@ -184,20 +185,35 @@ GOTO :EOF
 ::        -- %~3: database/rabbitmq user password
 ::        -- %~4: option to use for IIS linking
     SETLOCAL
-        IF [%~1]==[] call:show_help_install GOTO :END
-        IF [%~2]==[] call:show_help_install GOTO :END
-        IF [%~3]==[] call:show_help_install GOTO :END
+        IF [%~1]==[] (
+            call:show_help_install
+            GOTO :END
+        )
+        IF [%~2]==[] (
+            call:show_help_install
+            GOTO :END
+        )
+        IF [%~3]==[] (
+            call:show_help_install
+            GOTO :END
+        )
+        IF [%~1]==[help] (
+            call:show_help_install
+            GOTO :END
+        )
         set name=%~1
         set user=%~2
         set pass=%~3
-        call:rabbitmq_setup %name%,%pass%
         call:set_env %name%
-        call:get_ebagis
-        call:install_site_dependencies
+        call:get_ebagis %name%
+        call:install_site_dependencies %name%
         call:create_secret_file %name%,%user%,%pass%
         call:create_database %name%,%user%,%pass%
-        IF %~4==--IIS call:link_to_IIS %name%
+        IF [%~4]==[--IIS] (
+            call:link_to_IIS %name%
+        )
         :end_install
+        call:rabbitmq_setup %name%,%pass%
     ENDLOCAL
 GOTO :EOF
 
@@ -205,48 +221,56 @@ GOTO :EOF
 :upgrade  -- run upgrade steps
 ::        -- %~1: optional help argument
     SETLOCAL
-        IF %~1==help call:show_help_upgrade GOTO :END
+        IF [%~1]==[help] (
+            call:show_help_upgrade
+            GOTO :END
+        )
         git pull
         call:parse_secret_file name,user,pass
         call:set_env %name%
-        call:get_ebagis
-        call:install_site_dependencies
-        call:migrate_database
-        call:load_database
+        call:get_ebagis %name%
+        call:install_site_dependencies %name%
+        call:migrate_database %name%
+        call:load_database %name%
         :end_upgrade
     ENDLOCAL
 GOTO :EOF
 
 
 :reset  -- reset database
-::        -- %~1: optional argument for help/hard reset
+::      -- %~1: optional argument for help/hard reset
     SETLOCAL
-        IF %~1==help call:show_help_reset GOTO :END
+        IF [%~1]==[help] (
+            call:show_help_reset
+            GOTO :END
+        )
         call:parse_secret_file name,user,pass
         IF %~1==--hard (
             call:remove_database %name%,%user%,%pass%
             call:create_database %name%,%user%,%pass%
-        ) ELSE call:reset_database
-        call:load_database
+        ) ELSE call:reset_database %name%
+        call:load_database %name%
         :end_reset
     ENDLOCAL
 GOTO :EOF
 
 
 :remove  -- reverse installation steps
-::        -- %~1: optional help argument
+::       -- %~1: optional help argument
     SETLOCAL
-        IF %~1==help call:show_help_remove GOTO :END
+        IF [%~1]==[help] (
+            call:show_help_remove
+            GOTO :END
+        )
         call:parse_secret_file name,user,pass
         call:delink_to_IIS %name%
-        call:rabbitmq_remove %name%
         call:remove_env %name%
         call:remove_ebagis
         call:remove_database %name%,%user%,%pass%
-	echo
         REM The following line is to delete the whole django-ebagis-site directory
-        REM IF %~1==--all ((goto) 2>nul & rmdir /s /q "%~dp0")
-	IF %~1==--all echo NOTICE: Remove --all not implemented.
+        REM IF [%~1]==[--all] ((goto) 2>nul & rmdir /s /q "%~dp0")
+	IF [%~1]==[--all] (echo NOTICE: Remove --all not implemented.)
+        call:rabbitmq_remove %name%
         :end_remove
     ENDLOCAL
 GOTO :EOF
@@ -259,12 +283,9 @@ GOTO :EOF
         set name=%~1
         set password=%~2
         set found=False
-        REM commented out path, pushd, and popd because added to PATH
-        REM set RABBITMQ_SBIN_PATH="C:\Program Files (x86)\RabbitMQ Server\rabbitmq_server-3.4.4\sbin"
-        REM pushd %RABBITMQ_SBIN_PATH%
         FOR /F %%i IN ('rabbitmqctl list_vhosts') DO (
             IF %%i==%name% (
-        set found=True
+                set found=True
             )
         )
         IF %found%==False (
@@ -272,7 +293,6 @@ GOTO :EOF
             rabbitmqctl add_user %name% %password%
             rabbitmqctl set_permissions -p %name% %name% ".*" ".*" ".*"
         )
-        REM popd
     ENDLOCAL
 GOTO :EOF
 
@@ -291,17 +311,17 @@ GOTO :EOF
             rabbitmqctl delete_vhost %name%
             rabbitmqctl delete_user %name%
         )
-        REM popd
     ENDLOCAL
 GOTO :EOF
 
 
-:set_env     -- activate env, creating env, installing conda packages, and linking arcpy if required
-::           -- %~1: name for the environment
+:set_env  -- activate env, creating env, installing conda packages, and linking arcpy if required
+::        -- %~1: name for the environment
     SETLOCAL
         set name=%~1
-        call activate %name% || (
-            conda create -n %name% python --file conda-requirements.txt
+        call activate %name%
+        IF NOT %errorlevel%==0 (
+            conda create -n %name% python --file conda-requirements.txt -y
             call activate %name%
             call:create_arcpy_pthfile
         )
@@ -313,8 +333,8 @@ GOTO :EOF
 ::           -- %~1: name for the environment
     SETLOCAL
         set name=%~1
-        call deactivate %name%
-        conda env remove -n %name% python -y
+        call deactivate
+        conda env remove -n %name% -y
     ENDLOCAL
 GOTO :EOF
 
@@ -324,7 +344,7 @@ GOTO :EOF
         call:find_anaconda_dir anaconda_path
         call:arcgis_version arc_version_number
         SET arcpy_pth_filename=desktop%arc_version_number%.pth
-        SET arcgis_path=%arc_install_folder%Desktop%%arc_version_number%
+        SET arcgis_path=%arc_install_folder%Desktop%arc_version_number%
         SET pthfile=%anaconda_path%\Lib\site-packages\%arcpy_pth_filename%
         @echo %arcgis_path%\bin>%pthfile%
         @echo %arcgis_path%\ArcPy>>%pthfile%
@@ -365,18 +385,40 @@ GOTO :EOF
 
 
 :get_ebagis  -- pull or clone and install the django-bagis repo
+::           -- %~1: name for the environment
     SETLOCAL
-        IF EXISTS ../django-ebagis (
-            pushd ../django-ebagis
+        set name=%~1
+        set found=0
+        IF EXIST ..\django-ebagis (
+            
+            pushd ..\django-ebagis
             git pull
             popd
+
+            call activate %name%
+            FOR /F "usebackq" %%i IN (`pip list`) DO (
+                IF %%i==django-ebagis (
+                    set found=1
+                )
+            )
+            IF %found%==0 (
+                call:install_ebagis %name%
+            )
+
         ) ELSE (
-            git clone git@github.com:PSU-CSAR/django-ebagis.git ../django-ebagis && (
-                echo cloned django-ebagis write permissions
-                call:install_ebagis
-            ) || (
+            git clone git@github.com:PSU-CSAR/django-ebagis.git ..\django-ebagis
+            if %errorlevel%==0 (
+                echo cloned django-ebagis with push permissions
+                call:install_ebagis %name%
+            ) ELSE (
                 echo could not clone django-ebagis with write permissions, trying read-only
-                git clone https://github.com/PSU-CSAR/django-ebagis.git ../django-ebagis && call:install_ebagis
+                git clone https://github.com/PSU-CSAR/django-ebagis.git ..\django-ebagis
+                if %errorlevel%==0 ( 
+                    call:install_ebagis %name%
+                ) ELSE (
+                    echo ERROR: django-ebagis could not be cloned from GitHub repo!
+		    exit /b 1
+                )
             )    
         )
     ENDLOCAL
@@ -386,21 +428,30 @@ GOTO :EOF
 :remove_ebagis
     SETLOCAL
         echo WARNING: Any uncommitted changed to the local django-ebagis will be lost if you proceed!
-        rmdir /s ../django-ebagis
+        rmdir /s ..\django-ebagis
     ENDLOCAL
 GOTO :EOF
 
 
 :install_ebagis  -- install django-ebagis to current env in development mode
-    pushd ../django-ebagis
-    REM pip install -r requirements.txt
-    pip install -e .
-    popd
+::               -- %~1: name for the environment
+    SETLOCAL
+        set name=%~1
+        call activate %name%    
+        pushd ..\django-ebagis
+        pip install -r requirements.txt
+        popd
+    ENDLOCAL
 GOTO :EOF
 
 
 :install_site_dependencies
-    pip install --upgrade -r requirements.txt
+::                          -- %~1: name for the environment
+    SETLOCAL
+        set name=%~1
+        call activate %name%
+        pip install --upgrade -r requirements.txt
+     ENDLOCAL
 GOTO :EOF
 
 
@@ -408,37 +459,28 @@ GOTO :EOF
 ::                  -- %~1: name of the project instance
 ::                  -- %~2: database/rabbitmq user
 ::                  -- %~3: database/rabbitmq user password                 
-    SETLOCAL
+    SETLOCAL EnableDelayedExpansion
         set name=%~1
         set user=%~2
         set pass=%~3
         set secretfile=ebagis_site\secret.py
-        REM if the secret file does not exist create it
-        if not exist %secretfile% (
-            call:create_secret_key secret_key
-            @echo SECRET_KEY = '!secret_key!'> %secretfile%
-            @echo DATABASE_SETTINGS = {>> %secretfile%
-            @echo     'default': {>> %secretfile%
-            @echo         'ENGINE': 'django.contrib.gis.db.backends.postgis',>> %secretfile%
-            @echo         'NAME': '%name%',>> %secretfile%
-            @echo         'USER': '%user%',>> %secretfile%
-            @echo         'PASSWORD': '%pass%'>> %secretfile%
-            @echo     }>> %secretfile%
-            @echo }>> %secretfile%
-            @echo BROKER_URL = 'amqp://%name%:%pass%$@localhost:5672/%name%'>> %secretfile%
-        )
-    ENDLOCAL
-GOTO :EOF
 
-
-:create_secret_key  -- create the secret key for the site secret file
-::                  -- %~1: return variable for secret key
-    SETLOCAL
+        :: cannot make this into a function because of something
+        :: stupid about batch regarding delayed expansion but oh well
         set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace('\'', '').replace('\\', ''))) for i in range(50)])"'
-        for /f %%i in (%command%) do set secret_key=%%i
-    (ENDLOCAL & REM -- RETURN VALUES
-        IF "%~1" NEQ "" SET %~1=%secret_key%
-    )
+        FOR /F %%i in (%command%) do set secret_key=%%i
+
+        @echo SECRET_KEY = '!secret_key!'> %secretfile%
+        @echo DATABASE_SETTINGS = {>> %secretfile%
+        @echo     'default': {>> %secretfile%
+        @echo         'ENGINE': 'django.contrib.gis.db.backends.postgis',>> %secretfile%
+        @echo         'NAME': '%name%',>> %secretfile%
+        @echo         'USER': '%user%',>> %secretfile%
+        @echo         'PASSWORD': '%pass%',>> %secretfile%
+        @echo     }>> %secretfile%
+        @echo }>> %secretfile%
+        @echo BROKER_URL = 'amqp://%name%:%pass%$@localhost:5672/%name%'>> %secretfile%
+    ENDLOCAL
 GOTO :EOF
 
 
@@ -460,28 +502,32 @@ GOTO :EOF
         REM if found is false, then we need to create the database
         if %found%==False (
             psql -d "user=%user% password=%pass% host=localhost port=5432" -c "CREATE DATABASE %name% WITH OWNER %user% TEMPLATE postgis_21 TABLESPACE gis_data"
-            call:migrate_database
-            call:load_database
+            call:migrate_database %name%
+            call:load_database %name%
         )
     ENDLOCAL
 GOTO :EOF
 
 
 :migrate_database  -- migrate database schema changes
+::                 -- %~1: name for the environment
     SETLOCAL
+        set name=%~1
+        call activate %name% 
         python manage.py makemigrations
+        python manage.py migrate auth
         python manage.py migrate
-        pushd ebagis_site\fixtures\
-        FOR %%i in (*) do python manage.py loaddata %%i
-        popd
     ENDLOCAL
 GOTO :EOF
 
 
 :load_database  -- load all site fixtures into the database
+::              -- %~1: name for the environment
     SETLOCAL
+        set name=%~1
+        call activate %name% 
         pushd ebagis_site\fixtures\
-        FOR %%i in (*) do python manage.py loaddata %%i
+        FOR %%i in (*) do python ..\..\manage.py loaddata %%i
         popd
     ENDLOCAL
 GOTO :EOF
@@ -501,9 +547,12 @@ GOTO :EOF
 
 
 :reset_database
-  SETLOCAL
-    python manage.py flush
-    call:load_database
+::               -- %~1: name for the environment
+    SETLOCAL
+        set name=%~1
+        call activate %name% 
+        python manage.py flush
+        call:load_database %name%
   ENDLOCAL
 GOTO :EOF
 
@@ -532,12 +581,13 @@ GOTO :EOF
         set name=%~1
         call activate %name%
         python manage.py collectstatic
+
         set static_config=static\web.config
         IF NOT EXIST %static_config% (
             @echo ^<?xml version="1.0" encoding="UTF-8"?^>> %static_config%
             @echo ^<configuration^>>> %static_config%
             @echo   ^<system.webServer^>>> %static_config%
-            @echo     ^<!-- this configuration overrides the FastCGI handler to let IIS serve the static files --^>>> %static_config%
+            @echo     ^<^^!-- this configuration overrides the FastCGI handler to let IIS serve the static files --^>>> %static_config%
             @echo     ^<handlers^>>> %static_config%
             @echo     ^<clear/^>>> %static_config%
             @echo       ^<add name="StaticFile" path="*" verb="*" modules="StaticFileModule" resourceType="File" requireAccess="Read" /^>>> %static_config%
@@ -545,8 +595,12 @@ GOTO :EOF
             @echo   ^</system.webServer^>>> %static_config%
             @echo ^</configuration^>>> %static_config%
         )
+
         set touch_file=%~dp0touch_this_to_update_cgi.txt
         python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
+        pushd ..
+        ICACLS django-ebagis-site /t  /grant "IIS AppPool\%name%":F
+        popd
     ENDLOCAL
 GOTO :EOF
 
@@ -555,11 +609,9 @@ GOTO :EOF
 ::              -- %~1: name of IIS site to be removed
     SETLOCAL
         set name=%~1
-        set iis_command=%windir%\system32\inetsrv\appcmd
-        set found=False
-        FOR /f "tokens=2" %%A IN ('%iis_command% list site') DO (
-            IF %%A=="%name%" set found=True
-        )
-        IF %found%=True %iis_command% delete site %name%
+        call activate %name%
+        python manage.py winfcgi_install --delete --site-name %name%
+        :: delete the static assets directory
+        rmdir /q /s static\
     ENDLOCAL
 GOTO :EOF
