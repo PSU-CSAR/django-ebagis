@@ -205,7 +205,6 @@ GOTO :EOF
         set user=%~2
         set pass=%~3
         call:set_env %name%
-        call:create_celery_bat %name%
         call:get_ebagis %name%
         call:install_site_dependencies %name%
         call:create_secret_file %name%,%user%,%pass%
@@ -471,9 +470,7 @@ GOTO :EOF
 
         :: cannot make this into a function because of something
         :: stupid about batch regarding delayed expansion but oh well
-        set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace
-
-('\'', '').replace('\\', ''))) for i in range(50)])"'
+        set command='python -c "import random, string; print ''.join([random.SystemRandom().choice('{}{}{}'.format(string.ascii_letters, string.digits, string.punctuation.replace('\'', '').replace('\\', ''))) for i in range(50)])"'
         FOR /F %%i in (%command%) do set secret_key=%%i
 
         @echo SECRET_KEY = '!secret_key!'> %secretfile%
@@ -593,9 +590,7 @@ GOTO :EOF
         python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
 
         :: add max upload setting of 1GB to web.config file 
-        set cfg_str='    ^<security^>\n      ^<requestFiltering^>\n         ^<requestLimits maxAllowedContentLength=\"1024000000\"/^>\n      ^</requestFiltering^>\n    
-
-^</security^>\n'
+        set cfg_str='    ^<security^>\n      ^<requestFiltering^>\n         ^<requestLimits maxAllowedContentLength=\"1024000000\"/^>\n      ^</requestFiltering^>\n    ^</security^>\n'
         set cfg='web.config'
         python -c "f=open(%cfg%); content=[l for l in f]; f.close(); content.insert(3, %cfg_str%); f=open(%cfg%,'w'); f.write(''.join(content)); f.close()"
 
@@ -675,7 +670,7 @@ GOTO :EOF
         set name=%~1
         set celery_bat=start_celery.bat
         schtasks /create /tn %name%_celery /tr %~dp0%celery_bat% /sc onstart /ru SYSTEM
-        schtasks /run /tn %name%
+        schtasks /run /tn %name%_celery
     ENDLOCAL
 GOTO :EOF
 
@@ -684,8 +679,8 @@ GOTO :EOF
 ::                   -- %~1: name of task to remove
     SETLOCAL
         set name=%~1
-        schtasks /end /tn %name%
-        schtasks /delete /f /tn %name%
+        schtasks /end /tn %name%_celery
+        schtasks /delete /f /tn %name%_celery
     ENDLOCAL
 GOTO :EOF
 
@@ -694,8 +689,8 @@ GOTO :EOF
 ::                    -- %~1: the name of the project instance
     SETLOCAL
        set name=%~1
-       schtasks /end /tn %name%
-       schtasks /run /tn %name%
+       schtasks /end /tn %name%_celery
+       schtasks /run /tn %name%_celery
     ENDLOCAL
 GOTO :EOF
 
