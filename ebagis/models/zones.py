@@ -46,8 +46,13 @@ class HRUZonesData(CreatedByMixin, Directory):
         hruzonesdata_obj.save()
 
         # import the .gdb for this HRUZonesData instance
-        hru_gdb_path = os.path.join(temp_hru_path,
-                                    hruzones.name + constants.GDB_EXT)
+        # check first for hru gdb with _ prefixed: this is pre-cleaned
+        # and does not have ignored layers
+        hruzones_gdb_name = hruzones.name + constants.GDB_EXT
+        if os.path.exists("_" + hruzones_gdb_name):
+            hruzones_gdb_name = "_" + hruzones_gdb_name
+
+        hru_gdb_path = os.path.join(temp_hru_path, hruzones_gdb_name)
         hruzonesdata_obj.hruzonesgdb = HRUZonesGDB.create(hru_gdb_path,
                                                           user,
                                                           hruzones.aoi,
