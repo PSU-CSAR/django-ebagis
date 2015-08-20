@@ -49,10 +49,12 @@ class HRUZonesData(CreatedByMixin, Directory):
         # check first for hru gdb with _ prefixed: this is pre-cleaned
         # and does not have ignored layers
         hruzones_gdb_name = hruzones.name + constants.GDB_EXT
-        if os.path.exists("_" + hruzones_gdb_name):
-            hruzones_gdb_name = "_" + hruzones_gdb_name
-
         hru_gdb_path = os.path.join(temp_hru_path, hruzones_gdb_name)
+        hru_gdb_path_underscore = os.path.join(temp_hru_path,
+                                               "_" +  hruzones_gdb_name)
+        if os.path.exists(hru_gdb_path_underscore):
+            hru_gdb_path = hru_gdb_path_underscore
+
         hruzonesdata_obj.hruzonesgdb = HRUZonesGDB.create(hru_gdb_path,
                                                           user,
                                                           hruzones.aoi,

@@ -151,7 +151,7 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
         """
         # specifically calling super on geodatabase as need to get to
         # create method on directory class, not the create method
-        # on the goedatabase class, from which HRUZonesGDB inherits
+        # on the geodatabase class, from which HRUZonesGDB inherits
         # because we want to do something different than other gdbs
         # also, need to not save on create as subdirectory_of won't work
         gdb_obj = super(Geodatabase, cls).create(
