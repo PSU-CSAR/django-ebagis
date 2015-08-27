@@ -178,6 +178,7 @@ urlpatterns = patterns(
     # user URLs
     url(r'^users/$', user_list, name='user-list'),
     url(r'^users/(?P<pk>[0-9]+)/$', user_detail, name='user-detail'),
+    url(r'^validate-token/$', views.validate_token),
 
     url(r'^groups/$', group_list, name='group-list'),
     url(r'^groups/(?P<pk>[0-9]+)/$', group_detail, name='group-detail'),

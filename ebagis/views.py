@@ -5,7 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import viewsets, views
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (
+    api_view, authentication_classes, permission_classes
+)
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import status
@@ -13,7 +15,8 @@ from rest_framework.reverse import reverse
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.parsers import FileUploadParser, JSONParser, FormParser,\
     MultiPartParser
-
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from rest_framework import generics
 
@@ -104,6 +107,14 @@ class APIRoot(APIView):
             'Users': reverse('user-list', request=request),
             'Groups': reverse('group-list', request=request),
         })
+
+
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication, ))
+@permission_classes((IsAuthenticated, ))
+def validate_token(request):
+    if request.method == 'GET':
+        return Response({"message": "you're logged in", "user": request.user.username})
 
 
 class DownloadViewSet(viewsets.ModelViewSet):
