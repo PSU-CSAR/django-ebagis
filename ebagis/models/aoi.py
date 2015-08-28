@@ -25,6 +25,10 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
     objects = models.GeoManager()
     comment = models.TextField(blank=True)
 
+    # allow recursive parent-child relations
+    parent_aoi = models.ForeginKey("self", null=True, blank=True,
+                                   related_name="child_aois")
+
     # data
     surfaces = models.OneToOneField(Surfaces, related_name="aoi_surfaces",
                                     null=True, blank=True)
