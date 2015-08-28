@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 # Need to import every declared model for Django to recognize it
 from .aoi import AOI
-from .base import RandomPrimaryIdModel
 from .directory import Directory, Maps, PrismDir
 from .download import Download
 from .file import File, XML, MapDocument, Layer, Vector, Raster, Table

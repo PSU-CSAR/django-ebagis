@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import uuid
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
@@ -9,11 +10,11 @@ from django.db import transaction
 from .. import constants
 
 from .mixins import DirectoryMixin, AOIRelationMixin
-from .base import RandomPrimaryIdModel
 from .file import MapDocument
 
 
-class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
+class Directory(DirectoryMixin, AOIRelationMixin, models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     _path_name = None
 
     class Meta:

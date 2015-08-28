@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import shutil
+import uuid
 from logging import exception
 
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -11,14 +12,14 @@ from django.db import transaction
 
 from .. import constants
 
-from .base import RandomPrimaryIdModel
 from .mixins import (
     ProxyMixin, DateMixin, NameMixin, CreatedByMixin, AOIRelationMixin,
     )
 
 
 class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
-               AOIRelationMixin, RandomPrimaryIdModel):
+               AOIRelationMixin, models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     path = models.CharField(max_length=1024, unique=True)
     encoding = models.CharField(max_length=20, null=True, blank=True)
     content_type = models.ForeignKey(ContentType)

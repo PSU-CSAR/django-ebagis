@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import shutil
+import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -12,11 +13,11 @@ from djcelery.models import TaskMeta
 
 from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 
-from .base import RandomPrimaryIdModel
 from .mixins import DateMixin
 
 
-class Download(DateMixin, RandomPrimaryIdModel):
+class Download(DateMixin, models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name="%(class)s",
                              editable=False)

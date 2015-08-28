@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import shutil
+import uuid
 from logging import exception
 
 from django.utils import timezone
@@ -11,14 +12,14 @@ from .. import constants, utilities
 
 from ..settings import AOI_DIRECTORY, GEO_WKID
 
-from .base import RandomPrimaryIdModel
 from .mixins import CreatedByMixin, DirectoryMixin
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
 from .directory import PrismDir, Maps
 from .zones import Zones
 
 
-class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
+class AOI(CreatedByMixin, DirectoryMixin, models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
     objects = models.GeoManager()

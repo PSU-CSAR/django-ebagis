@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import uuid
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey, GenericRelation,
@@ -9,13 +10,13 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from .base import RandomPrimaryIdModel
 from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
 from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
 
 
 class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
-           RandomPrimaryIdModel):
+           models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
