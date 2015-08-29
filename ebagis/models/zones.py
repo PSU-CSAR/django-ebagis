@@ -37,12 +37,13 @@ class HRUZonesData(CreatedByMixin, Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, temp_hru_path, hruzones, user):
+    def create(cls, temp_hru_path, hruzones, user, id=None):
         # create a new HRUZonesData instance and save it
         hruzonesdata_obj = HRUZonesData(aoi=hruzones.aoi,
                                         name=hruzones.name,
                                         hruzones=hruzones,
-                                        created_by=user)
+                                        created_by=user,
+                                        id=id)
         hruzonesdata_obj.save()
 
         # import the .gdb for this HRUZonesData instance
@@ -95,10 +96,11 @@ class HRUZones(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, temp_zones_path, hru_name, zones, user):
+    def create(cls, temp_zones_path, hru_name, zones, user, id=None):
         hruzones_obj = HRUZones(aoi=zones.aoi,
                                 name=hru_name,
-                                zones=zones)
+                                zones=zones,
+                                id=id)
         hruzones_obj.save()
         HRUZonesData.create(os.path.join(temp_zones_path, hru_name),
                             hruzones_obj,
@@ -122,8 +124,8 @@ class Zones(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_zones_dir, user, aoi):
-        zones_obj = super(Zones, cls).create(aoi)
+    def create(cls, input_zones_dir, user, aoi, id=None):
+        zones_obj = super(Zones, cls).create(aoi, id=id)
 
         if os.path.exists(input_zones_dir):
             hruzones = [d for d in os.listdir(input_zones_dir)

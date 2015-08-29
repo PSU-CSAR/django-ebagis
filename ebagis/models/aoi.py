@@ -53,7 +53,7 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path, comment=""):
+    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path, comment="", id=None):
         # get multipolygon WKT from AOI Boundary Layer
         wkt, crs_wkt = utilities.get_multipart_wkt_geometry(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
@@ -70,7 +70,8 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
                   shortname=aoi_shortname,
                   boundary=wkt,
                   created_by=user,
-                  comment=comment)
+                  comment=comment
+                  id=id)
         try:
             aoi.save()
 

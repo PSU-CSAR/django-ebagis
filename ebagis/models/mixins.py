@@ -106,11 +106,19 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
     def save(self, *args, **kwargs):
         """Overrides the default save method adding the following:
 
-         - if the object has not been saved (no pk set),
-           sets the created at time and calls for the path
-           property to ensure a directory is created for the
-           GDB within its enclosing AOI"""
-        if not self.pk:
+        - if the path has not been set:
+            - sets the created at time
+            - set the path property to ensure a file system directory
+              is created for this directory object within its
+              enclosing file system folder
+        """
+        if not getattr(self, '_path', None):
+            # while a default created_at datetime is set by the
+            # date mixin, we have to explictly set the created_at
+            # datetime here, as it is required by the path method
+            # when creating the new directory and only would be set
+            # by default when the save method is called (after the
+            # path method has already been called)
             self.created_at = timezone.now()
             self.path
         return super(DirectoryMixin, self).save(*args, **kwargs)
@@ -167,6 +175,8 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         # export methods -- need to implement each subclass individually.
 
     def export(self, output_dir, querydate, *args, **kwargs):
+        # this super references the export in the date mixin, which
+        # validates the querydate argument
         super(DirectoryMixin, self).export(output_dir,
                                            querydate,
                                            *args,
