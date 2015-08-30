@@ -109,7 +109,7 @@ def get_multipart_wkt_geometry(sourcefile, layername=None):
 
     feature = None
     layer = None
-    shapefile = None
+    dataset = None
 
     return (wkt_polygons_to_multipolygon(geometries), crs_wkt)
 
@@ -214,16 +214,17 @@ def make_unique_directory(name, path,
     will attempt to create the directory `/home/foo/bar`, appending
     a postfix as desribed above until the directory can be created."""
     import os
+    from exceptions import LimitError
 
     # if no limit then set to True so while loop will never stop
     if limit is None:
         limit = True
     # if limit is a postive integer, don't need to do anything
-    else if type(limit) == int and limit > 0:
+    elif type(limit) == int and limit > 0:
         continue
     # if limit is neither of these then we don't know what to do
     else:
-        raise InputError("limit is not positive integer or None. Unable to proceed")
+        raise TypeError("limit is not positive integer or None. Unable to proceed")
 
     # postfix starts as empty string unless always_append is True
     postfix = ""
@@ -231,12 +232,13 @@ def make_unique_directory(name, path,
         postfix = generate_postfix(0, sequential_postfix)
 
     # iterate through names until directory is created
+    iteration = 0
     while limit:
         iteration += 1
 
         # append postfix and create full directory path
         uniqueid = name + postfix
-        outdirectory = os.path.join(data_repository, uniqueid)
+        outdirectory = os.path.join(path, uniqueid)
 
         # if the directory is made then break the while loop
         # so the function will return. Failure will result in
