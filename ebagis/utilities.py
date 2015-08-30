@@ -329,6 +329,8 @@ def get_queryset_arguments(object):
     queries. For example, finding all layers from a geodatabase in
     a specific AOI, the goedatabase and AOI ids would be used as
     the filters."""
+    from .constants import URL_FILTER_QUERY_ARG_PREFIX
+
     query_dict = {}
     for kwarg in object.kwargs:
         if kwarg.startswith(URL_FILTER_QUERY_ARG_PREFIX):
