@@ -23,7 +23,6 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
     objects = models.GeoManager()
-    comment = models.TextField(blank=True)
 
     # allow recursive parent-child relations
     parent_aoi = models.ForeginKey("self", null=True, blank=True,

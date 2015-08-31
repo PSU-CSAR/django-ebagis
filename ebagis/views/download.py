@@ -1,5 +1,7 @@
 from django.http import HttpResponse
+from django.contrib.contenttypes.models import ContentType
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -48,3 +50,14 @@ class DownloadViewSet(viewsets.ModelViewSet):
                                            context={'request': request})
         return Response(serializer.data)
 
+    @classmethod
+    def new_download(cls, object, request):
+        download_view = cls()
+        if request.method == 'GET':
+            return download_view.download(
+                request,
+                ContentType.objects.get_for_model(object.__class__),
+                object.pk
+            )
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

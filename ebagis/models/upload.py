@@ -9,14 +9,12 @@ from djcelery.models import TaskMeta
 from drf_chunked_upload.models import ChunkedUpload
 
 
-class AOIUpload(ChunkedUpload):
+class Upload(ChunkedUpload):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.CharField(max_length=10, null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    update = models.BooleanField(default=False)
     comment = models.TextField(blank=True)
     task = models.ForeignKey(TaskMeta, related_name='aoi_upload',
                              null=True, blank=True)
 
-
-class UpdateUpload(ChunkedUpload):
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
-    content_object = GenericForeignKey('content_type', 'object_id')
-    processed = models.TextField(default="No")

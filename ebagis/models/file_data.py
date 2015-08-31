@@ -25,6 +25,7 @@ class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
+    comment = models.TextField(blank=true)
 
     @classmethod
     @transaction.atomic

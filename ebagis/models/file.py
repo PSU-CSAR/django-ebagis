@@ -21,6 +21,7 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
     versions = GenericRelation(FileData, for_concrete_model=False)
+    comment = models.TextField(blank=true)
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")

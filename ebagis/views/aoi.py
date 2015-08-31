@@ -1,10 +1,5 @@
-import logging
-
-from django.contrib.contenttypes.models import ContentType
-
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from rest_framework import status
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 
@@ -27,7 +22,7 @@ from ..serializers.geodatabase import (
 from ..renderers import GeoJSONRenderer
 
 # up- and down-load views
-from .upload import AOIUploadView
+from .upload import UploadView
 from .download import DownloadViewSet
 
 
@@ -74,14 +69,7 @@ class AOIViewSet(MultiSerializerViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        logging.info(request.data)
-        upload_view = AOIUploadView()
-        if request.method == 'PUT':
-            return upload_view.put(request)
-        elif request.method == 'POST':
-            return upload_view.post(request)
-        else:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return UploadView.new_upload(AOI, request)
 
     @detail_route()
     def surfaces(self, request, *args, **kwargs):
@@ -116,13 +104,4 @@ class AOIViewSet(MultiSerializerViewSet):
     @detail_route()
     def download(self, request, *args, **kwargs):
         aoi = self.get_object()
-        download_view = DownloadViewSet()
-        if request.method == 'GET':
-            return download_view.download(
-                request,
-                ContentType.objects.get_for_model(aoi.__class__),
-                aoi.id
-            )
-        else:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        return DownloadViewSet.new_download(aoi, request)
