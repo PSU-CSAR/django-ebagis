@@ -53,7 +53,7 @@ class UploadView(ChunkedUploadView):
         else:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @classmethod
+    @staticmethod
     def generate_upload_UUID(model):
         """Generate a random UUID that is not already the
         id of an instance of model"""

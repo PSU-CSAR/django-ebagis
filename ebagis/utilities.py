@@ -264,25 +264,6 @@ def make_unique_directory(name, path,
     return uniqueid, outdirectory
 
 
-def validate_path(path, allow_whitespace=False,
-                  invalid_chars=[":", "/", "\\", "*", "?", ".", "%", "$"]):
-    """Validate a user-given path to ensure it does not have any
-    restricted characters that could be used for malicious intent,
-    or for non-malicious intent that might result in undesired
-    operation."""
-    if not allow_whitespace:
-        from string import whitespace
-        for char in whitespace:
-            if char in path:
-                raise Exception("Cannot contain whitespace.")
-
-    for char in invalid_chars:
-        if char in path:
-            raise Exception(
-                "Cannot contain {}.".format(invalid_chars)
-            )
-
-    return path
 
 
 def zip_directory(directory_path, zip_path):

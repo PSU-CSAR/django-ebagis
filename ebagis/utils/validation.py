@@ -1,14 +1,32 @@
 from __future__ import absolute_import
-import os
 
-import arcpy
 
-from .constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
+def validate_path(path, allow_whitespace=False,
+                  invalid_chars=[":", "/", "\\", "*", "?", ".", "%", "$"]):
+    """Validate a user-given path to ensure it does not have any
+    restricted characters that could be used for malicious intent,
+    or for non-malicious intent that might result in undesired
+    operation."""
+    if not allow_whitespace:
+        from string import whitespace
+        for char in whitespace:
+            if char in path:
+                raise Exception("Cannot contain whitespace.")
+
+    for char in invalid_chars:
+        if char in path:
+            raise Exception(
+                "Cannot contain {}.".format(invalid_chars)
+            )
+
+    return path
 
 
 def validate_required_gdb_layers(gdb_path, required_layers):
     """
     """
+    import arcpy
+    import os
     errorlist = []
 
     if not arcpy.Exists(gdb_path):
@@ -42,7 +60,10 @@ def validate_required_gdb_layers(gdb_path, required_layers):
 def validate_aoi(aoi_path):
     """
     """
-    errorlist = []
+    import arcpy
+    from .constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
+
+     errorlist = []
 
     # check to see that path is valid
     if not arcpy.Exists(aoi_path):
