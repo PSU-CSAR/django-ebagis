@@ -50,7 +50,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
                   "surfaces", "layers", "aoidb", "analysis", "prism",
                   #"maps",
                   #"hruzones",
-                  parent_aoi, child_aois,
+                  "parent_aoi", "child_aois,"
                   )
 
 

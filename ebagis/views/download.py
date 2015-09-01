@@ -14,7 +14,7 @@ from ..models.download import Download
 from ..serializers.download import DownloadSerializer
 
 # other
-from ..tasks import export_data
+from ..tasks.export import export_data
 
 
 class DownloadViewSet(viewsets.ModelViewSet):

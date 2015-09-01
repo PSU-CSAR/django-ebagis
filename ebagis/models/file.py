@@ -21,7 +21,7 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
     object_id = models.CharField(max_length=10)
     content_object = GenericForeignKey('content_type', 'object_id')
     versions = GenericRelation(FileData, for_concrete_model=False)
-    comment = models.TextField(blank=true)
+    comment = models.TextField(blank=True)
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")
@@ -70,7 +70,7 @@ class MapDocument(File):
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, containing_object, useri, id=None):
+    def create(cls, input_file, containing_object, user, id=None):
         return super(MapDocument, cls).create(input_file,
                                               containing_object,
                                               user,

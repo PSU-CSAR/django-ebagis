@@ -17,7 +17,7 @@ from ..models.upload import Upload
 from ..serializers.upload import UploadSerializer
 
 # other
-from ..tasks import process_upload
+from ..tasks.upload import process_upload
 
 
 class UploadView(ChunkedUploadView):

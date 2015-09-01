@@ -97,7 +97,7 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
                                       choices=constants.ARCHIVING_CHOICES,
                                       default=constants.NO_ARCHIVING,
                                       editable=False)
-    comment = models.TextField(blank=true)
+    comment = models.TextField(blank=True)
     subdirectory_of = os.getcwd()
 
     class Meta:

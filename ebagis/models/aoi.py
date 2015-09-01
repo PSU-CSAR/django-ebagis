@@ -15,6 +15,7 @@ from ..settings import AOI_DIRECTORY, GEO_WKID
 from ..exceptions import AOIError
 
 from ..utils.validation import validate_aoi
+from ..utils.misc import make_short_name
 
 from .mixins import CreatedByMixin, DirectoryMixin
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
