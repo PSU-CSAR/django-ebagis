@@ -27,7 +27,7 @@ from .models.file_data import RasterData, VectorData, TableData, XMLData
 # Directory Classes
 from .models.directory import Maps
 
-from .models.upload import AOIUpload
+from .models.upload import Upload
 from .models.download import Download
 
 from arcpy_extensions.geodatabase import Geodatabase
@@ -262,7 +262,7 @@ def validate_aoi(aoi_path):
     return errorlist
 
 
-def get_aoi_path_from_tempdir(tempdir):
+def get_path_from_tempdir(tempdir):
     tempdircontents = os.listdir(tempdir)
 
     directories = []
@@ -272,14 +272,14 @@ def get_aoi_path_from_tempdir(tempdir):
             directories.append(item)
 
     if len(directories) == 1:
-        aoi_path = directories[0]
+        path = directories[0]
     else:
-        aoi_path = tempdir
+        path = tempdir
 
-    return aoi_path
+    return path
 
 
-def unzip_AOI(aoizip, unzipdir):
+def unzip_upload(aoizip, unzipdir):
     """
     """
     from zipfile import ZipFile, BadZipfile
@@ -289,17 +289,17 @@ def unzip_AOI(aoizip, unzipdir):
 
         # ensure zipfile integrity
         if zfile.testzip():
-            raise BadZipfile("AOI zipfile has errors." +
+            raise BadZipfile("Upload zipfile has errors." +
                              " Please try resubmitting your request.")
 
         # validate zfile members: make sure no problem char in names
         if not files:
-            raise BadZipfile("AOI zipfile is empty.")
+            raise BadZipfile("Upload zipfile is empty.")
         else:
             for filename in files:
                 if filename.startswith("/") or \
                         filename.startswith("\\") or ".." in filename:
-                    raise BadZipfile("AOI zipfile contains nonstandard" +
+                    raise BadZipfile("Uplaod zipfile contains nonstandard" +
                                      " filenames and cannot be opened.")
 
         zfile.extractall(path=unzipdir)
@@ -314,7 +314,7 @@ def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user,
                            comment=""):
     with tempdirectory(prefix="AOI_", dir=TEMP_DIRECTORY) as tempdir:
         print "Extracting AOI to {}.".format(tempdir)
-        unzip_AOI(aoi_zip_path, tempdir)
+        unzip_upload(aoi_zip_path, tempdir)
 
         temp_aoi_path = get_aoi_path_from_tempdir(tempdir)
 
@@ -329,10 +329,10 @@ def extract_and_import_aoi(aoi_zip_path, aoi_name, aoi_shortname, user,
                 errormsg += "\n\t{}".format(error)
             raise AOIError(errormsg)
 
-        #return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
+    #return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
 
-        return AOI.create(aoi_name, aoi_shortname, user, temp_aoi_path,
-                          comment=comment)
+    return AOI.create(aoi_name, aoi_shortname, user, temp_aoi_path,
+                      comment=comment)
 
 
 @shared_task
@@ -344,6 +344,51 @@ def add_aoi(aoiupload_id):
     aoi_shortname = make_short_name(aoi_name)
     user = aoiupload.user
     aoi_zip_path = aoiupload.file
+
+    aoi = extract_and_import_aoi(aoi_zip_path,
+                                 aoi_name,
+                                 aoi_shortname,
+                                 user,
+                                 comment=aoiupload.comment)
+
+    return aoi.id
+
+
+@shared_task
+def process_upload(upload_id):
+
+    upload = Upload.objects.get(pk=upload_id)
+    upload_class = ContentType.model_class(upload.content_type)
+
+    temp_prefix = upload_class.__name__ + "_"
+
+    with tempdirectory(prefix=temp_prefix, dir=TEMP_DIRECTORY) as tempdir:
+        print "Extracting upload zip to {}.".format(tempdir)
+        unzip_upload(zip_path, tempdir)
+
+        temp_path = get_path_from_tempdir(tempdir)
+
+        print "AOI to import is {}.".format(temp_aoi_path)
+
+        aoi_errors = validate_aoi(temp_aoi_path)
+
+        if aoi_errors:
+            errormsg = "Errors were encountered with the AOI {}:"\
+                .format(temp_aoi_path)
+            for error in aoi_errors:
+                errormsg += "\n\t{}".format(error)
+            raise AOIError(errormsg)
+
+    #return import_aoi(temp_aoi_path, aoi_name, aoi_shortname, user)
+
+    return AOI.create(aoi_name, aoi_shortname, user, temp_aoi_path,
+                      comment=comment)
+
+
+    aoi_name = os.path.splitext(aoiupload.filename)[0]
+    aoi_shortname = make_short_name(aoi_name)
+    user = aoiupload.user
+    zip_path = upload.file
 
     aoi = extract_and_import_aoi(aoi_zip_path,
                                  aoi_name,

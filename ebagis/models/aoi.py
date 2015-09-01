@@ -12,6 +12,10 @@ from .. import constants, utilities
 
 from ..settings import AOI_DIRECTORY, GEO_WKID
 
+from ..exceptions import AOIError
+
+from ..utils.validation import validate_aoi
+
 from .mixins import CreatedByMixin, DirectoryMixin
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
 from .directory import PrismDir, Maps
@@ -51,8 +55,33 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
         unique_together = ("name",)
 
     @classmethod
+    def create_from_upload(cls, upload, temp_aoi_path):
+        aoi_name = os.path.splitext(upload.filename)[0]
+        aoi_shortname = make_short_name(aoi_name)
+        user = upload.user
+        comment = upload.comment
+        id = upload.object_id
+
+        return cls.create(aoi_name,
+                          aoi_shortname,
+                          user,
+                          temp_aoi_path,
+                          comment=comment,
+                          id=id)
+
+    @classmethod
     @transaction.atomic
     def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path, comment="", id=None):
+        # validate AOI to import
+        aoi_errors = validate_aoi(temp_aoi_path)
+
+        if aoi_errors:
+            errormsg = "Errors were encountered with the AOI {}:"\
+                .format(temp_aoi_path)
+            for error in aoi_errors:
+                errormsg += "\n\t{}".format(error)
+            raise AOIError(errormsg)
+
         # get multipolygon WKT from AOI Boundary Layer
         wkt, crs_wkt = utilities.get_multipart_wkt_geometry(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
@@ -69,7 +98,7 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
                   shortname=aoi_shortname,
                   boundary=wkt,
                   created_by=user,
-                  comment=comment
+                  comment=comment,
                   id=id)
         try:
             aoi.save()
