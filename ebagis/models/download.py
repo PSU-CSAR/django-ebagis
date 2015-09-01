@@ -23,7 +23,7 @@ class Download(DateMixin, models.Model):
                              editable=False)
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=10)
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id', for_concrete_model=False)
     task = models.ForeignKey(TaskMeta, related_name='download',
                              null=True, blank=True)
     file = models.FileField(max_length=255, null=True, blank=True)
