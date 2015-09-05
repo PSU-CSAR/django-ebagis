@@ -13,7 +13,7 @@ class Upload(ChunkedUpload):
     content_type = models.ForeignKey(ContentType)
     object_id = models.UUIDField(null=True, blank=True)
     content_object = GenericForeignKey('content_type', 'object_id', for_concrete_model=False)
-    update = models.BooleanField(default=False)
+    is_update = models.BooleanField(default=False)
     parent_object_content_type = models.ForeignKey(ContentType)
     parent_object_id = models.UUIDField(null=True, blank=True)
     comment = models.TextField(blank=True)

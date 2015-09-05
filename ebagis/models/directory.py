@@ -7,6 +7,8 @@ from django.contrib.gis.db import models
 from django.utils import timezone
 from django.db import transaction
 
+from rest_framework.reverse import reverse
+
 from .. import constants
 
 from .mixins import DirectoryMixin, AOIRelationMixin
@@ -74,3 +76,12 @@ class PrismDir(Directory):
         filtered = self.versions.filter(created_at__lt=querydate)
         return filtered.latest("created_at").export(output_dir,
                                                     querydate=querydate)
+
+    def get_url(self, request):
+        kwargs = {}
+        view_name = "aoi-prism-list"
+        kwargs["pk"] = self.aoi_id
+        return reverse(view_name,
+                       kwargs=kwargs,
+                       request=request)
+

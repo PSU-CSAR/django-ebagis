@@ -4,6 +4,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import timezone
 from django.db import transaction
 
+from rest_framework.reverse import reverse
+
 from arcpy_extensions.geodatabase import Geodatabase as arcpyGeodatabase
 #from arcpy_extensions.layer import Layer as arcpyLayer
 
@@ -73,6 +75,21 @@ class Geodatabase(ProxyMixin, Directory):
             table.export(outpath, querydate=querydate)
         return outpath
 
+    def get_url(self, request):
+        kwargs = {}
+        objtype = type(self).__name__.lower()
+        view_name = "aoi-" + objtype
+
+        if objtype in constants.MULTIPLE_GDBS:
+            kwargs["pk"] = self.id
+            kwargs["aoi_pk"] = self.aoi_id
+        else:
+            kwargs["pk"] = self.aoi_id
+
+        return reverse(view_name,
+                       kwargs=kwargs,
+                       request=request)
+
 
 class Geodatabase_IndividualArchive(Geodatabase):
     def __init__(self, *args, **kwargs):
@@ -129,6 +146,16 @@ class Prism(Geodatabase_GroupArchive):
     @property
     def subdirectory_of(self):
         return self.aoi.prism.path
+
+    def get_url(self, request):
+        kwargs = {}
+        objtype = type(self).__name__.lower()
+        view_name = "aoi-prism-detail"
+        kwargs["pk"] = self.id
+        kwargs["FILTER__aoi_id"] = self.aoi_id
+        return reverse(view_name,
+                       kwargs=kwargs,
+                       request=request)
 
     class Meta:
         proxy = True

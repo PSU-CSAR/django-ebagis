@@ -52,3 +52,8 @@ class RasterDataSerializer(FileDataSerializer):
 class TableDataSerializer(FileDataSerializer):
     class Meta:
         model = TableData
+
+class MapDocumentDataSerializer(FileDataSerializer):
+    class Meta:
+        model = MapDocumentData
+

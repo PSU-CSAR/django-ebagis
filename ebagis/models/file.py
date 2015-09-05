@@ -10,6 +10,10 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
+from rest_framework.reverse import reverse
+
+from ..constants import URL_FILTER_QUERY_ARG_PREFIX, MULTIPLE_GDBS
+
 from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
 from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
 
@@ -48,6 +52,22 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
         super(File, self).export(output_dir, querydate)
         query = self.versions.filter(created_at__lte=querydate)
         return query.latest("created_at").export(output_dir)
+
+    def get_url(self, request):
+        name_key = URL_FILTER_QUERY_ARG_PREFIX + "name__iexact"
+
+        kwargs = {
+            URL_FILTER_QUERY_ARG_PREFIX + "aoi_id": self.content_object.aoi_id,
+            "pk": self.id,
+            name_key: self.content_object.name.lower(),
+        }
+
+        if kwargs[name_key] in MULTIPLE_GDBS:
+            kwargs[URL_FILTER_QUERY_ARG_PREFIX + "id"] = self.object_id
+
+        return reverse('geodatabase-' + type(self).__name__.lower() + '-detail',
+                       kwargs=kwargs,
+                       request=request)
 
 
 class XML(File):
