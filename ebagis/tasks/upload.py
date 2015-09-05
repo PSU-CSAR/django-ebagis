@@ -28,7 +28,12 @@ def process_upload(upload_id):
 
         print "Upload to import is {}.".format(temp_path)
 
-    imported_obj = upload_class.create_from_upload(upload, temp_path)
+    if upload.is_update:
+        imported_obj = upload_class.update(upload, temp_path)
+    elif not upload.is_update:
+        imported_obj = upload_class.create_from_upload(upload, temp_path)
+    else:
+        raise Exception("Unexpected fatal error: is_update not set on upload")
 
     return "{},{}".format(imported_obj.id,upload.content_type)
 
