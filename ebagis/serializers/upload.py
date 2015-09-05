@@ -10,29 +10,38 @@ from ..models.upload import Upload
 
 from ..utils.validation import validate_path
 
-from .task import TaskSerializer
+from .task import UploadTaskSerializer
 
 
 class UploadSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="aoiupload-detail")
+    url = serializers.SerializerMethodField()
     user = serializers.HyperlinkedRelatedField(view_name="user-detail",
                                                read_only=True)
-    task = AOITaskSerializer(read_only=True)
+    task = UploadTaskSerializer(read_only=True)
     md5 = serializers.CharField(required=False)
 
-    #def validate_filename(self, value):
-    #    name = os.path.splitext(value)[0]
-    #    validate_path(name, allow_whitespace=True)
-    #    upload_class = ContentType.model_class(upload.content_type)
-    #
-    #    try:
-    #        upload_class.objects.get(name)
-    #    except upload_class.DoesNotExist:
-    #        pass
-    #    else:
-    #        raise Exception("An object of the same name and type already exists.")
-    #
-    #    return value
+    def get_url(self, obj):
+        return obj.get_url(self.contenxt['request'])
+
+# TODO: move the validation to the model classes, and call the necessary methods here
+#    def validate(self, data):
+#        if not data.is_update:
+#            if data.parent_object_id:
+#                parent_class = ContentType.model_class(data.parent_content_type)
+#                parent_object = parent_class.objects.get(pk=data.parent_object_id)
+#
+#            name = os.path.splitext(value)[0]
+#            validate_path(name, allow_whitespace=True)
+#            upload_class = ContentType.model_class(data.content_type)
+#
+#            try:
+#                upload_class.objects.get(name)
+#            except upload_class.DoesNotExist:
+#                pass
+#            else:
+#                raise serializers.ValidationError("An object of the same name and type already exists.")
+#
+#        return data
 
     class Meta:
         model = Upload
