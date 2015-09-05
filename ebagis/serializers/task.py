@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 from djcelery.models import TaskMeta
 
 
-class UploadTaskSerializer(serializers.ModelSerializer):
+class TaskSerializer(serializers.ModelSerializer):
     result = serializers.SerializerMethodField()
 
     def get_result(self, obj):

@@ -10,14 +10,14 @@ from ..models.upload import Upload
 
 from ..utils.validation import validate_path
 
-from .task import UploadTaskSerializer
+from .task import TaskSerializer
 
 
 class UploadSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     user = serializers.HyperlinkedRelatedField(view_name="user-detail",
                                                read_only=True)
-    task = UploadTaskSerializer(read_only=True)
+    task = TaskSerializer(read_only=True)
     md5 = serializers.CharField(required=False)
 
     def get_url(self, obj):

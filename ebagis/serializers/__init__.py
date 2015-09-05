@@ -17,6 +17,6 @@ from .geodatabase import (
     PrismDirSerializer, GeodatabaseSerializer, HRUZonesSerializer,
     PrismSerializer,
 )
-from .task import AOITaskSerializer
-from .upload import AOIUploadSerializer, UpdateUploadSerializer
+from .task import TaskSerializer
+from .upload import UploadSerializer
 from .user import UserSerializer, GroupSerializer, PermissionSerializer
