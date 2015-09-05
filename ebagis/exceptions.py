@@ -9,3 +9,7 @@ class DirectoryError(Exception):
 class LimitError(Exception):
     pass
 
+
+class SpatialReferenceError(Exception):
+    pass
+

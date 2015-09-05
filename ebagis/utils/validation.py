@@ -60,10 +60,11 @@ def validate_required_gdb_layers(gdb_path, required_layers):
 def validate_aoi(aoi_path):
     """
     """
+    import os
     import arcpy
-    from .constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
+    from ..constants import AOI_RASTER_LAYER, AOI_GDB, REQUIRED_LAYERS
 
-     errorlist = []
+    errorlist = []
 
     # check to see that path is valid
     if not arcpy.Exists(aoi_path):
