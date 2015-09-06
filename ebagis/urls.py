@@ -88,7 +88,7 @@ aoi_analysis = views.AOIViewSet.as_view({
 
 aoi_prism_list = views.AOIViewSet.as_view({
     'get': 'prism',
-    #'post': 'create'
+    'post': 'create'
 })
 aoi_prism_detail = views.PrismViewSet.as_view({
     'get': 'retrieve',
