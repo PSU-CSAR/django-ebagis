@@ -188,19 +188,12 @@ urlpatterns = patterns(
 
 
     # upload URLs
-    url(r'^aoiuploads/$',
-        views.AOIUploadView.as_view(),
-        name='aoiupload-list'),
-    url(r'^aoiuploads/(?P<pk>[^/.]+)/$',
-        views.AOIUploadView.as_view(),
-        name='aoiupload-detail'),
-
-    url(r'^updateuploads/$',
-        views.UpdateUploadView.as_view(),
-        name='updateupload-list'),
-    url(r'^updateuploads/(?P<pk>[^/.]+)/$',
-        views.UpdateUploadView.as_view(),
-        name='updateupload-detail'),
+    url(r'^uploads/$',
+        views.UploadView.as_view(),
+        name='upload-list'),
+    url(r'^uploads/(?P<pk>[^/.]+)/$',
+        views.UploadView.as_view(),
+        name='upload-detail'),
 
 
     # download URLs

@@ -7,7 +7,7 @@ class APIRoot(APIView):
     def get(self, request):
         return Response({
             'AOIs': reverse('aoi-list', request=request),
-            'AOI Uploads': reverse('aoiupload-list', request=request),
+            'Uploads': reverse('upload-list', request=request),
             'Downloads': reverse('download-list', request=request),
             'Users': reverse('user-list', request=request),
             'Groups': reverse('group-list', request=request),
