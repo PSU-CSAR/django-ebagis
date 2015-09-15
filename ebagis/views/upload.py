@@ -31,18 +31,43 @@ class UploadView(ChunkedUploadView):
         upload.save()
 
     @classmethod
-    def new_upload(cls, upload_model, request, update=False):
+    def new_upload(cls, upload_model_class, request,
+                   object_id=None,
+                   parent_object_instance=None):
         """
         """
         upload_view = cls()
 
-        # set the content_type and generate an object_id
-        # the object id would be automatically created,
-        # but we explicitly set it here to allow it
+        # set the upload object content_type
+        upload__model_class_name = upload_model_class.__name__
+        request.data["content_type"] = \
+            ContentType.objects.get(model=upload__model_class_name)
+
+        # we will assume the upload is an update
+        # until proven otherwise
+        is_update = True
+
+        # if no object_id is passed in then we know that the
+        # upload is not an update, and we need to generate an
+        # object id for it. The object id would be automatically
+        # created, but we explicitly set it here to allow it
         # to be returned before the upload is processed
-        request.data["content_type"] = ContentType.objects.get_for_model(upload_model)
-        request.data["object_id"] = cls.generate_upload_UUID(upload_model)
-        request.data["update"] = update
+        if not object_id:
+            object_id = cls.generate_upload_UUID(upload_model_class)
+            is_update = False
+
+        # set the id and update values
+        request.data["object_id"] = object_id
+        request.data["is_update"] = is_update
+
+        # if a parent object is supplied, we need to
+        # get its content_type and id, then add those
+        # parameters to our request
+        if parent_object_instance:
+            request.data["parent_content_type"] = \
+                ContentType.objects.get_for_model(parent_object_instance)
+            request.data["parent_object_id"] = \
+                parent_object_instance.id
 
         logging.info(request.data)
 
@@ -67,3 +92,4 @@ class UploadView(ChunkedUploadView):
                 break
 
         return id
+

@@ -32,7 +32,8 @@ class UploadMixin(object):
     new Upload instance to accept and process files
     for whatever object was "created"
     """
-    def create(self, request, *args, parent_object=None, **kwargs):
+    def create(self, request, *args, **kwargs):
+        parent_object = kwargs.get('parent_object', None)
         return UploadView.new_upload(self.queryset.model,
                                      request,
                                      parent_object_instance=parent_object)
