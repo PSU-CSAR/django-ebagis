@@ -6,11 +6,10 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 
 from .. import constants
+from ..utils.misc import get_subclasses
 
 from .metaclass import InheritanceMetaclass
 
-
-# ***************** MIXINS *****************
 
 class AOIRelationMixin(models.Model):
     """Generic mixin to provide a relation to the AOI model"""
@@ -189,33 +188,10 @@ class ProxyManager(models.Manager):
     def get_queryset(self):
         # build a list of all the subclasses of the class,
         # including itself
-        classes = [cls.__name__ for cls in _get_subclasses(self.model,
-                                                           [self.model])]
+        classes = [cls.__name__ for cls in get_subclasses(self.model,
+                                                          [self.model])]
         queryset = super(ProxyManager, self).get_queryset()
         return queryset.filter(classname__in=classes)
-
-
-def _get_subclasses(Class, list_of_subclasses=[], depth=None):
-    """Function used to find all subclasses of a class. An optional
-    depth parameter can be supplied to limit recursion to x number
-    of layers below the inital. That is, a value of 0 will only
-    return the direct subclasses of a class, whereas a value of 2
-    will go up to layers below the first. The default value of the
-    depth parameter is None, which has the effect of recursing through
-    all subclass layers to find every subclass of the class. Returns
-    a list containing all of the found subclasses."""
-    for subclass in Class.__subclasses__():
-        list_of_subclasses.append(subclass)
-        if depth is None or depth > 0:
-            try:
-                depth = depth - 1
-            except:
-                pass
-
-            list_of_subclasses = _get_subclasses(subclass,
-                                                 list_of_subclasses,
-                                                 depth=depth)
-    return list_of_subclasses
 
 
 class ProxyMixin(models.Model):
@@ -251,7 +227,7 @@ class ProxyMixin(models.Model):
         Used in the get_object method to return object as a
         specific subclass object, if nessesary."""
         return dict([(subclass.__name__, subclass)
-                     for subclass in _get_subclasses(cls)])
+                     for subclass in get_subclasses(cls)])
 
     def get_object(self):
         """Ensures when getting an object, it will be of
@@ -265,3 +241,4 @@ class ProxyMixin(models.Model):
         if self.classname in subclasses:
             self.__class__ = subclasses[self.classname]
         return self
+

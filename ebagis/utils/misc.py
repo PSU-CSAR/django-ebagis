@@ -49,3 +49,26 @@ def get_queryset_arguments(object):
             query_dict[query_lookup] = query_value
     return query_dict
 
+
+def get_subclasses(Class, list_of_subclasses=[], depth=None):
+    """Function used to find all subclasses of a class. An optional
+    depth parameter can be supplied to limit recursion to x number
+    of layers below the inital. That is, a value of 0 will only
+    return the direct subclasses of a class, whereas a value of 2
+    will go up to layers below the first. The default value of the
+    depth parameter is None, which has the effect of recursing through
+    all subclass layers to find every subclass of the class. Returns
+    a list containing all of the found subclasses."""
+    for subclass in Class.__subclasses__():
+        list_of_subclasses.append(subclass)
+        if depth is None or depth > 0:
+            try:
+                depth = depth - 1
+            except:
+                pass
+
+            list_of_subclasses = get_subclasses(subclass,
+                                                list_of_subclasses,
+                                                depth=depth)
+    return list_of_subclasses
+
