@@ -46,15 +46,6 @@ def proxy_pattern_builder(model, list_view=None, detail_view=None,
     return (patterns, model.__name__.lower())
 
 
-## ROUTER FOR REST API ##
-router = DefaultRouter()
-
-
-#router.register(r"aoi", views.AOIViewSet, base_name="aoi")
-router.register(r"user", views.UserViewSet, base_name="user")
-router.register(r"groups", views.GroupViewSet, base_name="groups")
-
-
 user_list = views.UserViewSet.as_view({
     "get": "list",
     "post": "create",
@@ -200,7 +191,6 @@ download_detail = views.DownloadViewSet.as_view({
 })
 
 
-
 aoi_patterns=([
     url(r"^$", aoi_list, name="list"),
     url(r"^{}/$".format(PK_QUERY), aoi_detail, name="detail"),
@@ -235,7 +225,6 @@ file_patterns=([
 urlpatterns = patterns(
     "",
     # API Root
-    #url(r"^", include(router.urls)),
     url(r"^$", views.APIRoot.as_view()),
 
     # rest framework auth
