@@ -12,7 +12,7 @@ PK_QUERY = ID_QUERY.format(id=pk)
 AOI_QUERY = ID_QUERY.format(id="aoi_id")
 ZONE_QUERY = ID_QUERY.format(id="zones_id")
 VERSION_QUERY = ID_QUERY.format(id="version_id")
-PROXY_LIST = r"(?P<{base}_type>{proxy_name})
+PROXY_LIST = r"(?P<{base}_type>{proxy_name})"
 PROXY_DETAIL = r"{}/{}".format(PROXY_LIST, ID_QUERY)
 S = "s"
 
