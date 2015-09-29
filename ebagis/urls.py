@@ -99,32 +99,19 @@ aoi_download = views.AOIViewSet.as_view({
     "get": "download",
 })
 
-aoi_surfaces = views.AOIViewSet.as_view({
-    "get": "surfaces"
-})
-
-aoi_layers = views.AOIViewSet.as_view({
-    "get": "layers"
-})
-
-aoi_aoidb = views.AOIViewSet.as_view({
-    "get": "aoidb"
-})
-
-aoi_analysis = views.AOIViewSet.as_view({
-    "get": "analysis"
-})
-
-
-aoi_prism_list = views.AOIViewSet.as_view({
+prism_list = views.PrismViewSet.as_view({
     "get": "prism",
     "post": "create"
 })
-aoi_prism_detail = views.PrismViewSet.as_view({
+prism_detail = views.PrismViewSet.as_view({
     "get": "retrieve",
     "put": "update",
     "patch": "partial_update",
     "delete": "destroy"
+})
+
+prism_download = views.PrismViewSet.as_view({
+    "get": "download",
 })
 
 
@@ -138,49 +125,36 @@ hruzones_detail = views.HRUZonesViewSet.as_view({
     "patch": "partial_update",
     "delete": "destroy"
 })
+hruzones_download = views.HRUZonesViewSet.as_view({
+    "get": "download",
+})
 
-geodatabase_vector_list = views.GeodatabaseVectorViewSet.as_view({
+geodatabase_list = views.GeodatabaseViewSet.as_view({
     "get": "list",
     "post": "create"
 })
-geodatabase_vector_detail = views.GeodatabaseVectorViewSet.as_view({
+geodatabase_detail = views.GeodatabaseViewSet.as_view({
     "get": "retrieve",
     "put": "update",
     "patch": "partial_update",
     "delete": "destroy"
 })
+geodatabase_download = views.GeodatabaseViewSet.as_view({
+    "get": "download",
+})
 
-geodatabase_table_list = views.GeodatabaseTableViewSet.as_view({
+file_list = view.FileViewSet.as_view({
     "get": "list",
     "post": "create"
 })
-geodatabase_table_detail = views.GeodatabaseTableViewSet.as_view({
+file_detail = views.FileViewSet.as_view({
     "get": "retrieve",
     "put": "update",
     "patch": "partial_update",
     "delete": "destroy"
 })
-
-geodatabase_xml_list = views.GeodatabaseXMLViewSet.as_view({
-    "get": "list",
-    "post": "create"
-})
-geodatabase_xml_detail = views.GeodatabaseXMLViewSet.as_view({
-    "get": "retrieve",
-    "put": "update",
-    "patch": "partial_update",
-    "delete": "destroy"
-})
-
-geodatabase_raster_list = views.GeodatabaseRasterViewSet.as_view({
-    "get": "list",
-    "post": "create"
-})
-geodatabase_raster_detail = views.GeodatabaseRasterViewSet.as_view({
-    "get": "retrieve",
-    "put": "update",
-    "patch": "partial_update",
-    "delete": "destroy"
+file_download = views.FileViewSet.as_view({
+    "get": "download",
 })
 
 download_list = views.DownloadViewSet.as_view({
@@ -250,10 +224,10 @@ urlpatterns = patterns(
     url(r"^downloads/{}/$".format(PK_QUERY), download_detail, name="download-detail"),
 
     # AOI URLs
-    url(r"^aois/$", include(aoi_patterns)),
+    url(r"^aois/$", include(aoi_patterns, namespace="aoi-base")),
 
     # Geodatabase URLs
-    url(r"^geodatabases/$", include(geodatabase_patterns)),
+    url(r"^geodatabases/$", include(geodatabase_patterns, namespace="geodatabase-base")),
     url(r"^surfaces/$", include(geodatabase_patterns), {'geodatabase_type': 'surfaces'}),
     url(r"^layers/$", include(geodatabase_patterns), {'geodatabase_type': 'layers'}),
     url(r"^aoidbs/$", include(geodatabase_patterns), {'geodatabase_type': 'aoidb'}),
@@ -263,19 +237,19 @@ urlpatterns = patterns(
     url(r"^paramgdbs/$", include(geodatabase_patterns), {'geodatabase_type': 'paramgdb'}),
 
     # HRU URLs
-    url(r"^hruzones/$", include(zones_patterns)),
+    url(r"^hruzones/$", include(zones_patterns, namespace="hruzones-base")),
 
     # Prism URLs
-    url(r"^prisms/$", include(prism_patterns)),
+    url(r"^prisms/$", include(prism_patterns, namespace="prism-base")),
 
     # File URLs
-    url(r"^files/$", include(file_patterns)),
-    url(r"^layers/$", include(file_patterns), {'file_type': 'layer'}),
-    url(r"^rasters/$", include(file_patterns), {'file_type': 'raster'}),
-    url(r"^vectors/$", include(file_patterns), {'file_type': 'vector'}),
-    url(r"^tables/$", include(file_patterns), {'file_type': 'table'}),
-    url(r"^maps/$", include(file_patterns), {'file_type': 'map'}),
-    url(r"^xmls/$", include(file_patterns), {'file_type': 'xml'}),
+    url(r"^files/$", include(file_patterns, namespace="file-base")),
+    url(r"^layers/$", include(file_patterns, namespace="layer-base"), {'file_type': 'layer'}),
+    url(r"^rasters/$", include(file_patterns, namespace="raster-base"), {'file_type': 'raster'}),
+    url(r"^vectors/$", include(file_patterns, namespace="vector-base"), {'file_type': 'vector'}),
+    url(r"^tables/$", include(file_patterns, namespace="table-base"), {'file_type': 'table'}),
+    url(r"^maps/$", include(file_patterns, namespace="map-base"), {'file_type': 'map'}),
+    url(r"^xmls/$", include(file_patterns, namespace="xml-base"), {'file_type': 'xml'}),
 
     # AOI Geodatabases
     url(r"^aois/{}/surfaces/$".format(AOI_QUERY), include(geodatabase_patterns), {"geodatabase_type": "surfaces"}),
