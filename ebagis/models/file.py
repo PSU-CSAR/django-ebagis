@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 import os
-import uuid
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey, GenericRelation,
@@ -9,10 +8,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
-
-from rest_framework.reverse import reverse
-
-from ..constants import URL_FILTER_QUERY_ARG_PREFIX, MULTIPLE_GDBS
 
 from .base import ABC
 from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
@@ -28,7 +23,7 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, ABC):
     class Meta:
         unique_together = ("content_type", "object_id", "name")
 
-    @prooperty
+    @property
     def _parent_object(self):
         return self.content_object
 
@@ -69,7 +64,7 @@ class XML(File):
         is_single = False
         if self.content_object._classname == "hru":
             is_single = True
-        return True
+        return is_single
 
     @classmethod
     @transaction.atomic

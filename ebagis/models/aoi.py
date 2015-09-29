@@ -1,14 +1,11 @@
 from __future__ import absolute_import
 import os
 import shutil
-import uuid
 from logging import exception
 
 from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
-
-from rest_framework.reverse import reverse
 
 from .. import constants, utilities
 
@@ -26,8 +23,7 @@ from .directory import PrismDir, Maps
 from .zones import Zones
 
 
-class AOI(CreatedByMixin, DirectoryMixin, models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
     objects = models.GeoManager()

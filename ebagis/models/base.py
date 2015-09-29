@@ -3,6 +3,8 @@ import uuid
 
 from django.contrib.gis.db import models
 
+from rest_framework.reverse import reverse
+
 
 class ABC(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
