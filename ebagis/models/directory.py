@@ -11,11 +11,12 @@ from rest_framework.reverse import reverse
 
 from .. import constants
 
+from .base import ABC
 from .mixins import DirectoryMixin, AOIRelationMixin
 from .file import MapDocument
 
 
-class Directory(DirectoryMixin, AOIRelationMixin, models.Model):
+class Directory(DirectoryMixin, AOIRelationMixin, ABC):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     _path_name = None
 
@@ -31,6 +32,10 @@ class Directory(DirectoryMixin, AOIRelationMixin, models.Model):
         if save:
             dir_obj.save()
         return dir_obj
+
+    @transaction.atomic
+    def update(self):
+        raise NotImplementedError
 
 
 class Maps(Directory):
@@ -51,10 +56,15 @@ class Maps(Directory):
 
 class PrismDir(Directory):
     versions = models.ManyToManyField("Prism", related_name="prismdir")
+    _singular = True
 
     @property
     def subdirectory_of(self):
         return self.aoi.path
+
+    @property
+    def _parent_object(self):
+        return self.aoi
 
     @classmethod
     @transaction.atomic
@@ -76,12 +86,4 @@ class PrismDir(Directory):
         filtered = self.versions.filter(created_at__lt=querydate)
         return filtered.latest("created_at").export(output_dir,
                                                     querydate=querydate)
-
-    def get_url(self, request):
-        kwargs = {}
-        view_name = "aoi-prism-list"
-        kwargs["pk"] = self.aoi_id
-        return reverse(view_name,
-                       kwargs=kwargs,
-                       request=request)
 

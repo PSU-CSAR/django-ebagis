@@ -19,6 +19,7 @@ from ..exceptions import AOIError
 from ..utils.validation import validate_aoi
 from ..utils.misc import make_short_name
 
+from .base import ABC
 from .mixins import CreatedByMixin, DirectoryMixin
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
 from .directory import PrismDir, Maps
@@ -56,6 +57,10 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
 
     class Meta:
         unique_together = ("name",)
+
+    @property
+    def _parent_object(self):
+        return None
 
     @classmethod
     def create_from_upload(cls, upload, temp_aoi_path):
@@ -184,6 +189,10 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
 
         return aoi
 
+    @transaction.atomic
+    def update(self):
+        raise NotImplementedError
+
     def export(self, output_dir, querydate=timezone.now(), outname=None):
         super(AOI, self).export(output_dir, querydate)
 
@@ -209,9 +218,4 @@ class AOI(CreatedByMixin, DirectoryMixin, models.Model):
         self.zones.export(outpath, querydate=querydate)
 
         return outpath
-
-    def get_url(self, request):
-        return reverse('aoi-detail',
-                       kwargs={'pk': self.id},
-                       request=request)
 

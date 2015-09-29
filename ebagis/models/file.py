@@ -14,21 +14,23 @@ from rest_framework.reverse import reverse
 
 from ..constants import URL_FILTER_QUERY_ARG_PREFIX, MULTIPLE_GDBS
 
+from .base import ABC
 from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
 from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
 
 
-class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
-           models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, ABC):
     content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
+    object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
     versions = GenericRelation(FileData, for_concrete_model=False)
-    comment = models.TextField(blank=True)
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")
+
+    @prooperty
+    def _parent_object(self):
+        return self.content_object
 
     @classmethod
     @transaction.atomic
@@ -48,31 +50,26 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
         data_class.create(input_file, file_obj, user)
         return file_obj
 
+    @transaction.atomic
+    def update(self):
+        raise NotImplementedError
+
     def export(self, output_dir, querydate=timezone.now()):
         super(File, self).export(output_dir, querydate)
         query = self.versions.filter(created_at__lte=querydate)
         return query.latest("created_at").export(output_dir)
 
-    def get_url(self, request):
-        name_key = URL_FILTER_QUERY_ARG_PREFIX + "name__iexact"
-
-        kwargs = {
-            URL_FILTER_QUERY_ARG_PREFIX + "aoi_id": self.content_object.aoi_id,
-            "pk": self.id,
-            name_key: self.content_object.name.lower(),
-        }
-
-        if kwargs[name_key] in MULTIPLE_GDBS:
-            kwargs[URL_FILTER_QUERY_ARG_PREFIX + "id"] = self.object_id
-
-        return reverse('geodatabase-' + type(self).__name__.lower() + '-detail',
-                       kwargs=kwargs,
-                       request=request)
-
 
 class XML(File):
     class Meta:
         proxy = True
+
+    @property
+    def _singular(self):
+        is_single = False
+        if self.content_object._classname == "hru":
+            is_single = True
+        return True
 
     @classmethod
     @transaction.atomic
@@ -87,6 +84,13 @@ class XML(File):
 class MapDocument(File):
     class Meta:
         proxy = True
+
+    def get_url(self, request):
+        if not self.aoi:
+            return super(File, self).get_url(request)
+        url = self.aoi.get_url()
+        url += self._classname + "s/" + self.pk
+        return url
 
     @classmethod
     @transaction.atomic

@@ -35,6 +35,13 @@ class HRUZonesData(CreatedByMixin, Directory):
     def subdirectory_of(self):
         return self.hruzones.path
 
+    @property
+    def _parent_object(self):
+        return self.hruzones
+
+    def get_url(self, request):
+        return super(HRUZonesData, self).get_url(request, no_model_name=True)
+
     @classmethod
     @transaction.atomic
     def create(cls, temp_hru_path, hruzones, user, id=None):
@@ -93,6 +100,10 @@ class HRUZones(Directory):
     @property
     def subdirectory_of(self):
         return self.zones.path
+
+    @property
+    def _parent_object(self):
+        return self.aoi
 
     @classmethod
     @transaction.atomic

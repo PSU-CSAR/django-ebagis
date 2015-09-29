@@ -92,6 +92,8 @@ class Geodatabase(ProxyMixin, Directory):
 
 
 class Geodatabase_IndividualArchive(Geodatabase):
+    _singular = True
+
     def __init__(self, *args, **kwargs):
         # override the default NO_ARCHIVING rule from the
         # directory class with INDIVIDUAL_ARCHIVING rule
@@ -115,6 +117,8 @@ class Geodatabase_GroupArchive(Geodatabase):
 
 
 class Geodatabase_ReadOnly(Geodatabase):
+    _singular = True
+
     def __init__(self, *args, **kwargs):
         # override default NO_ARCHIVING with READ_ONLY rule
         self._meta.get_field('archiving_rule').default = \
@@ -129,10 +133,17 @@ class Surfaces(Geodatabase_ReadOnly):
     class Meta:
         proxy = True
 
+    @property
+    def _parent_object(self):
+        return self.aoi
 
 class Layers(Geodatabase_IndividualArchive):
     class Meta:
         proxy = True
+
+    @property
+    def _parent_object(self):
+        return self.aoi
 
 
 class AOIdb(Geodatabase_ReadOnly):
@@ -141,21 +152,22 @@ class AOIdb(Geodatabase_ReadOnly):
     class Meta:
         proxy = True
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
 
 class Prism(Geodatabase_GroupArchive):
     @property
     def subdirectory_of(self):
         return self.aoi.prism.path
 
+    @property
+    def _parent_object(self):
+        return self.prismdir
+
     def get_url(self, request):
-        kwargs = {}
-        objtype = type(self).__name__.lower()
-        view_name = "aoi-prism-detail"
-        kwargs["pk"] = self.id
-        kwargs["FILTER__aoi_id"] = self.aoi_id
-        return reverse(view_name,
-                       kwargs=kwargs,
-                       request=request)
+        return super(Prism, self).get_url(request, no_model_name=True)
 
     class Meta:
         proxy = True
@@ -165,11 +177,19 @@ class Analysis(Geodatabase_IndividualArchive):
     class Meta:
         proxy = True
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
 
 class HRUZonesGDB(Geodatabase_ReadOnly):
     @property
     def subdirectory_of(self):
         return self.hru_hruGDB.path
+
+    @property
+    def _parent_object(self):
+        return self.hru_hruGDB
 
     @classmethod
     @transaction.atomic
@@ -229,6 +249,10 @@ class ParamGDB(Geodatabase_ReadOnly):
     def subdirectory_of(self):
         return self.hru_paramGDB.path
 
+    @property
+    def _parent_object(self):
+        return self.hru_paramGDB
+
     @classmethod
     @transaction.atomic
     def create(cls, geodatabase_path, user, aoi, hruzonedata, id=None):
@@ -260,3 +284,4 @@ class ParamGDB(Geodatabase_ReadOnly):
 
     class Meta:
         proxy = True
+
