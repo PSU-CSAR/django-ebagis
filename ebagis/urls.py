@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from django.conf.urls import patterns, include, url
-from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 
 from . import views
@@ -8,49 +7,21 @@ from . import views
 
 UUID = r"[a-fA-F0-9]{{32}}"
 ID_QUERY = r"(?P<{id}>{uuid})".format(uuid=UUID)
-PK_QUERY = ID_QUERY.format(id=pk)
+PK_QUERY = ID_QUERY.format(id="pk")
 AOI_QUERY = ID_QUERY.format(id="aoi_id")
 ZONE_QUERY = ID_QUERY.format(id="zones_id")
+PRISM_QUERY = ID_QUERY.format(id="prism_id")
 VERSION_QUERY = ID_QUERY.format(id="version_id")
+GEODATABASE_QUERY = ID_QUERY.format(id="geodatabase_id")
 PROXY_LIST = r"(?P<{base}_type>{proxy_name})"
 PROXY_DETAIL = r"{}/{}".format(PROXY_LIST, ID_QUERY)
 S = "s"
-
-
-def pattern_builder(model_name, list_view=None, detail_view=None,
-                    download_view=None):
-    patterns = []
-    if list_view:
-        patterns.append(url(r"^$",
-                        list_view, name="list"),
-    if detail_view:
-        patterns.append(url(r"^{}/$".format(PK_QUERY),
-                        detail_view, name="detail")
-    if download_view:
-        patterns.append(url(r"^{}/download/$".format(PK_QUERY),
-                        download_view, name="download")
-    return (patterns, model_name)
-
-
-def proxy_pattern_builder(model, list_view=None, detail_view=None,
-                          download_view=None):
-    model_types = [cls.__name__.lower() for cls in get_subclasses(model, [model])]
-    patterns = []
-    for type in model_types:
-        patterns.append(url(r"^{}/".format(type+S), include(pattern_builder(
-            type,
-            list_view=list_view,
-            detail_view=detail_view,
-            download_view=download_view,
-        ))))
-    return (patterns, model.__name__.lower())
 
 
 user_list = views.UserViewSet.as_view({
     "get": "list",
     "post": "create",
 })
-
 user_detail = views.UserViewSet.as_view({
     "get": "retrieve",
     "put": "update",
@@ -62,7 +33,6 @@ group_list = views.GroupViewSet.as_view({
     "get": "list",
     "post": "create",
 })
-
 group_detail = views.GroupViewSet.as_view({
     "get": "retrieve",
     "put": "update",
@@ -74,7 +44,6 @@ permission_list = views.PermissionViewSet.as_view({
     "get": "list",
     "post": "create",
 })
-
 permission_detail = views.PermissionViewSet.as_view({
     "get": "retrieve",
     "put": "update",
@@ -87,14 +56,12 @@ aoi_list = views.AOIViewSet.as_view({
     "put": "create",
     "post": "create",
 })
-
 aoi_detail = views.AOIViewSet.as_view({
     "get": "retrieve",
     "put": "update",
     "patch": "partial_update",
     "delete": "destroy",
 })
-
 aoi_download = views.AOIViewSet.as_view({
     "get": "download",
 })
@@ -109,7 +76,6 @@ prism_detail = views.PrismViewSet.as_view({
     "patch": "partial_update",
     "delete": "destroy"
 })
-
 prism_download = views.PrismViewSet.as_view({
     "get": "download",
 })
@@ -143,7 +109,7 @@ geodatabase_download = views.GeodatabaseViewSet.as_view({
     "get": "download",
 })
 
-file_list = view.FileViewSet.as_view({
+file_list = views.FileViewSet.as_view({
     "get": "list",
     "post": "create"
 })
@@ -165,35 +131,106 @@ download_detail = views.DownloadViewSet.as_view({
 })
 
 
-aoi_patterns=([
-    url(r"^$", aoi_list, name="list"),
-    url(r"^{}/$".format(PK_QUERY), aoi_detail, name="detail"),
-    url(r"^{}/download/$".format(PK_QUERY), aoi_download, name="download"),
-], 'aoi')
-
-geodatabase_patterns=([
-    url(r"^$", geodatabase_list, name="list"),
-    url(r"^{}/$".format(PK_QUERY), geodatabase_detail, name="detail"),
-    url(r"^{}/download/$".format(PK_QUERY), geodatabase_download, name="download"),
-], 'geodatabase')
-
-zones_patterns=([
-    url(r"^$", hruzones_list, name="list"),
-    url(r"^{}/$".format(PK_QUERY), hruzones_detail, name="detail"),
-    url(r"^{}/download/$".format(PK_QUERY), hruzones_download, name="download"),
-], 'hruzones')
-
-prism_patterns=([
-    url(r"^$", prism_list, name="list"),
-    url(r"^{}/$".format(PK_QUERY), prism_detail, name="detail"),
-    url(r"^{}/download/$".format(PK_QUERY), prism_download, name="download"),
-], 'prism')
-
-file_patterns=([
+file_patterns = ([
     url(r"^$", file_list, name="list"),
     url(r"^{}/$".format(PK_QUERY), file_detail, name="detail"),
     url(r"^{}/download/$".format(PK_QUERY), file_download, name="download"),
 ], 'file')
+
+file_patterns_no_id = ([
+    url(r"^$", file_detail, name="detail"),
+    url(r"^download/$", file_download, name="download"),
+], 'file')
+
+prism_patterns = ([
+    url(r"^$", prism_list, name="list"),
+    url(r"^{}/$".format(PK_QUERY), prism_detail, name="detail"),
+    url(r"^{}/download/$".format(PK_QUERY), prism_download, name="download"),
+    url(r"^{}/{}/layers/$".format(PRISM_QUERY, VERSION_QUERY), include(file_patterns), {'file_type': 'layer'}),
+    url(r"^{}/{}/rasters/$".format(PRISM_QUERY, VERSION_QUERY), include(file_patterns), {'file_type': 'raster'}),
+    url(r"^{}/{}/vectors/$".format(PRISM_QUERY, VERSION_QUERY), include(file_patterns), {'file_type': 'vector'}),
+    url(r"^{}/{}/tables/$".format(PRISM_QUERY, VERSION_QUERY), include(file_patterns), {'file_type': 'table'}),
+], 'prism')
+
+prism_patterns_no_id = ([
+    url(r"^$".format(PK_QUERY), prism_detail, name="detail"),
+    url(r"^{ownload/$".format(PK_QUERY), prism_download, name="download"),
+    url(r"^{}/layers/$".format(VERSION_QUERY), include(file_patterns), {'file_type': 'layer'}),
+    url(r"^{}/rasters/$".format(VERSION_QUERY), include(file_patterns), {'file_type': 'raster'}),
+    url(r"^{}/vectors/$".format(VERSION_QUERY), include(file_patterns), {'file_type': 'vector'}),
+    url(r"^{}/tables/$".format(VERSION_QUERY), include(file_patterns), {'file_type': 'table'}),
+], 'prism')
+
+geodatabase_patterns = ([
+    url(r"^$", geodatabase_list, name="list"),
+    url(r"^{}/$".format(PK_QUERY), geodatabase_detail, name="detail"),
+    url(r"^{}/download/$".format(PK_QUERY), geodatabase_download, name="download"),
+    url(r"^{}/layers/$".format(GEODATABASE_QUERY), include(file_patterns), {'file_type': 'layer'}),
+    url(r"^{}/rasters/$".format(GEODATABASE_QUERY), include(file_patterns), {'file_type': 'raster'}),
+    url(r"^{}/vectors/$".format(GEODATABASE_QUERY), include(file_patterns), {'file_type': 'vector'}),
+    url(r"^{}/tables/$".format(GEODATABASE_QUERY), include(file_patterns), {'file_type': 'table'}),
+], 'geodatabase')
+
+geodatabase_patterns_no_id = ([
+    url(r"^$", geodatabase_detail, name="detail"),
+    url(r"^download/$", geodatabase_download, name="download"),
+    url(r"^layers/$", include(file_patterns), {'file_type': 'layer'}),
+    url(r"^rasters/$", include(file_patterns), {'file_type': 'raster'}),
+    url(r"^vectors/$", include(file_patterns), {'file_type': 'vector'}),
+    url(r"^tables/$", include(file_patterns), {'file_type': 'table'}),
+], 'geodatabase')
+
+zones_patterns = ([
+    url(r"^$", hruzones_list, name="list"),
+    url(r"^{}/$".format(PK_QUERY), hruzones_detail, name="detail"),
+    url(r"^{}/download/$".format(PK_QUERY), hruzones_download, name="download"),
+
+    url(r"^{}/{}/xml/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns_no_id), {"file_type": "xml"}),
+
+    url(r"^{}/{}/param/$".format(ZONE_QUERY, VERSION_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "paramgdb"}),
+    url(r"^{}/{}/param/layers/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'layer'}),
+    url(r"^{}/{}/param/rasters/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'raster'}),
+    url(r"^{}/{}/param/vectors/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'vector'}),
+    url(r"^{}/{}/param/tables/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'table'}),
+
+    url(r"^{}/{}/hru/$".format(ZONE_QUERY, VERSION_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "hruzonesgdb"}),
+    url(r"^{}/{}/hru/layers/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'layer'}),
+    url(r"^{}/{}/hru/rasters/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'raster'}),
+    url(r"^{}/{}/hru/vectors/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'vector'}),
+    url(r"^{}/{}/hru/tables/$".format(ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'table'}),
+], 'hruzones')
+
+zones_patterns_no_id = ([
+    url(r"^{".format(PK_QUERY), hruzones_detail, name="detail"),
+    url(r"^{ownload/$".format(PK_QUERY), hruzones_download, name="download"),
+
+    url(r"^{}/xml/$".format(VERSION_QUERY), include(file_patterns_no_id), {"file_type": "xml"}),
+
+    url(r"^{}/param/$".format(VERSION_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "paramgdb"}),
+    url(r"^{}/param/layers/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'layer'}),
+    url(r"^{}/param/rasters/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'raster'}),
+    url(r"^{}/param/vectors/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'vector'}),
+    url(r"^{}/param/tables/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'table'}),
+
+    url(r"^{}/hru/$".format(VERSION_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "hruzonesgdb"}),
+    url(r"^{}/hru/layers/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'layer'}),
+    url(r"^{}/hru/rasters/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'raster'}),
+    url(r"^{}/hru/vectors/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'vector'}),
+    url(r"^{}/hru/tables/$".format(VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'table'}),
+], 'hruzones')
+
+aoi_patterns = ([
+    url(r"^$", aoi_list, name="list"),
+    url(r"^{}/$".format(PK_QUERY), aoi_detail, name="detail"),
+    url(r"^{}/download/$".format(PK_QUERY), aoi_download, name="download"),
+    url(r"^{}/surfaces/$".format(AOI_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "surfaces"}),
+    url(r"^{}/layers/$".format(AOI_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "layers"}),
+    url(r"^{}/aoidb/$".format(AOI_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "aoidb"}),
+    url(r"^{}/analysis/$".format(AOI_QUERY), include(geodatabase_patterns_no_id), {"geodatabase_type": "analysis"}),
+    url(r"^{}/prism/$".format(AOI_QUERY), include(prism_patterns_no_id)),
+    url(r"^{}/zones/$".format(AOI_QUERY), include(zones_patterns_no_id)),
+    url(r"^{}/maps/$".format(AOI_QUERY), include(file_patterns), {"file_type": "map"}),
+], 'aoi')
 
 
 urlpatterns = patterns(
@@ -250,54 +287,4 @@ urlpatterns = patterns(
     url(r"^tables/$", include(file_patterns, namespace="table-base"), {'file_type': 'table'}),
     url(r"^maps/$", include(file_patterns, namespace="map-base"), {'file_type': 'map'}),
     url(r"^xmls/$", include(file_patterns, namespace="xml-base"), {'file_type': 'xml'}),
-
-    # AOI Geodatabases
-    url(r"^aois/{}/surfaces/$".format(AOI_QUERY), include(geodatabase_patterns), {"geodatabase_type": "surfaces"}),
-    url(r"^aois/{}/surfaces/layers/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "surfaces", 'file_type': 'layer'}),
-    url(r"^aois/{}/surfaces/rasters/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "surfaces", 'file_type': 'raster'}),
-    url(r"^aois/{}/surfaces/vectors/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "surfaces", 'file_type': 'vector'}),
-    url(r"^aois/{}/surfaces/tables/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "surfaces", 'file_type': 'table'}),
-
-    url(r"^aois/{}/layers/$".format(AOI_QUERY), include(geodatabase_patterns), {"geodatabase_type": "layers"}),
-    url(r"^aois/{}/layers/layers/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "layers", 'file_type': 'layer'}),
-    url(r"^aois/{}/layers/rasters/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "layers", 'file_type': 'raster'}),
-    url(r"^aois/{}/layers/vectors/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "layers", 'file_type': 'vector'}),
-    url(r"^aois/{}/layers/tables/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "layers", 'file_type': 'table'}),
-
-    url(r"^aois/{}/aoidb/$".format(AOI_QUERY), include(geodatabase_patterns), {"geodatabase_type": "aoidb"}),
-    url(r"^aois/{}/aoidb/layers/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "aoidb", 'file_type': 'layer'}),
-    url(r"^aois/{}/aoidb/rasters/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "aoidb", 'file_type': 'raster'}),
-    url(r"^aois/{}/aoidb/vectors/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "aoidb", 'file_type': 'vector'}),
-    url(r"^aois/{}/aoidb/tables/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "aoidb", 'file_type': 'table'}),
-
-    url(r"^aois/{}/analysis/$".format(AOI_QUERY), include(geodatabase_patterns), {"geodatabase_type": "analysis"}),
-    url(r"^aois/{}/analysis/layers/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "analysis", 'file_type': 'layer'}),
-    url(r"^aois/{}/analysis/rasters/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "analysis", 'file_type': 'raster'}),
-    url(r"^aois/{}/analysis/vectors/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "analysis", 'file_type': 'vector'}),
-    url(r"^aois/{}/analysis/tables/$".format(AOI_QUERY), include(file_patterns), {"geodatabase_type": "analysis", 'file_type': 'table'}),
-
-    url(r"^aois/{}/prism/$".format(AOI_QUERY), include(geodatabase_patterns), {"geodatabase_type": "prismgdb"}),
-    url(r"^aois/{}/prism/{}/layers/$".format(AOI_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "prismgdb", 'file_type': 'layer'}),
-    url(r"^aois/{}/prism/{}/rasters/$".format(AOI_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "prismgdb", 'file_type': 'raster'}),
-    url(r"^aois/{}/prism/{}/vectors/$".format(AOI_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "prismgdb", 'file_type': 'vector'}),
-    url(r"^aois/{}/prism/{}/tables/$".format(AOI_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "prismgdb", 'file_type': 'table'}),
-
-    url(r"^aois/{}/zones/$".format(AOI_QUERY), include(zones_patterns)),
-    url(r"^aois/{}/zones/{}/{}/param/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(geodatabase_patterns), {"geodatabase_type": "paramgdb"}),
-    url(r"^aois/{}/zones/{}/{}/hru/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(geodatabase_patterns), {"geodatabase_type": "hruzonesgdb"}),
-    url(r"^aois/{}/zones/{}/{}/xml/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"file_type": "xml"}),
-
-    url(r"^aois/{}/zones/{}/{}/param/layers/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'layer'}),
-    url(r"^aois/{}/zones/{}/{}/param/rasters/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'raster'}),
-    url(r"^aois/{}/zones/{}/{}/param/vectors/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'vector'}),
-    url(r"^aois/{}/zones/{}/{}/param/tables/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "paramgdb", 'file_type': 'table'}),
-
-    url(r"^aois/{}/zones/{}/{}/hru/layers/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'layer'}),
-    url(r"^aois/{}/zones/{}/{}/hru/rasters/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'raster'}),
-    url(r"^aois/{}/zones/{}/{}/hru/vectors/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'vector'}),
-    url(r"^aois/{}/zones/{}/{}/hru/tables/$".format(AOI_QUERY, ZONE_QUERY, VERSION_QUERY), include(file_patterns), {"geodatabase_type": "hruzonesgdb", 'file_type': 'table'}),
-
-    # other
-    url(r"^aois/{}/maps/$".format(AOI_QUERY), include(file_patterns), {"file_type": "map"}),
-
 )
