@@ -30,7 +30,7 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
     objects = models.GeoManager()
 
     # allow recursive parent-child relations
-    parent_aoi = models.ForeginKey("self", null=True, blank=True,
+    parent_aoi = models.ForeignKey("self", null=True, blank=True,
                                    related_name="child_aois")
 
     # data

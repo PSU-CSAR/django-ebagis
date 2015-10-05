@@ -57,7 +57,7 @@ def make_unique_directory(name, path,
         limit = True
     # if limit is a postive integer, don't need to do anything
     elif type(limit) == int and limit > 0:
-        continue
+        pass
     # if limit is neither of these then we don't know what to do
     else:
         raise TypeError("limit is not positive integer or None. Unable to proceed")

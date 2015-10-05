@@ -29,27 +29,6 @@ def generate_random_name(layershortname, ext=""):
     return layershortname + "_" + random_string() + ext
 
 
-def get_queryset_arguments(object):
-    """This function is used by some of the view functions to
-    determine what URL arguments are to be used to filter instance
-    queries. For example, finding all layers from a geodatabase in
-    a specific AOI, the goedatabase and AOI ids would be used as
-    the filters."""
-    from ..constants import URL_FILTER_QUERY_ARG_PREFIX
-
-    query_dict = {}
-    for kwarg in object.kwargs:
-        if kwarg.startswith(URL_FILTER_QUERY_ARG_PREFIX):
-            query_lookup = kwarg.replace(
-                URL_FILTER_QUERY_ARG_PREFIX,
-                '',
-                1
-            )
-            query_value = object.kwargs.get(kwarg)
-            query_dict[query_lookup] = query_value
-    return query_dict
-
-
 def get_subclasses(Class, list_of_subclasses=[], depth=None):
     """Function used to find all subclasses of a class. An optional
     depth parameter can be supplied to limit recursion to x number

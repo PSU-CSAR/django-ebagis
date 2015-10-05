@@ -6,7 +6,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from ..models.aoi import AOI
 
 from .user import UserSerializer
-from . import (
+from .data import (
     GeodatabaseSerializer, FileSerializer, HRUZonesSerializer,
     PrismDirSerializer,
 )

@@ -3,8 +3,8 @@ from rest_framework import viewsets
 from ..models.zones import HRUZones
 from ..models.directory import PrismDir
 
-from ..serializers.geodatabase import (
-    HRUZonesSerializer, PrismSerializer,
+from ..serializers.data import (
+    HRUZonesSerializer, PrismDirSerializer,
 )
 
 from .mixins import UploadMixin, UpdateMixin, DownloadMixin
@@ -12,7 +12,7 @@ from .mixins import UploadMixin, UpdateMixin, DownloadMixin
 
 class PrismViewSet(UploadMixin, UpdateMixin, DownloadMixin,
                    viewsets.ModelViewSet):
-    serializer_class = PrismSerializer
+    serializer_class = PrismDirSerializer
 
     def get_queryset(self):
         filter = {}
@@ -34,4 +34,3 @@ class HRUZonesViewSet(UploadMixin, UpdateMixin, DownloadMixin,
             filter["aoi_id"] = self.kwargs["aoi_id"]
 
         return HRUZones.objects.get(**filter)
-

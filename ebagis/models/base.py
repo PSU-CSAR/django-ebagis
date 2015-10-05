@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 
 class ABC(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    comment = models.TextField(blank=True)
+    #comment = models.TextField(blank=True)
     _singular = False
 
     @property
@@ -38,4 +38,3 @@ class ABC(models.Model):
 
     class Meta:
         abstract = True
-

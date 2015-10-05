@@ -7,7 +7,7 @@ from . import models
 
 
 UUID = r"[a-fA-F0-9]{{32}}"
-ID_QUERY = r"(?P<{id}>{uuid})".format(uuid=UUID)
+ID_QUERY = r"(?P<{id}>{uuid})".format(uuid=UUID, id="{id}")
 PK_QUERY = ID_QUERY.format(id="pk")
 AOI_QUERY = ID_QUERY.format(id="aoi_id")
 ZONE_QUERY = ID_QUERY.format(id="zones_id")

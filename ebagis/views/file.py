@@ -2,7 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from ..models import File
 
-from ..serializers import FileSerializer
+from ..serializers.data import FileSerializer
 
 from .mixins import UploadMixin, UpdateMixin, DownloadMixin
 from .base import BaseViewSet

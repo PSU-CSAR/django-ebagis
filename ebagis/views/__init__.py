@@ -4,12 +4,13 @@ from __future__ import absolute_import
 from .aoi import AOIViewSet
 from .base import BaseViewSet
 from .directory import PrismViewSet, HRUZonesViewSet
-from .downlaod import DownloadViewSet
+from .download import DownloadViewSet
 from .file import FileViewSet
 from .geodatabase import GeodatabaseViewSet
 from .misc import validate_token
-from .mixins import MultiSerializerViewSet
+from .mixins import (
+    MultiSerializerMixin, UploadMixin, UpdateMixin, DownloadMixin
+)
 from .root import APIRoot
-from .upload import AOIUploadView, UpdateUploadView
+from .upload import UploadView
 from .users import UserViewSet, GroupViewSet, PermissionViewSet
-

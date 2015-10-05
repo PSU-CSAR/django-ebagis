@@ -2,11 +2,12 @@ from __future__ import absolute_import
 from celery import shared_task
 import os
 
-from .models.download import Download
+from ..models.download import Download
 
-from .utilities import tempdirectory, zip_directory
+from ..utils.filesystem import tempdirectory
+from ..utils.zipfile import zip_directory
 
-from .settings import TEMP_DIRECTORY, DOWNLOADS_DIRECTORY
+from ..settings import TEMP_DIRECTORY, DOWNLOADS_DIRECTORY
 
 
 @shared_task
@@ -30,4 +31,3 @@ def export_data(download_id):
 
     download.save()
     return download.id
-

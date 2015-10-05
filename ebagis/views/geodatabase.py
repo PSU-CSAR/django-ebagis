@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from ..models.aoi import Geodatabase
+from ..models.geodatabase import Geodatabase
 
-from ..serializers.geodatabase import GeodatabaseSerializer
+from ..serializers.data import GeodatabaseSerializer
 
 from .mixins import UpdateMixin, DownloadMixin
 
