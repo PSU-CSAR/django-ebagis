@@ -1,13 +1,10 @@
 from __future__ import absolute_import
-import os
 
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from ..models.aoi import AOI
 from ..models.upload import Upload
-
 from ..utils.validation import validate_path
 
 from .task import TaskSerializer

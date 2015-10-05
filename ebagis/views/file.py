@@ -1,46 +1,42 @@
-from rest_framework import viewsets
+from django.contrib.contenttypes.models import ContentType
 
-# model objects
-from ..models.geodatabase import Geodatabase
+from ..models import File
 
-# serializers
-from ..serializers.file import (
-    RasterSerializer, VectorSerializer, TableSerializer, XMLSerializer,
-    MapDocSerializer
-)
+from ..serializers import FileSerializer
 
-# other
-from ..utilties import get_queryset_arguments
+from .mixins import UploadMixin, UpdateMixin, DownloadMixin
+from .base import BaseViewSet
 
 
-class GeodatabaseXMLViewSet(viewsets.ModelViewSet):
-    serializer_class = XMLSerializer
+class FileViewSet(UploadMixin, UpdateMixin, DownloadMixin,
+                  BaseViewSet):
+    serializer_class = FileSerializer
 
     def get_queryset(self):
-        query_dict = get_queryset_arguments(self)
-        return Geodatabase.objects.get(**query_dict).xmls.all()
+        filter = {}
 
+        # get file class to build queryset defaulting to
+        # base File class if not set
+        file_type = self.kwargs.get("file_type", None)
+        if not file_type:
+            file_type = File
 
-class GeodatabaseTableViewSet(viewsets.ModelViewSet):
-    serializer_class = TableSerializer
+        if "geodatabase_id" in self.kwargs:
+            filter["object_id"] = self.kwargs["geodatabase_id"]
+        elif (file_type.__class__.__name__ == "XML" and "zones" in self.kwargs) or "prism" in self.kwargs:
+            filter["object_id"] = self.kwargs["version_id"]
+        elif "zones" in self.kwargs and "geodatabase_type" in self.kwargs:
+            filter["object_id"] = self.kwargs["geodatabase_type"].objects.get(
+                hruzonesdata=self.kwargs["version_id"]
+            )
+        elif "geodatabase_type" in self.kwargs and "aoi_id" in self.kwargs:
+            filter["content_type"] = ContentType.objects.get_for_model(
+                self.kwargs["geodatabase_type"],
+                for_concrete_model=False,
+            )
+            filter["aoi_id"] = self.kwargs["aoi_id"]
+        else:
+            return None
 
-    def get_queryset(self):
-        query_dict = get_queryset_arguments(self)
-        return Geodatabase.objects.get(**query_dict).tables.all()
-
-
-class GeodatabaseVectorViewSet(viewsets.ModelViewSet):
-    serializer_class = VectorSerializer
-
-    def get_queryset(self):
-        query_dict = get_queryset_arguments(self)
-        return Geodatabase.objects.get(**query_dict).vectors.all()
-
-
-class GeodatabaseRasterViewSet(viewsets.ModelViewSet):
-    serializer_class = RasterSerializer
-
-    def get_queryset(self):
-        query_dict = get_queryset_arguments(self)
-        return Geodatabase.objects.get(**query_dict).rasters.all()
+        return file_type.objects.get(**filter)
 

@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from .. import constants, utilities
+from .. import constants
 
 from ..settings import AOI_DIRECTORY, GEO_WKID
 
@@ -15,6 +15,7 @@ from ..exceptions import AOIError
 
 from ..utils.validation import validate_aoi
 from ..utils.misc import make_short_name
+from ..utils import gis
 
 from .base import ABC
 from .mixins import CreatedByMixin, DirectoryMixin
@@ -43,9 +44,9 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
                                  null=True, blank=True)
     analysis = models.OneToOneField(Analysis, related_name="aoi_analysis",
                                     null=True, blank=True)
-    maps = models.OneToOneField(Maps, related_name="aoi_maps",
+    _maps = models.OneToOneField(Maps, related_name="aoi_maps",
                                 null=True, blank=True)
-    zones = models.OneToOneField(Zones, related_name="aoi_zones",
+    _zones = models.OneToOneField(Zones, related_name="aoi_zones",
                                  null=True, blank=True)
 
     # for making file system changes
@@ -57,6 +58,14 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
     @property
     def _parent_object(self):
         return None
+
+    @property
+    def maps(self):
+        return self._maps.maps
+
+    @property
+    def zones(self):
+        return self._zones.hruzones
 
     @classmethod
     def create_from_upload(cls, upload, temp_aoi_path):
@@ -87,16 +96,16 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             raise AOIError(errormsg)
 
         # get multipolygon WKT from AOI Boundary Layer
-        wkt, crs_wkt = utilities.get_multipart_wkt_geometry(
+        wkt, crs_wkt = gis.get_multipart_wkt_geometry(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
             layername=constants.AOI_BOUNDARY_LAYER
         )
 
-        crs = utilities.create_spatial_ref_from_wkt(crs_wkt)
+        crs = gis.create_spatial_ref_from_wkt(crs_wkt)
 
-        if utilities.get_authority_code_from_spatial_ref(crs) != GEO_WKID:
-            dst_crs = utilities.create_spatial_ref_from_EPSG(GEO_WKID)
-            wkt = utilities.reproject_wkt(wkt, crs, dst_crs)
+        if gis.get_authority_code_from_spatial_ref(crs) != GEO_WKID:
+            dst_crs = gis.create_spatial_ref_from_EPSG(GEO_WKID)
+            wkt = gis.reproject_wkt(wkt, crs, dst_crs)
 
         aoi = cls(name=aoi_name,
                   shortname=aoi_shortname,
@@ -156,6 +165,7 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             # import prism.gdb -- need to add dir first, then add prism to it
             aoi.prism = PrismDir.create(
                 aoi,
+                user,
             )
             aoi.save()
             aoi.prism.add_prism(

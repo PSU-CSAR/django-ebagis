@@ -56,7 +56,7 @@ class DownloadViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             return download_view.download(
                 request,
-                ContentType.objects.get_for_model(object.__class__),
+                ContentType.objects.get_for_model(object),
                 object.pk
             )
         else:

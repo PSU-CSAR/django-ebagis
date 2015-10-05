@@ -1,10 +1,7 @@
+from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
-
-# custom mixins
-from .mixins import MultiSerializerViewSet
 
 # model objects
 from ..models.aoi import AOI
@@ -13,20 +10,16 @@ from ..models.aoi import AOI
 from ..serializers.aoi import (
     AOIListSerializer, AOIGeoListSerializer, AOISerializer, AOIGeoSerializer,
 )
-from ..serializers.geodatabase import (
-    SurfacesSerializer, LayersSerializer, AOIdbSerializer, AnalysisSerializer,
-    PrismDirSerializer
-)
 
 # customer renderers
 from ..renderers import GeoJSONRenderer
 
-# up- and down-load views
-from .upload import UploadView
-from .download import DownloadViewSet
+# custom mixins
+from .mixins import UploadMixin, UpdateMixin, DownloadMixin, MultiSerializerMixin
 
 
-class AOIViewSet(MultiSerializerViewSet):
+class AOIViewSet(UploadMixin, UpdateMixin, DownloadMixin,
+                 MultiSerializerMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows AOIs to be viewed or edited.
     """
@@ -68,40 +61,3 @@ class AOIViewSet(MultiSerializerViewSet):
             serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        return UploadView.new_upload(AOI, request)
-
-    @detail_route()
-    def surfaces(self, request, *args, **kwargs):
-        surfaces = self.get_object().surfaces
-        serializer = SurfacesSerializer(surfaces, context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route()
-    def layers(self, request, *args, **kwargs):
-        layers = self.get_object().layers
-        serializer = LayersSerializer(layers, context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route()
-    def aoidb(self, request, *args, **kwargs):
-        aoidb = self.get_object().aoidb
-        serializer = AOIdbSerializer(aoidb, context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route()
-    def analysis(self, request, *args, **kwargs):
-        analysis = self.get_object().analysis
-        serializer = AnalysisSerializer(analysis, context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route()
-    def prism(self, request, *args, **kwargs):
-        prism = self.get_object().prism
-        serializer = PrismDirSerializer(prism, context={'request': request})
-        return Response(serializer.data)
-
-    @detail_route()
-    def download(self, request, *args, **kwargs):
-        aoi = self.get_object()
-        return DownloadViewSet.new_download(aoi, request)

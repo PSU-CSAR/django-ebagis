@@ -9,11 +9,11 @@ from django.db import transaction
 from .. import constants
 
 from .base import ABC
-from .mixins import DirectoryMixin, AOIRelationMixin
+from .mixins import DirectoryMixin, AOIRelationMixin, CreatedByMixin
 from .file import MapDocument
 
 
-class Directory(DirectoryMixin, AOIRelationMixin, ABC):
+class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
     _path_name = None
 
     class Meta:
@@ -21,10 +21,10 @@ class Directory(DirectoryMixin, AOIRelationMixin, ABC):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi, name=None, save=True, id=None):
+    def create(cls, aoi, user, name=None, save=True, id=None):
         if not name:
             name = cls._path_name if cls._path_name else cls.__name__.lower()
-        dir_obj = cls(aoi=aoi, name=name, id=id)
+        dir_obj = cls(aoi=aoi, name=name, id=id, created_by=user)
         if save:
             dir_obj.save()
         return dir_obj
@@ -64,11 +64,12 @@ class PrismDir(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi, id=None):
+    def create(cls, aoi, user, id=None):
         prismdir_obj = super(PrismDir, cls).create(
             aoi,
             name=constants.PRISM_DIR_NAME,
-            id=id
+            id=id,
+            created_by=user,
         )
 
         return prismdir_obj

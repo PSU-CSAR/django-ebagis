@@ -1,5 +1,7 @@
-from rest_framework import viewsets
 from rest_framework.decorators import detail_route
+
+from .upload import UploadView
+from .download import DownloadViewSet
 
 
 class MultiSerializerMixin(object):
@@ -7,7 +9,7 @@ class MultiSerializerMixin(object):
 
     Use like:
 
-        class SomeViewSet(MultiSerializerViewSet):
+    class SomeViewSet(MultiSerializerViewSet):
         model = models.SomeModel
 
         serializers = {

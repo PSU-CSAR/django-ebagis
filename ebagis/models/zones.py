@@ -8,18 +8,15 @@ from django.db import transaction
 from .. import constants
 
 from .directory import Directory
-from .mixins import CreatedByMixin
 from .geodatabase import HRUZonesGDB, ParamGDB
 from .file import XML
 
 
-class HRUZonesData(CreatedByMixin, Directory):
+class HRUZonesData(Directory):
     xml = models.OneToOneField(XML, related_name="hru_xml", null=True)
     hruzonesgdb = models.OneToOneField(HRUZonesGDB,
-                                       related_name="hru_hruGDB",
                                        null=True)
     paramgdb = models.OneToOneField(ParamGDB,
-                                    related_name="hru_paramGDB",
                                     null=True)
     hruzones = models.ForeignKey("HRUZones", related_name="versions")
 
@@ -111,7 +108,8 @@ class HRUZones(Directory):
         hruzones_obj = HRUZones(aoi=zones.aoi,
                                 name=hru_name,
                                 zones=zones,
-                                id=id)
+                                id=id,
+                                created_by=user)
         hruzones_obj.save()
         HRUZonesData.create(os.path.join(temp_zones_path, hru_name),
                             hruzones_obj,
@@ -136,7 +134,7 @@ class Zones(Directory):
     @classmethod
     @transaction.atomic
     def create(cls, input_zones_dir, user, aoi, id=None):
-        zones_obj = super(Zones, cls).create(aoi, id=id)
+        zones_obj = super(Zones, cls).create(aoi, id=id, created_by=user)
 
         if os.path.exists(input_zones_dir):
             hruzones = [d for d in os.listdir(input_zones_dir)
@@ -159,3 +157,4 @@ class Zones(Directory):
             hruzone.export(outpath, querydate)
 
         return outpath
+
