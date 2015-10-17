@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from django.http import HttpResponse
 from django.contrib.contenttypes.models import ContentType
 
@@ -14,7 +16,7 @@ from ..models.download import Download
 from ..serializers.download import DownloadSerializer
 
 # other
-from ..tasks.export import export_data
+from ..tasks import export_data
 
 
 class DownloadViewSet(viewsets.ModelViewSet):

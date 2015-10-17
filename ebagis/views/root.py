@@ -6,7 +6,7 @@ from rest_framework.reverse import reverse
 class APIRoot(APIView):
     def get(self, request):
         return Response({
-            'AOIs': reverse('aoi-list', request=request),
+            'AOIs': reverse('aoi-base:list', request=request),
             'Uploads': reverse('upload-list', request=request),
             'Downloads': reverse('download-list', request=request),
             'Users': reverse('user-list', request=request),

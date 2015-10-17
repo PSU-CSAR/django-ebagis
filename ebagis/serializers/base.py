@@ -39,4 +39,3 @@ class BaseSerializer(serializers.Serializer):
             url = parent.get_url(self.request)
 
         return url
-

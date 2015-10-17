@@ -22,7 +22,7 @@ class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     path = models.CharField(max_length=1024, unique=True)
     encoding = models.CharField(max_length=20, null=True, blank=True)
     content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
+    object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
     @classmethod

@@ -60,7 +60,8 @@ def make_unique_directory(name, path,
         pass
     # if limit is neither of these then we don't know what to do
     else:
-        raise TypeError("limit is not positive integer or None. Unable to proceed")
+        raise TypeError("limit is not positive integer or None." +
+                        " Unable to proceed")
 
     # postfix starts as empty string unless always_append is True
     postfix = ""
@@ -89,10 +90,11 @@ def make_unique_directory(name, path,
         # if limit is an integer, then we need to subtract one
         # then we need to check if limit is now 0. If so,
         # we need to raise an exception indicating failure.
-        if not limit is True:
+        if limit is not True:
             limit -= 1
             if limit <= 0:
-                raise LimitError("Postfix limit was reached before directory could be created.")
+                raise LimitError("Postfix limit was reached before directory" +
+                                 " could be created.")
 
         # generate the next postfix based on the iteration
         postfix = generate_postfix(iteration, sequential_postfix)
@@ -101,20 +103,22 @@ def make_unique_directory(name, path,
 
 
 @contextmanager
-def tempdirectory(suffix="", prefix="", dir=None):
+def tempdirectory(suffix="", prefix="", dir=None, do_not_remove=False):
     """A context manager for creating a temporary directory
     that will automatically be removed when it is no longer
     in context."""
     from tempfile import mkdtemp
     from shutil import rmtree
     tmpdir = mkdtemp(suffix=suffix, prefix=prefix, dir=dir)
+    was_exception = False
     try:
         yield tmpdir
     except Exception as e:
+        was_exception = True
         raise e
     finally:
-        rmtree(tmpdir)
-        pass
+        if not do_not_remove or not was_exception:
+            rmtree(tmpdir)
 
 
 def get_path_from_tempdir(tempdir):

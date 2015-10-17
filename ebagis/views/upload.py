@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import logging
 import uuid
 
@@ -17,7 +19,7 @@ from ..models.upload import Upload
 from ..serializers.upload import UploadSerializer
 
 # other
-from ..tasks.upload import process_upload
+from ..tasks import process_upload
 
 
 class UploadView(ChunkedUploadView):
@@ -36,12 +38,19 @@ class UploadView(ChunkedUploadView):
                    parent_object_instance=None):
         """
         """
+        # once we have modified the upload request appropriately, we
+        # can call this view again with the defaul method and it will
+        # create the upload from our new request object
         upload_view = cls()
 
+        print request
+        print request.data
+
         # set the upload object content_type
-        upload__model_class_name = upload_model_class.__name__
+        upload_model_class_name_lower = upload_model_class.__name__.lower()
+        print upload_model_class_name_lower
         request.data["content_type"] = \
-            ContentType.objects.get(model=upload__model_class_name)
+            ContentType.objects.get(model=upload_model_class_name_lower).pk
 
         # we will assume the upload is an update
         # until proven otherwise
@@ -65,10 +74,12 @@ class UploadView(ChunkedUploadView):
         # parameters to our request
         if parent_object_instance:
             request.data["parent_content_type"] = \
-                ContentType.objects.get_for_model(parent_object_instance)
+                ContentType.objects.get_for_model(parent_object_instance).pk
             request.data["parent_object_id"] = \
                 parent_object_instance.id
 
+        print request
+        print request.data
         logging.info(request.data)
 
         if request.method == 'PUT':
@@ -88,8 +99,9 @@ class UploadView(ChunkedUploadView):
 
             # if an object does not already have that UUID
             # then we can use it and break out of the loop
-            if not model.objects.get(pk=id):
+            try:
+                model.objects.get(pk=id)
+            except model.DoesNotExist:
                 break
 
         return id
-

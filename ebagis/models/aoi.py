@@ -45,9 +45,9 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
     analysis = models.OneToOneField(Analysis, related_name="aoi_analysis",
                                     null=True, blank=True)
     _maps = models.OneToOneField(Maps, related_name="aoi_maps",
-                                null=True, blank=True)
-    _zones = models.OneToOneField(Zones, related_name="aoi_zones",
                                  null=True, blank=True)
+    _zones = models.OneToOneField(Zones, related_name="aoi_zones",
+                                  null=True, blank=True)
 
     # for making file system changes
     subdirectory_of = AOI_DIRECTORY
@@ -84,7 +84,8 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path, comment="", id=None):
+    def create(cls, aoi_name, aoi_shortname, user,
+               temp_aoi_path, comment="", id=None):
         # validate AOI to import
         aoi_errors = validate_aoi(temp_aoi_path)
 
@@ -146,12 +147,13 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             aoi.save()
 
             # import HRU Zones
-            aoi.zones = Zones.create(
+            aoi._zones = Zones.create(
                 os.path.join(temp_aoi_path,
                              constants.ZONES_DIR_NAME),
                 user,
                 aoi,
             )
+            aoi.save()
 
             # import analysis.gdb
             aoi.analysis = Analysis.create(
@@ -182,7 +184,9 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             # import param/paramdata.gdb
 
             # import map docs in maps directory
-            aoi.maps = Maps.create(aoi=aoi, name=constants.MAPS_DIR_NAME)
+            aoi._maps = Maps.create(aoi=aoi,
+                                    user=user,
+                                    name=constants.MAPS_DIR_NAME)
             aoi.save()
 
         except:
@@ -224,4 +228,3 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
         self.zones.export(outpath, querydate=querydate)
 
         return outpath
-

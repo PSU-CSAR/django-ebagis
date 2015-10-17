@@ -17,7 +17,8 @@ class HRUZonesData(Directory):
     hruzonesgdb = models.OneToOneField(HRUZonesGDB,
                                        null=True)
     paramgdb = models.OneToOneField(ParamGDB,
-                                    null=True)
+                                    null=True,
+                                    related_name="hru_zones_data")
     hruzones = models.ForeignKey("HRUZones", related_name="versions")
 
     def __init__(self, *args, **kwargs):
@@ -56,7 +57,7 @@ class HRUZonesData(Directory):
         hruzones_gdb_name = hruzones.name + constants.GDB_EXT
         hru_gdb_path = os.path.join(temp_hru_path, hruzones_gdb_name)
         hru_gdb_path_underscore = os.path.join(temp_hru_path,
-                                               "_" +  hruzones_gdb_name)
+                                               "_" + hruzones_gdb_name)
         if os.path.exists(hru_gdb_path_underscore):
             hru_gdb_path = hru_gdb_path_underscore
 
@@ -134,7 +135,8 @@ class Zones(Directory):
     @classmethod
     @transaction.atomic
     def create(cls, input_zones_dir, user, aoi, id=None):
-        zones_obj = super(Zones, cls).create(aoi, id=id, created_by=user)
+        zones_obj = super(Zones, cls).create(aoi, id=id, user=user)
+        zones_obj.save()
 
         if os.path.exists(input_zones_dir):
             hruzones = [d for d in os.listdir(input_zones_dir)
@@ -157,4 +159,3 @@ class Zones(Directory):
             hruzone.export(outpath, querydate)
 
         return outpath
-

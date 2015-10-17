@@ -68,7 +68,7 @@ def validate_aoi(aoi_path):
 
     # check to see that path is valid
     if not arcpy.Exists(aoi_path):
-        errorlist.append("AOI path is not valid.")
+        errorlist.append("AOI path is not valid: {}".format(aoi_path))
         return errorlist
 
     # check for aoi boundary raster layer

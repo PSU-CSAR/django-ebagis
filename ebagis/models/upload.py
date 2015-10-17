@@ -16,9 +16,12 @@ class Upload(ChunkedUpload):
                                        for_concrete_model=False)
     is_update = models.BooleanField(default=False)
     parent_object_content_type = \
-        models.ForeignKey(ContentType, related_name="upload_parent")
+        models.ForeignKey(ContentType, related_name="upload_parent",
+                          null=True, blank=True)
     parent_object_id = models.UUIDField(null=True, blank=True)
+    parent_object = GenericForeignKey('parent_object_content_type',
+                                      'parent_object_id',
+                                      for_concrete_model=False)
     comment = models.TextField(blank=True)
     task = models.ForeignKey(TaskMeta, related_name='aoi_upload',
                              null=True, blank=True)
-

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 def zip_directory(directory_path, zip_path):
     """Takes an input directory path and an output zip path
     and zips the contents of the directory into a zipfile at

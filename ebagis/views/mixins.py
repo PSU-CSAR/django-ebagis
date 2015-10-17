@@ -67,4 +67,3 @@ class DownloadMixin(object):
     def download(self, request, *args, **kwargs):
         object = self.get_object()
         return DownloadViewSet.new_download(object, request)
-

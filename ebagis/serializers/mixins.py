@@ -8,4 +8,3 @@ class URLMixin(object):
 
     def get_url(self, obj):
         return obj.get_url(self.context['request'])
-

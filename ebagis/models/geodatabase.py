@@ -46,7 +46,7 @@ class Geodatabase(ProxyMixin, Directory):
     @classmethod
     @transaction.atomic
     def create(cls, geodatabase_path, user, aoi, id=None):
-        gdb_obj = super(Geodatabase, cls).create(aoi, id=id, created_by=user)
+        gdb_obj = super(Geodatabase, cls).create(aoi, id=id, user=user)
 
         # get all geodatabase layers
         gdb = arcpyGeodatabase.Open(geodatabase_path)
@@ -185,11 +185,11 @@ class Analysis(Geodatabase_IndividualArchive):
 class HRUZonesGDB(Geodatabase_ReadOnly):
     @property
     def subdirectory_of(self):
-        return self.hruzonesdata.path
+        return self.hru_zones_data.path
 
     @property
     def _parent_object(self):
-        return self.hruzonesdata
+        return self.hru_zones_data
 
     @classmethod
     @transaction.atomic
@@ -198,7 +198,7 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
         """
         # specifically calling super on geodatabase as need to get to
         # create method on directory class, not the create method
-        # on the geodatabase class, from which HRUZonesGDB inherits
+        # on the geodatabase class from which HRUZonesGDB inherits,
         # because we want to do something different than other gdbs
         # also, need to not save on create as subdirectory_of won't work
         gdb_obj = super(Geodatabase, cls).create(
@@ -206,14 +206,14 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
             name=hruzonedata.name,
             save=False,
             id=id,
-            created_by=user,
+            user=user,
         )
 
         # this has a one-to-one relation with its containing model
         # that has not been created yet, so we need to "force" the
         # relation on this end to make the subdirectory_of property
         # actually be calculable and allow saving HRUZonesGDB instance
-        gdb_obj.hruzonesdata = hruzonedata
+        gdb_obj.hru_zones_data = hruzonedata
         gdb_obj.save()
 
         # get all geodatabase layers
@@ -248,11 +248,11 @@ class ParamGDB(Geodatabase_ReadOnly):
 
     @property
     def subdirectory_of(self):
-        return self.hruzonesdata.path
+        return self.hru_zones_data.path
 
     @property
     def _parent_object(self):
-        return self.hruzonesdata
+        return self.hru_zones_data
 
     @classmethod
     @transaction.atomic
@@ -265,14 +265,14 @@ class ParamGDB(Geodatabase_ReadOnly):
             aoi,
             save=False,
             id=id,
-            created_by=user,
+            user=user,
         )
 
         # this has a one-to-one relation with its containing model
         # that has not been created yet, so we need to "force" the
         # relation on this end to make the subdirectory_of property
         # actually be calculable and allow saving ParamGDB instance
-        gdb_obj.hruzonesdata = hruzonedata
+        gdb_obj.hru_zones_data = hruzonedata
         gdb_obj.save()
 
         # get all geodatabase layers
@@ -286,4 +286,3 @@ class ParamGDB(Geodatabase_ReadOnly):
 
     class Meta:
         proxy = True
-

@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 
 class ABC(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    #comment = models.TextField(blank=True)
+    comment = models.TextField(blank=True)
     _singular = False
 
     @property
@@ -22,8 +22,8 @@ class ABC(models.Model):
     def get_url(self, request, no_model_name=False):
         if not self._parent_object:
             view = self._classname + "-base:detail"
-            kwargs = {"pk": self.pk}
-            return reverse(view, kwargs, request)
+            kwargs = {"pk": str(self.pk)}
+            return reverse(view, kwargs=kwargs, request=request)
 
         url = self._parent_object.get_url()
 

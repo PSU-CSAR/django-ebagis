@@ -13,16 +13,18 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def get_result(self, obj):
         if obj.status == 'SUCCESS':
-            id, content_type = obj.result.split(",")
+            pk, content_type = obj.result.split(",")
 
             # TODO: the reverse won't work, need to use id and content type
             # to find exact object instance and build URL from it
 
-            upload_class = ContentType.model_class(content_type)
+            upload_class = ContentType.model_class(
+                ContentType.objects.get(model=content_type)
+            )
 
-            return reverse(upload_class.__name__.lower() + '-detail',
-                           kwargs={'pk': id},
-                           request=self.context['request'])
+            return upload_class.objects.get(pk=pk).get_url(
+                self.context['request']
+            )
         else:
             return obj.result
 

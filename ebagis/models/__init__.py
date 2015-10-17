@@ -12,7 +12,7 @@ from .file_data import (
 from .geodatabase import (
     Geodatabase, Geodatabase_IndividualArchive, Geodatabase_GroupArchive,
     Geodatabase_ReadOnly, Surfaces, Layers, AOIdb, Prism,
-    Analysis, HRUZonesGDB,
+    Analysis, HRUZonesGDB, ParamGDB
 )
 from .metaclass import InheritanceMetaclass
 from .mixins import (

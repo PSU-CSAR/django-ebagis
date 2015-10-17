@@ -69,7 +69,7 @@ class PrismDir(Directory):
             aoi,
             name=constants.PRISM_DIR_NAME,
             id=id,
-            created_by=user,
+            user=user,
         )
 
         return prismdir_obj
