@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
+from rest_framework.reverse import reverse
+
 from .. import constants
 
 from ..settings import AOI_DIRECTORY, GEO_WKID
@@ -228,3 +230,8 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
         self.zones.export(outpath, querydate=querydate)
 
         return outpath
+
+    def get_url(self, request):
+        view = self._classname + "-base:detail"
+        kwargs = {"pk": str(self.pk)}
+        return reverse(view, kwargs=kwargs, request=request)

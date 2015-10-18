@@ -222,7 +222,7 @@ zones_patterns_no_id = [
 ]
 
 aoi_patterns = [
-    url(r"^", aoi_list, name="list"),
+    url(r"^$", aoi_list, name="list"),
     url(r"^{}/$".format(PK_QUERY), aoi_detail, name="detail"),
     url(r"^{}/download/$".format(PK_QUERY), aoi_download, name="download"),
     url(r"^{}/surfaces/$".format(AOI_QUERY), include((geodatabase_patterns_no_id, "surfaces", "aoi-surfaces")), {"geodatabase_type": "surfaces"}),
@@ -263,7 +263,7 @@ urlpatterns = patterns(
     url(r"^downloads/{}/$".format(PK_QUERY), download_detail, name="download-detail"),
 
     # AOI URLs
-    url(r"^aois/$", include((aoi_patterns, "aoi", "aoi-base"))),
+    url(r"^aois/", include((aoi_patterns, "aoi", "aoi-base"))),
 
     # Geodatabase URLs
     url(r"^geodatabases/$", include((geodatabase_patterns, "geodatabase", "geodatabase-base"))),

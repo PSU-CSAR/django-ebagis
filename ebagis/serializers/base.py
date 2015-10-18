@@ -11,7 +11,7 @@ class BaseSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     parent_object = serializers.SerializerMethodField()
     comment = serializers.CharField(allow_blank=True)
-    user = UserSerializer()
+    created_by = UserSerializer(read_only=True)
 
     def __init__(self, *args, **kwargs):
         """Custom init used to allow optional serializer fields

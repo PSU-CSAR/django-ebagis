@@ -5,7 +5,6 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from ..models.aoi import AOI
 
-from .mixins import URLMixin
 from .user import UserSerializer
 from .data import (
     GeodatabaseSerializer, FileSerializer, HRUZonesSerializer,
@@ -13,12 +12,15 @@ from .data import (
 )
 
 
-class AOIListSerializer(URLMixin, serializers.HyperlinkedModelSerializer):
+class AOIListSerializer(serializers.HyperlinkedModelSerializer):
+ #   url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
+ #                                              read_only=True)
     created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = AOI
         fields = ('url', 'name', 'created_at', 'created_by', "comment")
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
 class AOIGeoListSerializer(GeoFeatureModelSerializer):
@@ -26,9 +28,12 @@ class AOIGeoListSerializer(GeoFeatureModelSerializer):
         model = AOI
         geo_field = 'boundary'
         fields = ('url', 'name')
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
-class AOISerializer(URLMixin, serializers.HyperlinkedModelSerializer):
+class AOISerializer(serializers.HyperlinkedModelSerializer):
+#    url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
+ #                                              read_only=True)
     created_by = UserSerializer(read_only=True)
     surfaces = GeodatabaseSerializer(read_only=True)
     layers = GeodatabaseSerializer(read_only=True)
@@ -38,7 +43,7 @@ class AOISerializer(URLMixin, serializers.HyperlinkedModelSerializer):
     maps = FileSerializer(read_only=True, many=True)
     zones = HRUZonesSerializer(read_only=True, many=True)
     parent_aoi = AOIListSerializer(read_only=True)
-    child_aois = AOIListSerializer(read_only=True)
+    child_aois = AOIListSerializer(read_only=True, many=True)
 
     class Meta:
         model = AOI
@@ -48,9 +53,12 @@ class AOISerializer(URLMixin, serializers.HyperlinkedModelSerializer):
                   "zones",
                   "parent_aoi", "child_aois",
                   )
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
-class AOIGeoSerializer(URLMixin, GeoFeatureModelSerializer):
+class AOIGeoSerializer(GeoFeatureModelSerializer):
+ #   url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
+ #                                              read_only=True)
     created_by = UserSerializer(read_only=True)
     surfaces = GeodatabaseSerializer(read_only=True)
     layers = GeodatabaseSerializer(read_only=True)
@@ -60,8 +68,9 @@ class AOIGeoSerializer(URLMixin, GeoFeatureModelSerializer):
     maps = FileSerializer(read_only=True, many=True)
     zones = HRUZonesSerializer(read_only=True, many=True)
     parent_aoi = AOIListSerializer(read_only=True)
-    child_aois = AOIListSerializer(read_only=True)
+    child_aois = AOIListSerializer(read_only=True, many=True)
 
     class Meta:
         model = AOI
         geo_field = 'boundary'
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}

@@ -10,11 +10,14 @@ from django.contrib.gis.db import models
 from django.db import transaction
 
 from .base import ABC
-from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
+from .mixins import (
+    ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, CreatedByMixin
+)
 from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
 
 
-class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, ABC):
+class File(ProxyMixin, CreatedByMixin, DateMixin,
+           NameMixin, AOIRelationMixin, ABC):
     content_type = models.ForeignKey(ContentType)
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
