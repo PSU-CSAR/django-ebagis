@@ -83,4 +83,3 @@ class PrismDir(Directory):
         filtered = self.versions.filter(created_at__lt=querydate)
         return filtered.latest("created_at").export(output_dir,
                                                     querydate=querydate)
-

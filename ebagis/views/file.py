@@ -35,8 +35,5 @@ class FileViewSet(UploadMixin, UpdateMixin, DownloadMixin,
                 for_concrete_model=False,
             )
             filter["aoi_id"] = self.kwargs["aoi_id"]
-        else:
-            return None
 
-        return file_type.objects.get(**filter)
-
+        return file_type.objects.filter(**filter)

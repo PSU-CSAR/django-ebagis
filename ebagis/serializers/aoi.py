@@ -13,8 +13,6 @@ from .data import (
 
 
 class AOIListSerializer(serializers.HyperlinkedModelSerializer):
- #   url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
- #                                              read_only=True)
     created_by = UserSerializer(read_only=True)
 
     class Meta:
@@ -32,14 +30,12 @@ class AOIGeoListSerializer(GeoFeatureModelSerializer):
 
 
 class AOISerializer(serializers.HyperlinkedModelSerializer):
-#    url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
- #                                              read_only=True)
     created_by = UserSerializer(read_only=True)
     surfaces = GeodatabaseSerializer(read_only=True)
     layers = GeodatabaseSerializer(read_only=True)
     aoidb = GeodatabaseSerializer(read_only=True)
     analysis = GeodatabaseSerializer(read_only=True)
-    prism = PrismDirSerializer(read_only=True)
+    prism = GeodatabaseSerializer(read_only=True, many=True)
     maps = FileSerializer(read_only=True, many=True)
     zones = HRUZonesSerializer(read_only=True, many=True)
     parent_aoi = AOIListSerializer(read_only=True)
@@ -57,14 +53,14 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AOIGeoSerializer(GeoFeatureModelSerializer):
- #   url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
- #                                              read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
+                                               read_only=True)
     created_by = UserSerializer(read_only=True)
     surfaces = GeodatabaseSerializer(read_only=True)
     layers = GeodatabaseSerializer(read_only=True)
     aoidb = GeodatabaseSerializer(read_only=True)
     analysis = GeodatabaseSerializer(read_only=True)
-    prism = PrismDirSerializer(read_only=True)
+    prism = GeodatabaseSerializer(read_only=True, many=True)
     maps = FileSerializer(read_only=True, many=True)
     zones = HRUZonesSerializer(read_only=True, many=True)
     parent_aoi = AOIListSerializer(read_only=True)
@@ -73,4 +69,3 @@ class AOIGeoSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = AOI
         geo_field = 'boundary'
-        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}

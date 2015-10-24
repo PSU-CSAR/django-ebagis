@@ -31,11 +31,11 @@ class BaseSerializer(serializers.Serializer):
             if not self.fields[optional_fields]:
                 self.fields.pop(field_name)
 
-    def parent_object(self, obj):
+    def get_parent_object(self, obj):
         parent = obj._parent_object
         url = None
 
         if parent:
-            url = parent.get_url(self.request)
+            url = parent.get_url(self.context['request'])
 
         return url

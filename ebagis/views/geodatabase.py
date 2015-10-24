@@ -1,15 +1,16 @@
-from rest_framework import viewsets
+from __future__ import absolute_import
 
 from ..models.geodatabase import Geodatabase
 
 from ..serializers.data import GeodatabaseSerializer
 
+from .base import BaseViewSet
 from .mixins import UpdateMixin, DownloadMixin
 
 
 class GeodatabaseViewSet(UpdateMixin, DownloadMixin,
-                         viewsets.ModelViewSet):
-    serializers = GeodatabaseSerializer
+                         BaseViewSet):
+    serializer_class = GeodatabaseSerializer
 
     def get_queryset(self):
         filter = {}
@@ -24,8 +25,5 @@ class GeodatabaseViewSet(UpdateMixin, DownloadMixin,
             filter["hruzonesdata"] = self.kwargs["version_id"]
         elif "aoi_id" in self.kwargs:
             filter["aoi_id"] = self.kwargs["aoi_id"]
-        else:
-            return None
 
-        return geodatabase_type.objects.get(**filter)
-
+        return geodatabase_type.objects.filter(**filter)

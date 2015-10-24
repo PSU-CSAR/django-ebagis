@@ -4,8 +4,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import timezone
 from django.db import transaction
 
-from rest_framework.reverse import reverse
-
 from arcpy_extensions.geodatabase import Geodatabase as arcpyGeodatabase
 #from arcpy_extensions.layer import Layer as arcpyLayer
 
@@ -75,21 +73,6 @@ class Geodatabase(ProxyMixin, Directory):
             table.export(outpath, querydate=querydate)
         return outpath
 
-    def get_url(self, request):
-        kwargs = {}
-        objtype = type(self).__name__.lower()
-        view_name = "aoi-" + objtype
-
-        if objtype in constants.MULTIPLE_GDBS:
-            kwargs["pk"] = self.id
-            kwargs["aoi_pk"] = self.aoi_id
-        else:
-            kwargs["pk"] = self.aoi_id
-
-        return reverse(view_name,
-                       kwargs=kwargs,
-                       request=request)
-
 
 class Geodatabase_IndividualArchive(Geodatabase):
     _singular = True
@@ -130,6 +113,8 @@ class Geodatabase_ReadOnly(Geodatabase):
 
 
 class Surfaces(Geodatabase_ReadOnly):
+    _plural_name = "surfaces"
+
     class Meta:
         proxy = True
 
@@ -137,7 +122,10 @@ class Surfaces(Geodatabase_ReadOnly):
     def _parent_object(self):
         return self.aoi
 
+
 class Layers(Geodatabase_IndividualArchive):
+    _plural_name = "layers"
+
     class Meta:
         proxy = True
 
@@ -160,20 +148,26 @@ class AOIdb(Geodatabase_ReadOnly):
 class Prism(Geodatabase_GroupArchive):
     @property
     def subdirectory_of(self):
-        return self.aoi.prism.path
+        return self.aoi._prism.path
 
     @property
     def _parent_object(self):
-        return self.prismdir
+        # a many-to-many realtionship used to implement a
+        # one-to-many relationship. Need to just get the first
+        # of the list returned, as there should only ever be
+        # one object in the list, as it is one-to-many.
+        return self.aoi
 
     def get_url(self, request):
-        return super(Prism, self).get_url(request, no_model_name=True)
+        return super(Prism, self).get_url(request, no_s=True)
 
     class Meta:
         proxy = True
 
 
 class Analysis(Geodatabase_IndividualArchive):
+    _plural_name = "analyses"
+
     class Meta:
         proxy = True
 

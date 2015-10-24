@@ -15,7 +15,8 @@ from .file import XML
 class HRUZonesData(Directory):
     xml = models.OneToOneField(XML, related_name="hru_xml", null=True)
     hruzonesgdb = models.OneToOneField(HRUZonesGDB,
-                                       null=True)
+                                       null=True,
+                                       related_name="hru_zones_data")
     paramgdb = models.OneToOneField(ParamGDB,
                                     null=True,
                                     related_name="hru_zones_data")
@@ -71,10 +72,14 @@ class HRUZonesData(Directory):
             temp_hru_path,
             constants.HRU_PARAM_GDB_NAME + constants.GDB_EXT,
         )
-        hruzonesdata_obj.paramgdb = ParamGDB.create(param_gdb_path,
-                                                    user,
-                                                    hruzones.aoi,
-                                                    hruzonesdata_obj)
+
+        if os.path.exists(param_gdb_path):
+            hruzonesdata_obj.paramgdb = ParamGDB.create(
+                param_gdb_path,
+                user,
+                hruzones.aoi,
+                hruzonesdata_obj,
+            )
 
         # lastly import the HRU's xml log file
         hru_XML_path = os.path.join(temp_hru_path, constants.HRU_LOG_FILE)
@@ -93,6 +98,7 @@ class HRUZonesData(Directory):
 
 
 class HRUZones(Directory):
+    _plural_name = "zones"
     zones = models.ForeignKey("Zones", related_name="hruzones")
 
     @property

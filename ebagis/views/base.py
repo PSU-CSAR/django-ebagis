@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,19 +11,24 @@ from rest_framework import status
 # to find the pk to use, which it will pass to the default detail method
 # via the super function.
 
+
 class BaseViewSet(viewsets.ModelViewSet):
 
-    def get_queryset(self):
-        raise NotImplementedError
+    #def get_queryset(self):
+    #    raise NotImplementedError
 
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        if not pk:
+    def get_object(self):
+        logger.debug(self.kwargs)
+        if "pk" not in self.kwargs:
             queryset = self.filter_queryset(self.get_queryset())
-
-            if not queryset.count() == 1:
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            pk = queryset[0].pk
-
-        return super(BaseViewSet, self).retrieve(request, pk, *args, **kwargs)
-
+            logger.debug("\ntt\n")
+            try:
+                if not len(queryset) == 1:
+                    return None
+            except TypeError:
+                return queryset
+            else:
+                return queryset[0]
+        else:
+            logger.debug("\nff\n")
+            return super(BaseViewSet, self).get_object()

@@ -42,8 +42,8 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
                                   null=True, blank=True)
     aoidb = models.OneToOneField(AOIdb, related_name="aoi_aoidb",
                                  null=True, blank=True)
-    prism = models.OneToOneField(PrismDir, related_name="aoi_prism",
-                                 null=True, blank=True)
+    _prism = models.OneToOneField(PrismDir, related_name="aoi_prism",
+                                  null=True, blank=True)
     analysis = models.OneToOneField(Analysis, related_name="aoi_analysis",
                                     null=True, blank=True)
     _maps = models.OneToOneField(Maps, related_name="aoi_maps",
@@ -60,6 +60,10 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
     @property
     def _parent_object(self):
         return None
+
+    @property
+    def prism(self):
+        return self._prism.versions.all()
 
     @property
     def maps(self):
@@ -167,12 +171,12 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             aoi.save()
 
             # import prism.gdb -- need to add dir first, then add prism to it
-            aoi.prism = PrismDir.create(
+            aoi._prism = PrismDir.create(
                 aoi,
                 user,
             )
             aoi.save()
-            aoi.prism.add_prism(
+            aoi._prism.add_prism(
                 os.path.join(temp_aoi_path,
                              constants.PRISM_GDB),
                 user,
