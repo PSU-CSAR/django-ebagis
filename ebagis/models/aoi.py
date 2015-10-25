@@ -228,10 +228,10 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
         self.surfaces.export(outpath, querydate=querydate)
         self.layers.export(outpath, querydate=querydate)
         self.aoidb.export(outpath, querydate=querydate)
-        self.prism.export(outpath, querydate=querydate)
+        self._prism.export(outpath, querydate=querydate)
         self.analysis.export(outpath, querydate=querydate)
-        self.maps.export(outpath, querydate=querydate)
-        self.zones.export(outpath, querydate=querydate)
+        self._maps.export(outpath, querydate=querydate)
+        self._zones.export(outpath, querydate=querydate)
 
         return outpath
 

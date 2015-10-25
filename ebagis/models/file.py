@@ -43,6 +43,7 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
                        content_type=content_type,
                        object_id=containing_object.id,
                        name=file_name,
+                       created_by=user,
                        id=id)
         file_obj.save()
         data_class.create(input_file, file_obj, user)
@@ -115,6 +116,7 @@ class Layer(File):
                        content_type=content_type,
                        object_id=geodatabase.id,
                        name=arcpy_ext_layer.name,
+                       created_by=user,
                        id=id)
         file_obj.save()
         LAYER_DATA_CLASSES[arcpy_ext_layer.type].create(arcpy_ext_layer,

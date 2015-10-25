@@ -44,7 +44,7 @@ class DownloadViewSet(viewsets.ModelViewSet):
                             content_type=content_type,
                             object_id=object_id)
         download.save()
-        result = export_data.delay(download.id)
+        result = export_data.delay(str(download.pk))
         download.task, created = \
             TaskMeta.objects.get_or_create(task_id=result.task_id)
         download.save()
