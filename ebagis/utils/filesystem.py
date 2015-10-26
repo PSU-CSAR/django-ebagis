@@ -138,3 +138,57 @@ def get_path_from_tempdir(tempdir):
 
     return path
 
+
+class FileWrapper(object):
+    """Wrapper to convert file-like objects to iterables,
+    based on the FileWrapper class from wsgiref, but modified to
+    take a start and end point to allow serving byte ranges in
+    addition to whole files. Also fixes __getitem__ method to
+    actaully work as a getitem function should, so API is not
+    exactly the same as the wsgiref implementation."""
+
+    def __init__(self, filelike, blksize=8192, start=0, end=None):
+        self.filelike = filelike
+        self.blocksize = blksize
+        self.start = start
+        self.filelike.seek(start)
+        self.end = end
+        if hasattr(filelike, ' close'):
+            self.close = filelike.close
+
+    def __getitem__(self, key):
+        self._read(key=key)
+
+    def __iter__(self):
+        return self
+
+    def _read(self, key=None):
+        blocksize = self.blocksize
+        current_position = self.filelike.tell()
+
+        if key:
+            self.filelike.seek(self.start + blocksize * key)
+
+        if self.end and self.filelike.tell() + self.blocksize > self.end:
+            blocksize = self.end - self.filelike.tell()
+
+        data = self.filelike.read(blocksize)
+
+        if key:
+            self.filelike.seek(current_position)
+
+        if data:
+            return data
+
+        raise IndexError
+
+    def seek(self, position):
+        position += self.start
+        self.filelike.seek(position)
+
+    def next(self):
+        try:
+            self._read()
+        except IndexError:
+            logger.exception("problem")
+            raise StopIteration
