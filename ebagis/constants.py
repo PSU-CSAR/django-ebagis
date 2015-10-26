@@ -1,3 +1,5 @@
+CHUNK_SIZE = 2**13
+
 FILTER_PREFIX = "FILTER__"
 
 RASTER_TYPECODE = "RasterDataset"

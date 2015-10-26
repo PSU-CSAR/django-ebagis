@@ -33,7 +33,7 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     @classmethod
     @transaction.atomic
     def create(cls, input_file, containing_object, user,
-               data_class=FileData, id=None):
+               data_class=FileData, id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             containing_object.__class__,
             for_concrete_model=False
@@ -44,7 +44,8 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
                        object_id=containing_object.id,
                        name=file_name,
                        created_by=user,
-                       id=id)
+                       id=id,
+                       comment=comment)
         file_obj.save()
         data_class.create(input_file, file_obj, user)
         return file_obj
@@ -72,12 +73,14 @@ class XML(File):
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, containing_object, user, id=None):
+    def create(cls, input_file, containing_object, user,
+               id=None, comment=""):
         return super(XML, cls).create(input_file,
                                       containing_object,
                                       user,
                                       data_class=XMLData,
-                                      id=id)
+                                      id=id,
+                                      comment=comment)
 
 
 class MapDocument(File):
@@ -93,12 +96,14 @@ class MapDocument(File):
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, containing_object, user, id=None):
+    def create(cls, input_file, containing_object, user,
+               id=None, comment=""):
         return super(MapDocument, cls).create(input_file,
                                               containing_object,
                                               user,
                                               data_class=MapDocumentData,
-                                              id=id)
+                                              id=id,
+                                              comment=comment)
 
 
 class Layer(File):
@@ -107,7 +112,8 @@ class Layer(File):
 
     @classmethod
     @transaction.atomic
-    def create(cls, arcpy_ext_layer, geodatabase, user, id=None):
+    def create(cls, arcpy_ext_layer, geodatabase, user,
+               id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             geodatabase.__class__,
             for_concrete_model=False
@@ -117,7 +123,8 @@ class Layer(File):
                        object_id=geodatabase.id,
                        name=arcpy_ext_layer.name,
                        created_by=user,
-                       id=id)
+                       id=id,
+                       comment=comment)
         file_obj.save()
         LAYER_DATA_CLASSES[arcpy_ext_layer.type].create(arcpy_ext_layer,
                                                         file_obj,

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from rest_framework.decorators import detail_route
 
 from .upload import UploadView

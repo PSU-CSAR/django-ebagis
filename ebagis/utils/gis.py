@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 def get_multipart_wkt_geometry(sourcefile, layername=None):
     """extract a single multipolygon geometry from an sourcefile
     containing polygon geometries"""
@@ -88,4 +90,3 @@ def create_spatial_ref_from_wkt(wkt):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromWkt(wkt)
     return spatial_ref
-

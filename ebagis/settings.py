@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 from datetime import timedelta
 from django.conf import settings
@@ -16,7 +17,7 @@ TEMP_DIRECTORY = getattr(settings, 'EBAGIS_TEMP_DIRECTORY',
 # Path where download files will be stored
 DEFAULT_DOWNLOADS_DIRECTORY = os.path.join(settings.MEDIA_ROOT, r'downloads')
 DOWNLOADS_DIRECTORY = getattr(settings, 'EBAGIS_DOWNLOADS_DIRECTORY',
-                             DEFAULT_DOWNLOADS_DIRECTORY)
+                              DEFAULT_DOWNLOADS_DIRECTORY)
 
 # Download Expiration Time
 DEFAULT_EXPIRATION_DELTA = timedelta(days=1)

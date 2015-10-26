@@ -8,4 +8,3 @@ class DirectoryError(Exception):
 
 class LimitError(Exception):
     pass
-

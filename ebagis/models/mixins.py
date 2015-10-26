@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import logging
 import os
 
 from django.contrib.auth.models import User
@@ -9,6 +10,9 @@ from .. import constants
 from ..utils.misc import get_subclasses
 
 from .metaclass import InheritanceMetaclass
+
+
+logger = logging.getLogger(__name__)
 
 
 class AOIRelationMixin(models.Model):
@@ -153,7 +157,7 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
             try:
                 os.makedirs(path)
             except Exception as e:
-                print "Failed create directory: {}".format(path)
+                logger.exception("Failed create directory: {}".format(path))
                 raise e
             else:
                 # set the value of the directory path field
@@ -240,4 +244,3 @@ class ProxyMixin(models.Model):
         if self.classname in subclasses:
             self.__class__ = subclasses[self.classname]
         return self
-

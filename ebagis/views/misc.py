@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from rest_framework.decorators import (
     api_view, authentication_classes, permission_classes
 )
@@ -11,5 +13,5 @@ from rest_framework.permissions import IsAuthenticated
 @permission_classes((IsAuthenticated, ))
 def validate_token(request):
     if request.method == 'GET':
-        return Response({"message": "you're logged in", "user": request.user.username})
-
+        return Response({"message": "you're logged in",
+                         "user": request.user.username})

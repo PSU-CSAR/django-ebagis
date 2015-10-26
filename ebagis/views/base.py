@@ -1,9 +1,7 @@
-import logging
-logger = logging.getLogger(__name__)
+from __future__ import absolute_import
 
 from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import status
+
 
 # so the idea here for getting a detail view without a pk is to override the
 # default detail method with one that will take an optional pk. Then, if no
@@ -13,15 +11,9 @@ from rest_framework import status
 
 
 class BaseViewSet(viewsets.ModelViewSet):
-
-    #def get_queryset(self):
-    #    raise NotImplementedError
-
     def get_object(self):
-        logger.debug(self.kwargs)
         if "pk" not in self.kwargs:
             queryset = self.filter_queryset(self.get_queryset())
-            logger.debug("\ntt\n")
             try:
                 if not len(queryset) == 1:
                     return None
@@ -30,5 +22,4 @@ class BaseViewSet(viewsets.ModelViewSet):
             else:
                 return queryset[0]
         else:
-            logger.debug("\nff\n")
             return super(BaseViewSet, self).get_object()

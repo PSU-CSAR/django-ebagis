@@ -94,4 +94,3 @@ def validate_aoi(aoi_path):
                                                   required_layers)
 
     return errorlist
-

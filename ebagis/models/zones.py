@@ -43,13 +43,14 @@ class HRUZonesData(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, temp_hru_path, hruzones, user, id=None):
+    def create(cls, temp_hru_path, hruzones, user, id=None, comment=""):
         # create a new HRUZonesData instance and save it
         hruzonesdata_obj = HRUZonesData(aoi=hruzones.aoi,
                                         name=hruzones.name,
                                         hruzones=hruzones,
                                         created_by=user,
-                                        id=id)
+                                        id=id,
+                                        comment=comment)
         hruzonesdata_obj.save()
 
         # import the .gdb for this HRUZonesData instance
@@ -111,12 +112,14 @@ class HRUZones(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, temp_zones_path, hru_name, zones, user, id=None):
+    def create(cls, temp_zones_path, hru_name, zones, user,
+               id=None, comment=""):
         hruzones_obj = HRUZones(aoi=zones.aoi,
                                 name=hru_name,
                                 zones=zones,
                                 id=id,
-                                created_by=user)
+                                created_by=user,
+                                comment=comment)
         hruzones_obj.save()
         HRUZonesData.create(os.path.join(temp_zones_path, hru_name),
                             hruzones_obj,
@@ -140,8 +143,11 @@ class Zones(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_zones_dir, user, aoi, id=None):
-        zones_obj = super(Zones, cls).create(aoi, id=id, user=user)
+    def create(cls, input_zones_dir, user, aoi, id=None, comment=""):
+        zones_obj = super(Zones, cls).create(aoi,
+                                             id=id,
+                                             user=user,
+                                             comment=comment)
         zones_obj.save()
 
         if os.path.exists(input_zones_dir):

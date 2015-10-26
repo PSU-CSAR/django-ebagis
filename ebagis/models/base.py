@@ -21,7 +21,6 @@ class ABC(models.Model):
 
     @property
     def _parent_object(self):
-        #raise NotImplementedError
         return None
 
     def get_url(self, request, no_model_name=False, no_s=False):

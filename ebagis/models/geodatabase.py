@@ -43,8 +43,13 @@ class Geodatabase(ProxyMixin, Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi, id=None):
-        gdb_obj = super(Geodatabase, cls).create(aoi, id=id, user=user)
+    def create(cls, geodatabase_path, user, aoi, id=None, comment=""):
+        gdb_obj = super(Geodatabase, cls).create(
+            aoi,
+            id=id,
+            user=user,
+            comment=comment,
+        )
 
         # get all geodatabase layers
         gdb = arcpyGeodatabase.Open(geodatabase_path)
@@ -187,7 +192,8 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi, hruzonedata, id=None):
+    def create(cls, geodatabase_path, user, aoi, hruzonedata,
+               id=None, comment=""):
         """
         """
         # specifically calling super on geodatabase as need to get to
@@ -201,6 +207,7 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
             save=False,
             id=id,
             user=user,
+            comment=comment,
         )
 
         # this has a one-to-one relation with its containing model
@@ -250,7 +257,8 @@ class ParamGDB(Geodatabase_ReadOnly):
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi, hruzonedata, id=None):
+    def create(cls, geodatabase_path, user, aoi, hruzonedata,
+               id=None, comment=""):
         # specifically calling super on geodatabase as need to get to
         # create method on directory class, not the create method
         # on the goedatabase class, from which ParamGDB inherits
@@ -260,6 +268,7 @@ class ParamGDB(Geodatabase_ReadOnly):
             save=False,
             id=id,
             user=user,
+            comment=comment,
         )
 
         # this has a one-to-one relation with its containing model

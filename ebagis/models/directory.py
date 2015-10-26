@@ -21,10 +21,11 @@ class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi, user, name=None, save=True, id=None):
+    def create(cls, aoi, user, name=None, save=True, id=None, comment=""):
         if not name:
             name = cls._path_name if cls._path_name else cls.__name__.lower()
-        dir_obj = cls(aoi=aoi, name=name, id=id, created_by=user)
+        dir_obj = cls(aoi=aoi, name=name, id=id,
+                      created_by=user, comment=comment)
         if save:
             dir_obj.save()
         return dir_obj
@@ -64,12 +65,13 @@ class PrismDir(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi, user, id=None):
+    def create(cls, aoi, user, id=None, comment=""):
         prismdir_obj = super(PrismDir, cls).create(
             aoi,
             name=constants.PRISM_DIR_NAME,
             id=id,
             user=user,
+            comment=comment,
         )
 
         return prismdir_obj

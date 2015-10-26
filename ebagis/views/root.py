@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -12,4 +14,3 @@ class APIRoot(APIView):
             'Users': reverse('user-list', request=request),
             'Groups': reverse('group-list', request=request),
         })
-

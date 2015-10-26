@@ -1,10 +1,14 @@
+from __future__ import absolute_import
+
 from rest_framework import viewsets
 
 # model objects
 from django.contrib.auth.models import User, Group, Permission
 
 # serializers
-from ..serializers.user import UserSerializer, GroupSerializer, PermissionSerializer
+from ..serializers.user import (
+    UserSerializer, GroupSerializer, PermissionSerializer
+)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -29,4 +33,3 @@ class PermissionViewSet(viewsets.ModelViewSet):
     """
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
-

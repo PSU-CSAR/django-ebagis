@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+
+
 def random_string(length=5):
     """
     Returns a string of random letters (uppercase and lowercase) and numbers of
@@ -50,4 +53,3 @@ def get_subclasses(Class, list_of_subclasses=[], depth=None):
                                                 list_of_subclasses,
                                                 depth=depth)
     return list_of_subclasses
-

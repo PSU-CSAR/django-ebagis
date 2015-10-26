@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
@@ -15,7 +17,9 @@ from ..serializers.aoi import (
 from ..renderers import GeoJSONRenderer
 
 # custom mixins
-from .mixins import UploadMixin, UpdateMixin, DownloadMixin, MultiSerializerMixin
+from .mixins import (
+    UploadMixin, UpdateMixin, DownloadMixin, MultiSerializerMixin,
+)
 
 
 class AOIViewSet(UploadMixin, UpdateMixin, DownloadMixin,
@@ -60,4 +64,3 @@ class AOIViewSet(UploadMixin, UpdateMixin, DownloadMixin,
         else:
             serializer = self.get_serializer(instance)
         return Response(serializer.data)
-

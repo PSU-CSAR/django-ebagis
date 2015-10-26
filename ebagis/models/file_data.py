@@ -27,7 +27,7 @@ class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, File, user, id=None):
+    def create(cls, input_file, File, user, id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             File.__class__,
             for_concrete_model=False,
@@ -47,7 +47,8 @@ class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
                            name=name+ext,
                            created_by=user,
                            created_at=now,
-                           id=id)
+                           id=id,
+                           comment=comment)
             data_obj.save()
         except:
             try:
@@ -90,7 +91,7 @@ class LayerData(FileData):
 
     @classmethod
     @transaction.atomic
-    def create(cls, arcpy_ext_layer, File, user, id=None):
+    def create(cls, arcpy_ext_layer, File, user, id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             File.__class__,
             for_concrete_model=False
@@ -109,7 +110,8 @@ class LayerData(FileData):
                            name=arcpy_ext_layer.name,
                            created_by=user,
                            created_at=now,
-                           id=id)
+                           id=id,
+                           comment=comment)
             data_obj.save()
         except:
             try:

@@ -190,5 +190,4 @@ class FileWrapper(object):
         try:
             self._read()
         except IndexError:
-            logger.exception("problem")
             raise StopIteration

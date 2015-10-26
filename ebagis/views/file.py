@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from django.contrib.contenttypes.models import ContentType
 
 from ..models import File
@@ -23,7 +24,8 @@ class FileViewSet(UploadMixin, UpdateMixin, DownloadMixin,
 
         if "geodatabase_id" in self.kwargs:
             filter["object_id"] = self.kwargs["geodatabase_id"]
-        elif (file_type.__class__.__name__ == "XML" and "zones" in self.kwargs) or "prism" in self.kwargs:
+        elif (file_type.__class__.__name__ == "XML" and
+              "zones" in self.kwargs) or "prism" in self.kwargs:
             filter["object_id"] = self.kwargs["version_id"]
         elif "zones" in self.kwargs and "geodatabase_type" in self.kwargs:
             filter["object_id"] = self.kwargs["geodatabase_type"].objects.get(
