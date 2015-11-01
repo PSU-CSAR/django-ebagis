@@ -278,7 +278,7 @@ urlpatterns = patterns(
 
     # upload URLs
     url(r"^uploads/$", views.UploadView.as_view(), name="upload-list"),
-    url(r"^uploads/(?P<pk>[a-fA-F0-9]{32})/$",
+    url(r"^uploads/{}/$".format(PK_QUERY),
         views.UploadView.as_view(),
         name="upload-detail"),
 
