@@ -40,5 +40,5 @@ class UploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Upload
         read_only_fields = (
-            'status', 'completed_at', 'task', 'offset',
+            'id', 'status', 'completed_at', 'task', 'offset',
         )
