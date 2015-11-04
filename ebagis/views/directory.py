@@ -14,29 +14,34 @@ from .mixins import UploadMixin, UpdateMixin, DownloadMixin
 class PrismViewSet(UploadMixin, UpdateMixin, DownloadMixin,
                    BaseViewSet):
     serializer_class = PrismDirSerializer
+    _query_class = PrismDir
 
-    def get_queryset(self):
+    @property
+    def _filter_args(self):
         filter = {}
 
         if "aoi_id" in self.kwargs:
             filter["aoi_id"] = self.kwargs["aoi_id"]
 
-        return PrismDir.objects.filter(**filter)
+        return filter
 
 
 class HRUZonesViewSet(UploadMixin, UpdateMixin, DownloadMixin,
                       BaseViewSet):
     serializer_class = HRUZonesSerializer
+    _query_class = HRUZones
 
-    def get_queryset(self):
+    @property
+    def _filter_args(self):
         filter = {}
 
         if "aoi_id" in self.kwargs:
             filter["aoi_id"] = self.kwargs["aoi_id"]
 
-        return HRUZones.objects.filter(**filter)
+        return filter
 
 
 class HRUZonesDataViewSet(BaseViewSet):
     serializer_class = HRUZonesDataSerializer
     queryset = HRUZonesData.objects.all()
+    _query_class = HRUZonesData

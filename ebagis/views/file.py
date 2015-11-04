@@ -13,18 +13,22 @@ class FileViewSet(UploadMixin, UpdateMixin, DownloadMixin,
                   BaseViewSet):
     serializer_class = FileSerializer
 
-    def get_queryset(self):
-        filter = {}
-
+    @property
+    def _query_class(self):
         # get file class to build queryset defaulting to
         # base File class if not set
         file_type = self.kwargs.get("file_type", None)
         if not file_type:
             file_type = File
+        return file_type
+
+    @property
+    def _filter_args(self):
+        filter = {}
 
         if "geodatabase_id" in self.kwargs:
             filter["object_id"] = self.kwargs["geodatabase_id"]
-        elif (file_type.__class__.__name__ == "XML" and
+        elif (self._query_class.__class__.__name__ == "XML" and
               "zones" in self.kwargs) or "prism" in self.kwargs:
             filter["object_id"] = self.kwargs["version_id"]
         elif "zones" in self.kwargs and "geodatabase_type" in self.kwargs:
@@ -38,4 +42,4 @@ class FileViewSet(UploadMixin, UpdateMixin, DownloadMixin,
             )
             filter["aoi_id"] = self.kwargs["aoi_id"]
 
-        return file_type.objects.filter(**filter)
+        return filter

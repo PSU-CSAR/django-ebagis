@@ -27,7 +27,7 @@ class UploadView(ChunkedUploadView):
     serializer_class = UploadSerializer
 
     def on_completion(self, upload, request):
-        result = process_upload.delay(upload.id)
+        result = process_upload.delay(str(upload.id))
         upload.task, created = \
             TaskMeta.objects.get_or_create(task_id=result.task_id)
         upload.save()

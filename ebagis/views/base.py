@@ -11,15 +11,15 @@ from rest_framework import viewsets
 
 
 class BaseViewSet(viewsets.ModelViewSet):
+    _filter_args = None
+    _prefetch_related_fields = None
+    _related_fields = None
+
+    def get_queryset(self):
+        return self._query_class.objects.filter(**self._filter_args)
+
     def get_object(self):
         if "pk" not in self.kwargs:
-            queryset = self.filter_queryset(self.get_queryset())
-            try:
-                if not len(queryset) == 1:
-                    return None
-            except TypeError:
-                return queryset
-            else:
-                return queryset[0]
+            return self._query_class.objects.get(**self._filter_args)
         else:
             return super(BaseViewSet, self).get_object()
