@@ -22,9 +22,13 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
     versions = GenericRelation(FileData, for_concrete_model=False)
+    _prefetch = ["versions"]
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")
+        index_together = [
+            ["object_id", "content_type", "classname"],
+        ]
 
     @property
     def _parent_object(self):

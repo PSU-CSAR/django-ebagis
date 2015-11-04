@@ -25,6 +25,11 @@ class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    class Meta:
+        index_together = [
+            ["object_id", "content_type", "classname"],
+        ]
+
     @classmethod
     @transaction.atomic
     def create(cls, input_file, File, user, id=None, comment=""):

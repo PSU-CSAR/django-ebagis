@@ -15,27 +15,34 @@ from .file import Raster, Vector, Table
 
 
 def import_rasters(geodatabase, geodatabase_obj, user, filter=None):
-    for raster in geodatabase.rasters:
-        if filter is None or raster.name in filter:
-            Raster.create(raster, geodatabase_obj, user)
+    import_layers(geodatabase.rasters, Raster, geodatabase_obj, user, filter)
 
 
 def import_vectors(geodatabase, geodatabase_obj, user, filter=None):
-    for vector in geodatabase.featureclasses:
-        if filter is None or vector.name in filter:
-            Vector.create(vector, geodatabase_obj, user)
+    import_layers(geodatabase.featureclasses,
+                  Vector, geodatabase_obj, user, filter)
 
 
 def import_tables(geodatabase, geodatabase_obj, user, filter=None):
-    for table in geodatabase.tables:
-        if filter is None or table.name in filter:
-            Table.create(table, geodatabase_obj, user)
+    import_layers(geodatabase.tables, Table, geodatabase_obj, user, filter)
+
+
+def import_layers(layers, layer_class, geodatabase_obj, user, filter=None):
+    for layer in layers:
+        if filter is None or layer.name in filter:
+            layer_class.create(layer, geodatabase_obj, user)
 
 
 class Geodatabase(ProxyMixin, Directory):
+    _prefetch = ["rasters", "vectors", "tables"]
     rasters = GenericRelation(Raster, for_concrete_model=False)
     vectors = GenericRelation(Vector, for_concrete_model=False)
     tables = GenericRelation(Table, for_concrete_model=False)
+
+    class Meta:
+        index_together = [
+            ["id", "classname"],
+        ]
 
     @property
     def subdirectory_of(self):
@@ -182,6 +189,8 @@ class Analysis(Geodatabase_IndividualArchive):
 
 
 class HRUZonesGDB(Geodatabase_ReadOnly):
+    _prefetch = ["rasters", "vectors", "tables", "hru_zones_data"]
+
     @property
     def subdirectory_of(self):
         return self.hru_zones_data.path
@@ -245,6 +254,7 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
 
 
 class ParamGDB(Geodatabase_ReadOnly):
+    _prefetch = ["rasters", "vectors", "tables", "hru_zones_data"]
     _path_name = constants.HRU_PARAM_GDB_NAME
 
     @property

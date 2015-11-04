@@ -25,22 +25,26 @@ class ABC(models.Model):
 
     def get_url(self, request, no_model_name=False, no_s=False):
         pk = str(self.pk)
-        if not self._parent_object:
-            view = self._classname + "-base:detail"
-            kwargs = {"pk": pk}
-            return reverse(view, kwargs=kwargs, request=request)
+        #if not self._parent_object:
+        #    view = self._classname + "-base:detail"
+        #    kwargs = {"pk": pk}
+        #    return reverse(view, kwargs=kwargs, request=request)
 
-        url = self._parent_object.get_url(request)
+        #url = self._parent_object.get_url(request)
 
-        if self._singular:
-            url += "{}/".format(self._classname)
-        elif no_model_name:
-            url += "{}/".format(pk)
-        else:
-            name = self._classname if no_s else self._plural_name
-            url += "{}/{}/".format(name, pk)
+        #if self._singular:
+        #    url += "{}/".format(self._classname)
+        #elif no_model_name:
+        #    url += "{}/".format(pk)
+        #else:
+        #    name = self._classname if no_s else self._plural_name
+        #    url += "{}/{}/".format(name, pk)
 
-        return url
+        #return url
+
+        view = self._classname + "-base:detail"
+        kwargs = {"pk": pk}
+        return reverse(view, kwargs=kwargs, request=request)
 
     class Meta:
         abstract = True

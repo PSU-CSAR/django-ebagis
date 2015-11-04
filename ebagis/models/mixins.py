@@ -194,7 +194,9 @@ class ProxyManager(models.Manager):
         classes = [cls.__name__ for cls in get_subclasses(self.model,
                                                           [self.model])]
         queryset = super(ProxyManager, self).get_queryset()
-        return queryset.filter(classname__in=classes)
+        return queryset.filter(
+            classname__in=classes
+        ).select_related()#.prefetch_related(*self.model._prefetch)
 
 
 class ProxyMixin(models.Model):
@@ -208,6 +210,7 @@ class ProxyMixin(models.Model):
     such that the correct class types will not be returned."""
     __metaclass__ = InheritanceMetaclass
     classname = models.CharField(max_length=40)
+    _prefetch = []
     objects = ProxyManager()
 
     class Meta:

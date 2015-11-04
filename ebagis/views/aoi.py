@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
@@ -16,14 +18,15 @@ from ..serializers.aoi import (
 # customer renderers
 from ..renderers import GeoJSONRenderer
 
-# custom mixins
+
+from .upload import UploadView
 from .mixins import (
-    UploadMixin, UpdateMixin, DownloadMixin, MultiSerializerMixin,
+    UpdateMixin, DownloadMixin, MultiSerializerMixin,
 )
 
 
-class AOIViewSet(UploadMixin, UpdateMixin, DownloadMixin,
-                 MultiSerializerMixin, viewsets.ModelViewSet):
+class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
+                 viewsets.ModelViewSet):
     """
     API endpoint that allows AOIs to be viewed or edited.
     """
@@ -38,6 +41,15 @@ class AOIViewSet(UploadMixin, UpdateMixin, DownloadMixin,
         FormParser,
         MultiPartParser,
     )
+
+    def create(self, request, *args, **kwargs):
+        # if the user supplied a parent id for an AOI upload, we know
+        # that it also must be an AOI instance and we can assign the
+        # the parent content type for the user
+        if hasattr(request.data, "parent_object_id"):
+            request.data["parent_content_type"] = \
+                ContentType.objects.get_for_model(AOI).pk
+        return UploadView.new_upload(self.queryset.model, request)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

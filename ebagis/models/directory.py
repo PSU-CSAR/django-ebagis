@@ -13,7 +13,15 @@ from .mixins import DirectoryMixin, AOIRelationMixin, CreatedByMixin
 from .file import MapDocument
 
 
+class DirectoryManager(models.Manager):
+    """Model manager class used by the Directory Class"""
+    def get_queryset(self):
+        return super(DirectoryManager, self).get_queryset(
+            ).select_related()#.prefetch_related(*self.model._prefetch)
+
+
 class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
+    _prefetch = []
     _path_name = None
 
     class Meta:
@@ -36,6 +44,7 @@ class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
 
 
 class Maps(Directory):
+    _prefetch = ["maps"]
     maps = GenericRelation(MapDocument, for_concrete_model=False)
 
     @property
@@ -52,6 +61,7 @@ class Maps(Directory):
 
 
 class PrismDir(Directory):
+    _prefetch = ["versions"]
     versions = models.ManyToManyField("Prism", related_name="prismdir")
     _singular = True
 

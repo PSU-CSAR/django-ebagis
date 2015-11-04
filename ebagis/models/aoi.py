@@ -26,14 +26,23 @@ from .directory import PrismDir, Maps
 from .zones import Zones
 
 
+class AOIManager(models.GeoManager):
+    def get_queryset(self):
+        return super(AOIManager, self).get_queryset().select_related()
+
+
 class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
-    objects = models.GeoManager()
+    objects = AOIManager()
 
     # allow recursive parent-child relations
+    # db_constraint as false means an AOI with the given ID
+    # does not actually need to exist yet; useful if parent and
+    # child AOIs are processed out of order
     parent_aoi = models.ForeignKey("self", null=True, blank=True,
-                                   related_name="child_aois")
+                                   related_name="child_aois",
+                                   db_constraint=False)
 
     # data
     surfaces = models.OneToOneField(Surfaces, related_name="aoi_surfaces",
@@ -80,18 +89,20 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
         user = upload.user
         comment = upload.comment
         id = upload.object_id
+        parent_id = upload.parent_object_id
 
         return cls.create(aoi_name,
                           aoi_shortname,
                           user,
                           temp_aoi_path,
                           comment=comment,
-                          id=id)
+                          id=id,
+                          parent_aoi_id=parent_id)
 
     @classmethod
     @transaction.atomic
     def create(cls, aoi_name, aoi_shortname, user,
-               temp_aoi_path, comment="", id=None):
+               temp_aoi_path, comment="", id=None, parent_aoi_id=None):
         # validate AOI to import
         aoi_errors = validate_aoi(temp_aoi_path)
 
@@ -119,7 +130,8 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
                   boundary=wkt,
                   created_by=user,
                   comment=comment,
-                  id=id)
+                  id=id,
+                  parent_aoi_id=parent_aoi_id)
         try:
             aoi.save()
 
