@@ -30,7 +30,9 @@ HRU_PARAM_GDB_NAME = "param"
 HRU_LOG_FILE = "log.xml"
 
 HRU_GDB_LAYERS_TO_SAVE = {RASTER_TYPECODE: ("grid", ),
-                          FC_TYPECODE: ("grid_v", "grid_zones_v", "polygon_v")}
+                          FC_TYPECODE: ("grid_v",
+                                        "grid_zones_v",
+                                        "polygrid_v")}
 
 
 # aoi gdb names, required layers, and optional layers
