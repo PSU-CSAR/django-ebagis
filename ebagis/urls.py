@@ -206,24 +206,29 @@ prism_patterns_no_id = [
         {'geodatabase_type': models.Prism}),
 ]
 
+zones_data_patterns = [
+    url(r"^{}/$".format(PK_QUERY),
+        hruzonesdata_detail,
+        name="detail"),
+    url(r"^{}/xml/$".format(VERSION_QUERY),
+        include((file_patterns_no_id, "file", "hru-xml")),
+        {"file_type": models.XML}),
+    url(r"^{}/param/".format(VERSION_QUERY),
+        include((geodatabase_patterns_no_id, "geodatabase", "hru-param")),
+        {"geodatabase_type": models.ParamGDB}),
+    url(r"^{}/hru/".format(VERSION_QUERY),
+        include((geodatabase_patterns_no_id, "geodatabase", "hru-hru")),
+        {"geodatabase_type": models.HRUZonesGDB}),
+]
+
 zones_patterns = [
     url(r"^$", hruzones_list, name="list"),
     url(r"^{}/$".format(PK_QUERY), hruzones_detail, name="detail"),
     url(r"^{}/download/$".format(PK_QUERY),
         hruzones_download,
         name="download"),
-    url(r"^{}/{}/$".format(ZONE_QUERY, VERSION_QUERY),
-        hruzonesdata_detail,
-        name="version"),
-    url(r"^{}/{}/xml/$".format(ZONE_QUERY, VERSION_QUERY),
-        include((file_patterns_no_id, "file", "hru-xml")),
-        {"file_type": models.XML}),
-    url(r"^{}/{}/param/".format(ZONE_QUERY, VERSION_QUERY),
-        include((geodatabase_patterns_no_id, "geodatabase", "hru-param")),
-        {"geodatabase_type": models.ParamGDB}),
-    url(r"^{}/{}/hru/".format(ZONE_QUERY, VERSION_QUERY),
-        include((geodatabase_patterns_no_id, "geodatabase", "hru-hru")),
-        {"geodatabase_type": models.HRUZonesGDB}),
+    url(r"^{}/".format(ZONE_QUERY),
+        include((zones_data_patterns, "zones_data", "zones-data"))),
 ]
 
 aoi_patterns = [
@@ -295,30 +300,34 @@ urlpatterns = patterns(
     url(r"^geodatabases/",
         include((geodatabase_patterns, "geodatabase", "geodatabase-base"))),
     url(r"^surfaces/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-suf")),
+        include((geodatabase_patterns, "geodatabase", "surfaces-base")),
         {'geodatabase_type': models.Surfaces}),
     url(r"^layers/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-layer")),
+        include((geodatabase_patterns, "geodatabase", "layers-base")),
         {'geodatabase_type': models.Layers}),
     url(r"^aoidbs/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-aoidb")),
+        include((geodatabase_patterns, "geodatabase", "aoidb-base")),
         {'geodatabase_type': models.AOIdb}),
     url(r"^analyses/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-analysis")),
+        include((geodatabase_patterns, "geodatabase", "analysis-base")),
         {'geodatabase_type': models.Analysis}),
     url(r"^hruzonesgdbs/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-hru")),
+        include((geodatabase_patterns, "geodatabase", "hruzonesgdb-base")),
         {'geodatabase_type': models.HRUZonesGDB}),
     url(r"^prisms/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-prism")),
+        include((geodatabase_patterns, "geodatabase", "prism-base")),
         {"prism": True, 'geodatabase_type': models.Prism}),
     url(r"^paramgdbs/",
-        include((geodatabase_patterns, "geodatabase", "geodatabase-param")),
+        include((geodatabase_patterns, "geodatabase", "paramgdb-base")),
         {'geodatabase_type': models.ParamGDB}),
 
     # HRU URLs
     url(r"^hruzones/",
         include((zones_patterns, "zones", "hruzones-base")),
+        {"zones": True}),
+
+    url(r"^hruzonesdata/",
+        include((zones_data_patterns, "zones_data", "hruzonesdata-base")),
         {"zones": True}),
 
     # Prism URLs
