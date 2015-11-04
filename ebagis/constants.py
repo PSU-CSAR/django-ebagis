@@ -1,4 +1,6 @@
-URL_FILTER_QUERY_ARG_PREFIX = "FILTER__"
+CHUNK_SIZE = 2**13
+
+FILTER_PREFIX = "FILTER__"
 
 RASTER_TYPECODE = "RasterDataset"
 FC_TYPECODE = "FeatureClass"
@@ -28,7 +30,9 @@ HRU_PARAM_GDB_NAME = "param"
 HRU_LOG_FILE = "log.xml"
 
 HRU_GDB_LAYERS_TO_SAVE = {RASTER_TYPECODE: ("grid", ),
-                          FC_TYPECODE: ("grid_v", "grid_zones_v")}
+                          FC_TYPECODE: ("grid_v",
+                                        "grid_zones_v",
+                                        "polygrid_v")}
 
 
 # aoi gdb names, required layers, and optional layers

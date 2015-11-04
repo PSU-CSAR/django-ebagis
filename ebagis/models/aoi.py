@@ -7,22 +7,42 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from .. import constants, utilities
+from rest_framework.reverse import reverse
+
+from .. import constants
 
 from ..settings import AOI_DIRECTORY, GEO_WKID
 
-from .base import RandomPrimaryIdModel
+from ..exceptions import AOIError
+
+from ..utils.validation import validate_aoi
+from ..utils.misc import make_short_name
+from ..utils import gis
+
+from .base import ABC
 from .mixins import CreatedByMixin, DirectoryMixin
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
 from .directory import PrismDir, Maps
 from .zones import Zones
 
 
-class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
+class AOIManager(models.GeoManager):
+    def get_queryset(self):
+        return super(AOIManager, self).get_queryset().select_related()
+
+
+class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
-    objects = models.GeoManager()
-    comment = models.TextField(blank=True)
+    objects = AOIManager()
+
+    # allow recursive parent-child relations
+    # db_constraint as false means an AOI with the given ID
+    # does not actually need to exist yet; useful if parent and
+    # child AOIs are processed out of order
+    parent_aoi = models.ForeignKey("self", null=True, blank=True,
+                                   related_name="child_aois",
+                                   db_constraint=False)
 
     # data
     surfaces = models.OneToOneField(Surfaces, related_name="aoi_surfaces",
@@ -31,14 +51,14 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
                                   null=True, blank=True)
     aoidb = models.OneToOneField(AOIdb, related_name="aoi_aoidb",
                                  null=True, blank=True)
-    prism = models.OneToOneField(PrismDir, related_name="aoi_prism",
-                                 null=True, blank=True)
+    _prism = models.OneToOneField(PrismDir, related_name="aoi_prism",
+                                  null=True, blank=True)
     analysis = models.OneToOneField(Analysis, related_name="aoi_analysis",
                                     null=True, blank=True)
-    maps = models.OneToOneField(Maps, related_name="aoi_maps",
-                                null=True, blank=True)
-    zones = models.OneToOneField(Zones, related_name="aoi_zones",
+    _maps = models.OneToOneField(Maps, related_name="aoi_maps",
                                  null=True, blank=True)
+    _zones = models.OneToOneField(Zones, related_name="aoi_zones",
+                                  null=True, blank=True)
 
     # for making file system changes
     subdirectory_of = AOI_DIRECTORY
@@ -46,26 +66,72 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
     class Meta:
         unique_together = ("name",)
 
+    @property
+    def _parent_object(self):
+        return None
+
+    @property
+    def prism(self):
+        return self._prism.versions.all()
+
+    @property
+    def maps(self):
+        return self._maps.maps
+
+    @property
+    def zones(self):
+        return self._zones.hruzones
+
+    @classmethod
+    def create_from_upload(cls, upload, temp_aoi_path):
+        aoi_name = os.path.splitext(upload.filename)[0]
+        aoi_shortname = make_short_name(aoi_name)
+        user = upload.user
+        comment = upload.comment
+        id = upload.object_id
+        parent_id = upload.parent_object_id
+
+        return cls.create(aoi_name,
+                          aoi_shortname,
+                          user,
+                          temp_aoi_path,
+                          comment=comment,
+                          id=id,
+                          parent_aoi_id=parent_id)
+
     @classmethod
     @transaction.atomic
-    def create(cls, aoi_name, aoi_shortname, user, temp_aoi_path, comment=""):
+    def create(cls, aoi_name, aoi_shortname, user,
+               temp_aoi_path, comment="", id=None, parent_aoi_id=None):
+        # validate AOI to import
+        aoi_errors = validate_aoi(temp_aoi_path)
+
+        if aoi_errors:
+            errormsg = "Errors were encountered with the AOI {}:"\
+                .format(temp_aoi_path)
+            for error in aoi_errors:
+                errormsg += "\n\t{}".format(error)
+            raise AOIError(errormsg)
+
         # get multipolygon WKT from AOI Boundary Layer
-        wkt, crs_wkt = utilities.get_multipart_wkt_geometry(
+        wkt, crs_wkt = gis.get_multipart_wkt_geometry(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
             layername=constants.AOI_BOUNDARY_LAYER
         )
 
-        crs = utilities.create_spatial_ref_from_wkt(crs_wkt)
+        crs = gis.create_spatial_ref_from_wkt(crs_wkt)
 
-        if utilities.get_authority_code_from_spatial_ref(crs) != GEO_WKID:
-            dst_crs = utilities.create_spatial_ref_from_EPSG(GEO_WKID)
-            wkt = utilities.reproject_wkt(wkt, crs, dst_crs)
+        if gis.get_authority_code_from_spatial_ref(crs) != GEO_WKID:
+            dst_crs = gis.create_spatial_ref_from_EPSG(GEO_WKID)
+            wkt = gis.reproject_wkt(wkt, crs, dst_crs)
 
         aoi = cls(name=aoi_name,
                   shortname=aoi_shortname,
                   boundary=wkt,
                   created_by=user,
-                  comment=comment)
+                  comment=comment,
+                  id=id,
+                  parent_aoi_id=parent_aoi_id)
         try:
             aoi.save()
 
@@ -99,12 +165,13 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
             aoi.save()
 
             # import HRU Zones
-            aoi.zones = Zones.create(
+            aoi._zones = Zones.create(
                 os.path.join(temp_aoi_path,
                              constants.ZONES_DIR_NAME),
                 user,
                 aoi,
             )
+            aoi.save()
 
             # import analysis.gdb
             aoi.analysis = Analysis.create(
@@ -116,11 +183,12 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
             aoi.save()
 
             # import prism.gdb -- need to add dir first, then add prism to it
-            aoi.prism = PrismDir.create(
+            aoi._prism = PrismDir.create(
                 aoi,
+                user,
             )
             aoi.save()
-            aoi.prism.add_prism(
+            aoi._prism.add_prism(
                 os.path.join(temp_aoi_path,
                              constants.PRISM_GDB),
                 user,
@@ -134,7 +202,9 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
             # import param/paramdata.gdb
 
             # import map docs in maps directory
-            aoi.maps = Maps.create(aoi=aoi, name=constants.MAPS_DIR_NAME)
+            aoi._maps = Maps.create(aoi=aoi,
+                                    user=user,
+                                    name=constants.MAPS_DIR_NAME)
             aoi.save()
 
         except:
@@ -146,6 +216,10 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
             raise
 
         return aoi
+
+    @transaction.atomic
+    def update(self):
+        raise NotImplementedError
 
     def export(self, output_dir, querydate=timezone.now(), outname=None):
         super(AOI, self).export(output_dir, querydate)
@@ -166,9 +240,14 @@ class AOI(CreatedByMixin, DirectoryMixin, RandomPrimaryIdModel):
         self.surfaces.export(outpath, querydate=querydate)
         self.layers.export(outpath, querydate=querydate)
         self.aoidb.export(outpath, querydate=querydate)
-        self.prism.export(outpath, querydate=querydate)
+        self._prism.export(outpath, querydate=querydate)
         self.analysis.export(outpath, querydate=querydate)
-        self.maps.export(outpath, querydate=querydate)
-        self.zones.export(outpath, querydate=querydate)
+        self._maps.export(outpath, querydate=querydate)
+        self._zones.export(outpath, querydate=querydate)
 
         return outpath
+
+    def get_url(self, request):
+        view = self._classname + "-base:detail"
+        kwargs = {"pk": str(self.pk)}
+        return reverse(view, kwargs=kwargs, request=request)

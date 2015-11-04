@@ -1,26 +1,24 @@
 from __future__ import absolute_import
 
-from django.core.urlresolvers import NoReverseMatch
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from ..models.aoi import AOI
 
 from .user import UserSerializer
-from .geodatabase import (
-    SurfacesSerializer, LayersSerializer, AOIdbSerializer, AnalysisSerializer,
-    PrismDirSerializer
+from .data import (
+    GeodatabaseSerializer, FileSerializer, HRUZonesSerializer,
+    PrismDirSerializer,
 )
 
 
 class AOIListSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
-                                               read_only=True)
     created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = AOI
         fields = ('url', 'name', 'created_at', 'created_by', "comment")
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
 class AOIGeoListSerializer(GeoFeatureModelSerializer):
@@ -28,44 +26,45 @@ class AOIGeoListSerializer(GeoFeatureModelSerializer):
         model = AOI
         geo_field = 'boundary'
         fields = ('url', 'name')
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
 class AOISerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
-                                               read_only=True)
     created_by = UserSerializer(read_only=True)
-    surfaces = SurfacesSerializer(read_only=True)
-    layers = LayersSerializer(read_only=True)
-    aoidb = AOIdbSerializer(read_only=True)
-    analysis = AnalysisSerializer(read_only=True)
-    prism = PrismDirSerializer(read_only=True)
-    #maps = MapDocSerializer(read_only=True, many=True)
-    #hruzones = HRUZonesSerializer(read_only=True, many=True)
+    surfaces = GeodatabaseSerializer(read_only=True)
+    layers = GeodatabaseSerializer(read_only=True)
+    aoidb = GeodatabaseSerializer(read_only=True)
+    analysis = GeodatabaseSerializer(read_only=True)
+    prism = GeodatabaseSerializer(read_only=True, many=True)
+    maps = FileSerializer(read_only=True, many=True)
+    zones = HRUZonesSerializer(read_only=True, many=True)
+    parent_aoi = AOIListSerializer(read_only=True)
+    child_aois = AOIListSerializer(read_only=True, many=True)
 
     class Meta:
         model = AOI
         fields = ("url", "name", "created_by", "created_at", "comment",
                   "surfaces", "layers", "aoidb", "analysis", "prism",
-                  #"maps",
-                  #"hruzones",
+                  "maps",
+                  "zones",
+                  "parent_aoi", "child_aois",
                   )
+        extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
 class AOIGeoSerializer(GeoFeatureModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='aoi-detail',
+    url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
                                                read_only=True)
-    #created_by = serializers.HyperlinkedRelatedField(view_name='user-detail',
-    #                                                 read_only=True)
-
     created_by = UserSerializer(read_only=True)
-
-    surfaces = SurfacesSerializer(read_only=True)
-    layers = LayersSerializer(read_only=True)
-    aoidb = AOIdbSerializer(read_only=True)
-    analysis = AnalysisSerializer(read_only=True)
-    prism = PrismDirSerializer(read_only=True)
-    #maps = MapDocSerializer(read_only=True, many=True)
-    #hruzones = HRUZonesSerializer(read_only=True, many=True)
+    surfaces = GeodatabaseSerializer(read_only=True)
+    layers = GeodatabaseSerializer(read_only=True)
+    aoidb = GeodatabaseSerializer(read_only=True)
+    analysis = GeodatabaseSerializer(read_only=True)
+    prism = GeodatabaseSerializer(read_only=True, many=True)
+    maps = FileSerializer(read_only=True, many=True)
+    zones = HRUZonesSerializer(read_only=True, many=True)
+    parent_aoi = AOIListSerializer(read_only=True)
+    child_aois = AOIListSerializer(read_only=True, many=True)
 
     class Meta:
         model = AOI

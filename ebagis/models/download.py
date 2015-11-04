@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import shutil
+import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -12,17 +13,18 @@ from djcelery.models import TaskMeta
 
 from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 
-from .base import RandomPrimaryIdModel
 from .mixins import DateMixin
 
 
-class Download(DateMixin, RandomPrimaryIdModel):
+class Download(DateMixin, models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name="%(class)s",
                              editable=False)
     content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
-    content_object = GenericForeignKey('content_type', 'object_id')
+    object_id = models.UUIDField()
+    content_object = GenericForeignKey('content_type', 'object_id',
+                                       for_concrete_model=False)
     task = models.ForeignKey(TaskMeta, related_name='download',
                              null=True, blank=True)
     file = models.FileField(max_length=255, null=True, blank=True)

@@ -8,12 +8,20 @@ from django.db import transaction
 
 from .. import constants
 
-from .mixins import DirectoryMixin, AOIRelationMixin
-from .base import RandomPrimaryIdModel
+from .base import ABC
+from .mixins import DirectoryMixin, AOIRelationMixin, CreatedByMixin
 from .file import MapDocument
 
 
-class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
+class DirectoryManager(models.Manager):
+    """Model manager class used by the Directory Class"""
+    def get_queryset(self):
+        return super(DirectoryManager, self).get_queryset(
+            ).select_related()#.prefetch_related(*self.model._prefetch)
+
+
+class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
+    _prefetch = []
     _path_name = None
 
     class Meta:
@@ -21,16 +29,22 @@ class Directory(DirectoryMixin, AOIRelationMixin, RandomPrimaryIdModel):
 
     @classmethod
     @transaction.atomic
-    def create(cls, aoi, name=None, save=True):
+    def create(cls, aoi, user, name=None, save=True, id=None, comment=""):
         if not name:
             name = cls._path_name if cls._path_name else cls.__name__.lower()
-        dir_obj = cls(aoi=aoi, name=name)
+        dir_obj = cls(aoi=aoi, name=name, id=id,
+                      created_by=user, comment=comment)
         if save:
             dir_obj.save()
         return dir_obj
 
+    @transaction.atomic
+    def update(self):
+        raise NotImplementedError
+
 
 class Maps(Directory):
+    _prefetch = ["maps"]
     maps = GenericRelation(MapDocument, for_concrete_model=False)
 
     @property
@@ -47,17 +61,27 @@ class Maps(Directory):
 
 
 class PrismDir(Directory):
+    _prefetch = ["versions"]
     versions = models.ManyToManyField("Prism", related_name="prismdir")
+    _singular = True
 
     @property
     def subdirectory_of(self):
         return self.aoi.path
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
     @classmethod
     @transaction.atomic
-    def create(cls, aoi):
+    def create(cls, aoi, user, id=None, comment=""):
         prismdir_obj = super(PrismDir, cls).create(
-            aoi, name=constants.PRISM_DIR_NAME
+            aoi,
+            name=constants.PRISM_DIR_NAME,
+            id=id,
+            user=user,
+            comment=comment,
         )
 
         return prismdir_obj

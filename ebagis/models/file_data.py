@@ -11,28 +11,31 @@ from django.db import transaction
 
 from .. import constants
 
-from .base import RandomPrimaryIdModel
+from .base import ABC
 from .mixins import (
     ProxyMixin, DateMixin, NameMixin, CreatedByMixin, AOIRelationMixin,
-    )
+)
 
 
 class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
-               AOIRelationMixin, RandomPrimaryIdModel):
+               AOIRelationMixin, ABC):
     path = models.CharField(max_length=1024, unique=True)
     encoding = models.CharField(max_length=20, null=True, blank=True)
     content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
+    object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    # TODO Finish this method and those for the sub classes
-    # TODO Review all other class create methods -- finish GDB methods
+    class Meta:
+        index_together = [
+            ["object_id", "content_type", "classname"],
+        ]
+
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, File, user):
+    def create(cls, input_file, File, user, id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             File.__class__,
-            for_concrete_model=False
+            for_concrete_model=False,
         )
 
         now = timezone.now()
@@ -48,7 +51,9 @@ class FileData(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
                            path=path,
                            name=name+ext,
                            created_by=user,
-                           created_at=now)
+                           created_at=now,
+                           id=id,
+                           comment=comment)
             data_obj.save()
         except:
             try:
@@ -91,7 +96,7 @@ class LayerData(FileData):
 
     @classmethod
     @transaction.atomic
-    def create(cls, arcpy_ext_layer, File, user):
+    def create(cls, arcpy_ext_layer, File, user, id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             File.__class__,
             for_concrete_model=False
@@ -102,8 +107,6 @@ class LayerData(FileData):
         output_name = arcpy_ext_layer.name + now.strftime("_%Y%m%d%H%M%S")
         newlyr = arcpy_ext_layer.copy_to_file(output_dir, outname=output_name)
 
-        print cls
-
         try:
             data_obj = cls(aoi=File.aoi,
                            content_type=content_type,
@@ -111,7 +114,9 @@ class LayerData(FileData):
                            path=newlyr.path,
                            name=arcpy_ext_layer.name,
                            created_by=user,
-                           created_at=now)
+                           created_at=now,
+                           id=id,
+                           comment=comment)
             data_obj.save()
         except:
             try:

@@ -8,19 +8,18 @@ from django.db import transaction
 from .. import constants
 
 from .directory import Directory
-from .mixins import CreatedByMixin
 from .geodatabase import HRUZonesGDB, ParamGDB
 from .file import XML
 
 
-class HRUZonesData(CreatedByMixin, Directory):
+class HRUZonesData(Directory):
     xml = models.OneToOneField(XML, related_name="hru_xml", null=True)
     hruzonesgdb = models.OneToOneField(HRUZonesGDB,
-                                       related_name="hru_hruGDB",
-                                       null=True)
+                                       null=True,
+                                       related_name="hru_zones_data")
     paramgdb = models.OneToOneField(ParamGDB,
-                                    related_name="hru_paramGDB",
-                                    null=True)
+                                    null=True,
+                                    related_name="hru_zones_data")
     hruzones = models.ForeignKey("HRUZones", related_name="versions")
 
     def __init__(self, *args, **kwargs):
@@ -35,14 +34,23 @@ class HRUZonesData(CreatedByMixin, Directory):
     def subdirectory_of(self):
         return self.hruzones.path
 
+    @property
+    def _parent_object(self):
+        return self.hruzones
+
+    def get_url(self, request):
+        return super(HRUZonesData, self).get_url(request, no_model_name=True)
+
     @classmethod
     @transaction.atomic
-    def create(cls, temp_hru_path, hruzones, user):
+    def create(cls, temp_hru_path, hruzones, user, id=None, comment=""):
         # create a new HRUZonesData instance and save it
         hruzonesdata_obj = HRUZonesData(aoi=hruzones.aoi,
                                         name=hruzones.name,
                                         hruzones=hruzones,
-                                        created_by=user)
+                                        created_by=user,
+                                        id=id,
+                                        comment=comment)
         hruzonesdata_obj.save()
 
         # import the .gdb for this HRUZonesData instance
@@ -51,7 +59,7 @@ class HRUZonesData(CreatedByMixin, Directory):
         hruzones_gdb_name = hruzones.name + constants.GDB_EXT
         hru_gdb_path = os.path.join(temp_hru_path, hruzones_gdb_name)
         hru_gdb_path_underscore = os.path.join(temp_hru_path,
-                                               "_" +  hruzones_gdb_name)
+                                               "_" + hruzones_gdb_name)
         if os.path.exists(hru_gdb_path_underscore):
             hru_gdb_path = hru_gdb_path_underscore
 
@@ -65,10 +73,14 @@ class HRUZonesData(CreatedByMixin, Directory):
             temp_hru_path,
             constants.HRU_PARAM_GDB_NAME + constants.GDB_EXT,
         )
-        hruzonesdata_obj.paramgdb = ParamGDB.create(param_gdb_path,
-                                                    user,
-                                                    hruzones.aoi,
-                                                    hruzonesdata_obj)
+
+        if os.path.exists(param_gdb_path):
+            hruzonesdata_obj.paramgdb = ParamGDB.create(
+                param_gdb_path,
+                user,
+                hruzones.aoi,
+                hruzonesdata_obj,
+            )
 
         # lastly import the HRU's xml log file
         hru_XML_path = os.path.join(temp_hru_path, constants.HRU_LOG_FILE)
@@ -87,18 +99,27 @@ class HRUZonesData(CreatedByMixin, Directory):
 
 
 class HRUZones(Directory):
+    _plural_name = "zones"
     zones = models.ForeignKey("Zones", related_name="hruzones")
 
     @property
     def subdirectory_of(self):
         return self.zones.path
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
     @classmethod
     @transaction.atomic
-    def create(cls, temp_zones_path, hru_name, zones, user):
+    def create(cls, temp_zones_path, hru_name, zones, user,
+               id=None, comment=""):
         hruzones_obj = HRUZones(aoi=zones.aoi,
                                 name=hru_name,
-                                zones=zones)
+                                zones=zones,
+                                id=id,
+                                created_by=user,
+                                comment=comment)
         hruzones_obj.save()
         HRUZonesData.create(os.path.join(temp_zones_path, hru_name),
                             hruzones_obj,
@@ -122,8 +143,12 @@ class Zones(Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_zones_dir, user, aoi):
-        zones_obj = super(Zones, cls).create(aoi)
+    def create(cls, input_zones_dir, user, aoi, id=None, comment=""):
+        zones_obj = super(Zones, cls).create(aoi,
+                                             id=id,
+                                             user=user,
+                                             comment=comment)
+        zones_obj.save()
 
         if os.path.exists(input_zones_dir):
             hruzones = [d for d in os.listdir(input_zones_dir)

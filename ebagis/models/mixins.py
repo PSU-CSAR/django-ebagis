@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import logging
 import os
 
 from django.contrib.auth.models import User
@@ -6,11 +7,13 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 
 from .. import constants
+from ..utils.misc import get_subclasses
 
 from .metaclass import InheritanceMetaclass
 
 
-# ***************** MIXINS *****************
+logger = logging.getLogger(__name__)
+
 
 class AOIRelationMixin(models.Model):
     """Generic mixin to provide a relation to the AOI model"""
@@ -106,11 +109,19 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
     def save(self, *args, **kwargs):
         """Overrides the default save method adding the following:
 
-         - if the object has not been saved (no pk set),
-           sets the created at time and calls for the path
-           property to ensure a directory is created for the
-           GDB within its enclosing AOI"""
-        if not self.pk:
+        - if the path has not been set:
+            - sets the created at time
+            - set the path property to ensure a file system directory
+              is created for this directory object within its
+              enclosing file system folder
+        """
+        if not getattr(self, '_path', None):
+            # while a default created_at datetime is set by the
+            # date mixin, we have to explictly set the created_at
+            # datetime here, as it is required by the path method
+            # when creating the new directory and only would be set
+            # by default when the save method is called (after the
+            # path method has already been called)
             self.created_at = timezone.now()
             self.path
         return super(DirectoryMixin, self).save(*args, **kwargs)
@@ -146,7 +157,7 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
             try:
                 os.makedirs(path)
             except Exception as e:
-                print "Failed create directory: {}".format(path)
+                logger.exception("Failed create directory: {}".format(path))
                 raise e
             else:
                 # set the value of the directory path field
@@ -167,6 +178,8 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         # export methods -- need to implement each subclass individually.
 
     def export(self, output_dir, querydate, *args, **kwargs):
+        # this super references the export in the date mixin, which
+        # validates the querydate argument
         super(DirectoryMixin, self).export(output_dir,
                                            querydate,
                                            *args,
@@ -178,33 +191,12 @@ class ProxyManager(models.Manager):
     def get_queryset(self):
         # build a list of all the subclasses of the class,
         # including itself
-        classes = [cls.__name__ for cls in _get_subclasses(self.model,
-                                                           [self.model])]
+        classes = [cls.__name__ for cls in get_subclasses(self.model,
+                                                          [self.model])]
         queryset = super(ProxyManager, self).get_queryset()
-        return queryset.filter(classname__in=classes)
-
-
-def _get_subclasses(Class, list_of_subclasses=[], depth=None):
-    """Function used to find all subclasses of a class. An optional
-    depth parameter can be supplied to limit recursion to x number
-    of layers below the inital. That is, a value of 0 will only
-    return the direct subclasses of a class, whereas a value of 2
-    will go up to layers below the first. The default value of the
-    depth parameter is None, which has the effect of recursing through
-    all subclass layers to find every subclass of the class. Returns
-    a list containing all of the found subclasses."""
-    for subclass in Class.__subclasses__():
-        list_of_subclasses.append(subclass)
-        if depth is None or depth > 0:
-            try:
-                depth = depth - 1
-            except:
-                pass
-
-            list_of_subclasses = _get_subclasses(subclass,
-                                                 list_of_subclasses,
-                                                 depth=depth)
-    return list_of_subclasses
+        return queryset.filter(
+            classname__in=classes
+        ).select_related()#.prefetch_related(*self.model._prefetch)
 
 
 class ProxyMixin(models.Model):
@@ -218,6 +210,7 @@ class ProxyMixin(models.Model):
     such that the correct class types will not be returned."""
     __metaclass__ = InheritanceMetaclass
     classname = models.CharField(max_length=40)
+    _prefetch = []
     objects = ProxyManager()
 
     class Meta:
@@ -240,7 +233,7 @@ class ProxyMixin(models.Model):
         Used in the get_object method to return object as a
         specific subclass object, if nessesary."""
         return dict([(subclass.__name__, subclass)
-                     for subclass in _get_subclasses(cls)])
+                     for subclass in get_subclasses(cls)])
 
     def get_object(self):
         """Ensures when getting an object, it will be of

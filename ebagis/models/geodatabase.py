@@ -15,27 +15,34 @@ from .file import Raster, Vector, Table
 
 
 def import_rasters(geodatabase, geodatabase_obj, user, filter=None):
-    for raster in geodatabase.rasters:
-        if filter is None or raster.name in filter:
-            Raster.create(raster, geodatabase_obj, user)
+    import_layers(geodatabase.rasters, Raster, geodatabase_obj, user, filter)
 
 
 def import_vectors(geodatabase, geodatabase_obj, user, filter=None):
-    for vector in geodatabase.featureclasses:
-        if filter is None or vector.name in filter:
-            Vector.create(vector, geodatabase_obj, user)
+    import_layers(geodatabase.featureclasses,
+                  Vector, geodatabase_obj, user, filter)
 
 
 def import_tables(geodatabase, geodatabase_obj, user, filter=None):
-    for table in geodatabase.tables:
-        if filter is None or table.name in filter:
-            Table.create(table, geodatabase_obj, user)
+    import_layers(geodatabase.tables, Table, geodatabase_obj, user, filter)
+
+
+def import_layers(layers, layer_class, geodatabase_obj, user, filter=None):
+    for layer in layers:
+        if filter is None or layer.name in filter:
+            layer_class.create(layer, geodatabase_obj, user)
 
 
 class Geodatabase(ProxyMixin, Directory):
+    _prefetch = ["rasters", "vectors", "tables"]
     rasters = GenericRelation(Raster, for_concrete_model=False)
     vectors = GenericRelation(Vector, for_concrete_model=False)
     tables = GenericRelation(Table, for_concrete_model=False)
+
+    class Meta:
+        index_together = [
+            ["id", "classname"],
+        ]
 
     @property
     def subdirectory_of(self):
@@ -43,8 +50,13 @@ class Geodatabase(ProxyMixin, Directory):
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi):
-        gdb_obj = super(Geodatabase, cls).create(aoi)
+    def create(cls, geodatabase_path, user, aoi, id=None, comment=""):
+        gdb_obj = super(Geodatabase, cls).create(
+            aoi,
+            id=id,
+            user=user,
+            comment=comment,
+        )
 
         # get all geodatabase layers
         gdb = arcpyGeodatabase.Open(geodatabase_path)
@@ -75,6 +87,8 @@ class Geodatabase(ProxyMixin, Directory):
 
 
 class Geodatabase_IndividualArchive(Geodatabase):
+    _singular = True
+
     def __init__(self, *args, **kwargs):
         # override the default NO_ARCHIVING rule from the
         # directory class with INDIVIDUAL_ARCHIVING rule
@@ -98,6 +112,8 @@ class Geodatabase_GroupArchive(Geodatabase):
 
 
 class Geodatabase_ReadOnly(Geodatabase):
+    _singular = True
+
     def __init__(self, *args, **kwargs):
         # override default NO_ARCHIVING with READ_ONLY rule
         self._meta.get_field('archiving_rule').default = \
@@ -109,13 +125,25 @@ class Geodatabase_ReadOnly(Geodatabase):
 
 
 class Surfaces(Geodatabase_ReadOnly):
+    _plural_name = "surfaces"
+
     class Meta:
         proxy = True
+
+    @property
+    def _parent_object(self):
+        return self.aoi
 
 
 class Layers(Geodatabase_IndividualArchive):
+    _plural_name = "layers"
+
     class Meta:
         proxy = True
+
+    @property
+    def _parent_object(self):
+        return self.aoi
 
 
 class AOIdb(Geodatabase_ReadOnly):
@@ -124,47 +152,78 @@ class AOIdb(Geodatabase_ReadOnly):
     class Meta:
         proxy = True
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
 
 class Prism(Geodatabase_GroupArchive):
     @property
     def subdirectory_of(self):
-        return self.aoi.prism.path
+        return self.aoi._prism.path
+
+    @property
+    def _parent_object(self):
+        # a many-to-many realtionship used to implement a
+        # one-to-many relationship. Need to just get the first
+        # of the list returned, as there should only ever be
+        # one object in the list, as it is one-to-many.
+        return self.aoi
+
+    def get_url(self, request):
+        return super(Prism, self).get_url(request, no_s=True)
 
     class Meta:
         proxy = True
 
 
 class Analysis(Geodatabase_IndividualArchive):
+    _plural_name = "analyses"
+
     class Meta:
         proxy = True
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
 
 class HRUZonesGDB(Geodatabase_ReadOnly):
+    _prefetch = ["rasters", "vectors", "tables", "hru_zones_data"]
+
     @property
     def subdirectory_of(self):
-        return self.hru_hruGDB.path
+        return self.hru_zones_data.path
+
+    @property
+    def _parent_object(self):
+        return self.hru_zones_data
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi, hruzonedata):
+    def create(cls, geodatabase_path, user, aoi, hruzonedata,
+               id=None, comment=""):
         """
         """
         # specifically calling super on geodatabase as need to get to
         # create method on directory class, not the create method
-        # on the geodatabase class, from which HRUZonesGDB inherits
+        # on the geodatabase class from which HRUZonesGDB inherits,
         # because we want to do something different than other gdbs
         # also, need to not save on create as subdirectory_of won't work
         gdb_obj = super(Geodatabase, cls).create(
             aoi,
             name=hruzonedata.name,
             save=False,
+            id=id,
+            user=user,
+            comment=comment,
         )
 
         # this has a one-to-one relation with its containing model
         # that has not been created yet, so we need to "force" the
         # relation on this end to make the subdirectory_of property
         # actually be calculable and allow saving HRUZonesGDB instance
-        gdb_obj.hru_hruGDB = hruzonedata
+        gdb_obj.hru_zones_data = hruzonedata
         gdb_obj.save()
 
         # get all geodatabase layers
@@ -195,15 +254,21 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
 
 
 class ParamGDB(Geodatabase_ReadOnly):
+    _prefetch = ["rasters", "vectors", "tables", "hru_zones_data"]
     _path_name = constants.HRU_PARAM_GDB_NAME
 
     @property
     def subdirectory_of(self):
-        return self.hru_paramGDB.path
+        return self.hru_zones_data.path
+
+    @property
+    def _parent_object(self):
+        return self.hru_zones_data
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi, hruzonedata):
+    def create(cls, geodatabase_path, user, aoi, hruzonedata,
+               id=None, comment=""):
         # specifically calling super on geodatabase as need to get to
         # create method on directory class, not the create method
         # on the goedatabase class, from which ParamGDB inherits
@@ -211,13 +276,16 @@ class ParamGDB(Geodatabase_ReadOnly):
         gdb_obj = super(Geodatabase, cls).create(
             aoi,
             save=False,
+            id=id,
+            user=user,
+            comment=comment,
         )
 
         # this has a one-to-one relation with its containing model
         # that has not been created yet, so we need to "force" the
         # relation on this end to make the subdirectory_of property
         # actually be calculable and allow saving ParamGDB instance
-        gdb_obj.hru_paramGDB = hruzonedata
+        gdb_obj.hru_zones_data = hruzonedata
         gdb_obj.save()
 
         # get all geodatabase layers

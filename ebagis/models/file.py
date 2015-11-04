@@ -9,24 +9,35 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from .base import RandomPrimaryIdModel
-from .mixins import ProxyMixin, DateMixin, NameMixin, AOIRelationMixin
+from .base import ABC
+from .mixins import (
+    ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, CreatedByMixin
+)
 from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
 
 
-class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
-           RandomPrimaryIdModel):
+class File(ProxyMixin, CreatedByMixin, DateMixin,
+           NameMixin, AOIRelationMixin, ABC):
     content_type = models.ForeignKey(ContentType)
-    object_id = models.CharField(max_length=10)
+    object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
     versions = GenericRelation(FileData, for_concrete_model=False)
+    _prefetch = ["versions"]
 
     class Meta:
         unique_together = ("content_type", "object_id", "name")
+        index_together = [
+            ["object_id", "content_type", "classname"],
+        ]
+
+    @property
+    def _parent_object(self):
+        return self.content_object
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, containing_object, user, data_class=FileData):
+    def create(cls, input_file, containing_object, user,
+               data_class=FileData, id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             containing_object.__class__,
             for_concrete_model=False
@@ -35,10 +46,17 @@ class File(ProxyMixin, DateMixin, NameMixin, AOIRelationMixin,
         file_obj = cls(aoi=containing_object.aoi,
                        content_type=content_type,
                        object_id=containing_object.id,
-                       name=file_name)
+                       name=file_name,
+                       created_by=user,
+                       id=id,
+                       comment=comment)
         file_obj.save()
         data_class.create(input_file, file_obj, user)
         return file_obj
+
+    @transaction.atomic
+    def update(self):
+        raise NotImplementedError
 
     def export(self, output_dir, querydate=timezone.now()):
         super(File, self).export(output_dir, querydate)
@@ -50,26 +68,46 @@ class XML(File):
     class Meta:
         proxy = True
 
+    @property
+    def _singular(self):
+        is_single = False
+        if self.content_object._classname == "hru":
+            is_single = True
+        return is_single
+
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, containing_object, user):
+    def create(cls, input_file, containing_object, user,
+               id=None, comment=""):
         return super(XML, cls).create(input_file,
                                       containing_object,
                                       user,
-                                      data_class=XMLData)
+                                      data_class=XMLData,
+                                      id=id,
+                                      comment=comment)
 
 
 class MapDocument(File):
     class Meta:
         proxy = True
 
+    def get_url(self, request):
+        if not self.aoi:
+            return super(File, self).get_url(request)
+        url = self.aoi.get_url()
+        url += self._classname + "s/" + self.pk
+        return url
+
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, containing_object, user):
+    def create(cls, input_file, containing_object, user,
+               id=None, comment=""):
         return super(MapDocument, cls).create(input_file,
                                               containing_object,
                                               user,
-                                              data_class=MapDocumentData)
+                                              data_class=MapDocumentData,
+                                              id=id,
+                                              comment=comment)
 
 
 class Layer(File):
@@ -78,7 +116,8 @@ class Layer(File):
 
     @classmethod
     @transaction.atomic
-    def create(cls, arcpy_ext_layer, geodatabase, user):
+    def create(cls, arcpy_ext_layer, geodatabase, user,
+               id=None, comment=""):
         content_type = ContentType.objects.get_for_model(
             geodatabase.__class__,
             for_concrete_model=False
@@ -86,7 +125,10 @@ class Layer(File):
         file_obj = cls(aoi=geodatabase.aoi,
                        content_type=content_type,
                        object_id=geodatabase.id,
-                       name=arcpy_ext_layer.name)
+                       name=arcpy_ext_layer.name,
+                       created_by=user,
+                       id=id,
+                       comment=comment)
         file_obj.save()
         LAYER_DATA_CLASSES[arcpy_ext_layer.type].create(arcpy_ext_layer,
                                                         file_obj,
