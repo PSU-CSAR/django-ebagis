@@ -34,7 +34,8 @@ class AOIManager(models.GeoManager):
 class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
-    objects = AOIManager()
+    #objects = AOIManager()
+    objects = models.GeoManager()
 
     # allow recursive parent-child relations
     # db_constraint as false means an AOI with the given ID
@@ -60,6 +61,13 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
     _zones = models.OneToOneField(Zones, related_name="aoi_zones",
                                   null=True, blank=True)
 
+    _archive_fields = {
+        "read_only": ["id", "created_at", "created_by", "parent_aoi",
+                      "surfaces", "layers", "aoidb", "_prism", "analysis",
+                      "_maps", "_zones"],
+        "writable": ["name", "comment"]
+    }
+
     # for making file system changes
     subdirectory_of = AOI_DIRECTORY
 
@@ -67,8 +75,30 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
         unique_together = ("name",)
 
     @property
+    def _metadata_path(self):
+        """again overriding this property to put the metadata file
+        inside the AOI directory. While this conflicts with all other
+        directory subclasses, I believe the case of the AOI object
+        is differnet enough to warrant this change.
+        """
+        return self._path
+
+    @property
+    def _filesystem_name(self):
+        """This property is the name of the file system directory
+        created when an AOI instance is saved.
+
+        Here we use the ID and not the name so we can do two things:
+            1) allow multiple AOIs with the same name (though this is
+               currently prevented with a database constraint)
+            2) change the name of an existing AOI and not have to change
+               anything in the file system (except the metadata file)
+        """
+        return self.id
+
+    @property
     def _parent_object(self):
-        return None
+        return self.parent_aoi
 
     @property
     def prism(self):
@@ -136,6 +166,8 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             aoi.save()
 
             # TODO: convert GDB imports to use celery group or multiprocessing
+            # though how to maintain thread-safety, and manage transactions?
+
             # import aoi.gdb
             aoi.aoidb = AOIdb.create(
                 os.path.join(temp_aoi_path,

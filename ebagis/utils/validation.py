@@ -1,6 +1,36 @@
 from __future__ import absolute_import
 
 
+def hash_file(filepath):
+    import hashlib
+    sha = hashlib.sha256()
+    with open(filepath, 'rb') as f:
+        while True:
+            block = f.read(2**10)
+            if not block:
+                break
+            sha.update(block)
+    return sha.hexdigest()
+
+
+def generate_uuid(model_class):
+    import uuid
+    # get a list of all of this model's object IDs in the table
+    # this does create a race condition, but the performance gain of
+    # only hitting the DB offsets the incredibly small chance that
+    # an equal UUID will be created in the time this method will run
+    existing_ids = model_class.objects.values_list('id', flat=True)
+
+    # generate UUIDs until one is created
+    # that is not in the existing list
+    while True:
+        id = uuid.uuid4()
+        if id not in existing_ids:
+            break
+
+    return id
+
+
 def validate_path(path, allow_whitespace=False,
                   invalid_chars=[":", "/", "\\", "*", "?", ".", "%", "$"]):
     """Validate a user-given path to ensure it does not have any

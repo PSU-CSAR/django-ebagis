@@ -24,6 +24,9 @@ class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
     _prefetch = []
     _path_name = None
 
+    _archive_fields = {"read_only": ["id", "created_at", "created_by"],
+                       "writable": ["name", "comment"]}
+
     class Meta:
         abstract = True
 

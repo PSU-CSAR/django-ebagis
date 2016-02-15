@@ -106,6 +106,26 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         unique_together = ("subdirectory_of", "name")
         abstract = True
 
+    @property
+    def _metadata_path(self):
+        """overriding this property to put the metadata file in the
+        directory above the directory represented by this object
+        """
+        # I don't think this object could ever represent the root
+        # of a disk, so I believe this property will always return a
+        # consistent value
+        return os.path.dirname(self._path)
+
+    @property
+    def _filesystem_name(self):
+        """this property is the name of the file system dir
+        that gets created when an instance is first saved
+        we simply default to using the value of the
+        "name" field, though this method can be overridden
+        to change what field/value subclasses use
+        """
+        return self.name
+
     def save(self, *args, **kwargs):
         """Overrides the default save method adding the following:
 
@@ -146,7 +166,7 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
         if not getattr(self, '_path', None):
             # default path is simply the value of the name field
             # inside the subdirectory_of path
-            path = os.path.join(self.subdirectory_of, self.name)
+            path = os.path.join(self.subdirectory_of, self._filesystem_name)
 
             # if archiving rule set to group archiving, then the
             # directory name need needs the date appended
@@ -196,7 +216,7 @@ class ProxyManager(models.Manager):
         queryset = super(ProxyManager, self).get_queryset()
         return queryset.filter(
             classname__in=classes
-        ).select_related()#.prefetch_related(*self.model._prefetch)
+        )#.select_related()#.prefetch_related(*self.model._prefetch)
 
 
 class ProxyMixin(models.Model):

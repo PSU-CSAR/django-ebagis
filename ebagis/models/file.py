@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db import transaction
 
+from ..utils.validation import hash_file
+
 from .base import ABC
 from .mixins import (
     ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, CreatedByMixin
@@ -24,6 +26,9 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     versions = GenericRelation(FileData, for_concrete_model=False)
     _prefetch = ["versions"]
 
+    _archive_fields = {"read_only": ["id", "created_at", "created_by"],
+                       "writable": ["name", "comment"]}
+
     class Meta:
         unique_together = ("content_type", "object_id", "name")
         index_together = [
@@ -33,6 +38,10 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     @property
     def _parent_object(self):
         return self.content_object
+
+    @property
+    def path(self):
+        return self.content_object.path
 
     @classmethod
     @transaction.atomic
@@ -61,7 +70,14 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     def export(self, output_dir, querydate=timezone.now()):
         super(File, self).export(output_dir, querydate)
         query = self.versions.filter(created_at__lte=querydate)
-        return query.latest("created_at").export(output_dir)
+        return query.latest("created_at").export(output_dir, self.name)
+
+    def is_new_version(self, file_path):
+        sha = hash_file(file_path)
+        for version in self.versions:
+            if sha == version.sha_hash:
+                return False
+        return True
 
 
 class XML(File):

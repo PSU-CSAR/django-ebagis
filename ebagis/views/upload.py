@@ -20,6 +20,7 @@ from ..serializers.upload import UploadSerializer
 
 # other
 from ..tasks import process_upload
+from ..utils.validation import generate_uuid
 
 
 class UploadView(ChunkedUploadView):
@@ -62,7 +63,7 @@ class UploadView(ChunkedUploadView):
         # created, but we explicitly set it here to allow it
         # to be returned before the upload is processed
         if not object_id:
-            object_id = cls.generate_upload_UUID(upload_model_class)
+            object_id = generate_uuid(upload_model_class)
             is_update = False
 
         # set the id and update values
@@ -88,20 +89,3 @@ class UploadView(ChunkedUploadView):
             return upload_view.post(request)
         else:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    @staticmethod
-    def generate_upload_UUID(model):
-        """Generate a random UUID that is not already the
-        id of an instance of model"""
-        while True:
-            # create a random 128-bit UUID
-            id = uuid.uuid4()
-
-            # if an object does not already have that UUID
-            # then we can use it and break out of the loop
-            try:
-                model.objects.get(pk=id)
-            except model.DoesNotExist:
-                break
-
-        return id
