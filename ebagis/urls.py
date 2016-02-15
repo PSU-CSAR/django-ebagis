@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from django.conf.urls import patterns, include, url
-from rest_framework.authtoken.views import obtain_auth_token
 
 from . import views
 from . import models
@@ -265,7 +264,7 @@ urlpatterns = patterns(
     url(r"^$", views.APIRoot.as_view()),
 
     # rest framework auth
-    url(r"^api-token-auth/$", obtain_auth_token),
+    url(r"^token/$", views.ObtainExpiringAuthToken.as_view()),
     url(r"^api-auth/",
         include("rest_framework.urls", namespace="rest_framework")),
     url(r"^docs/", include("rest_framework_swagger.urls")),
