@@ -8,7 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from __future__ import absolute_import
-from . import secret
+import pytz
+from . import secret, email
 
 
 # this is a really stupid hack for arc 10.3
@@ -24,6 +25,7 @@ except Exception as e:
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -50,34 +52,84 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django.contrib.sites',
+
     'django_extensions',
     'django_windows_tools',
     'djcelery',
+
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
     'drf_chunked_upload',
+
+    #'debug_toolbar',
+
+    # theme
+    "bootstrapform",
+    "pinax_theme_bootstrap",
+
+    # external
+    "account",
+    "metron",
+#    "pinax.eventlog",
+
+    #project
     'ebagis',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'account.middleware.LocaleMiddleware',
+    'account.middleware.TimezoneMiddleware',
 )
 
 ROOT_URLCONF = 'ebagis_site.urls'
 WSGI_APPLICATION = 'ebagis_site.wsgi.application'
 
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+]
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 DATABASES = secret.DATABASE_SETTINGS
 
+# Email
+EMAIL_HOST = email.HOST
+EMAIL_PORT = email.PORT
+EMAIL_HOST_USER = email.USER
+EMAIL_HOST_PASSWORD = email.PASSWORD
+EMAIL_SUBJECT_PREFIX = email.SUBJECT_PREFIX
+EMAIL_USE_SSL = email.USE_SSL
+DEFAULT_FROM_EMAIL = email.EMAIL_USER
+
+# User account management via pinax django-user-accounts
+ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+ACCOUNT_TIMEZONES = list(zip(pytz.country_timezones('us'),
+                             pytz.country_timezones('us')))
+ACCOUNT_LANGUAGES = [
+    ("en", "English"),
+    #("es-mx", u"espa\u00F1ol de Mexico"),
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -114,8 +166,35 @@ STATICFILES_FINDERS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.static',
+    'account.context_processors.account',
+    'django.core.context_processors.request',
+    'pinax_theme_bootstrap.context_processors.theme',
     )
 
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(PACKAGE_ROOT, "templates"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "debug": DEBUG,
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
+                "account.context_processors.account",
+                "pinax_theme_bootstrap.context_processors.theme",
+            ],
+        },
+    },
+]
 
 # media/upload settings
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -133,6 +212,17 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# cache settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
 
 # settings for rest framework
 REST_ROOT = r"^api/rest/"
@@ -141,7 +231,7 @@ REST_FRAMEWORK = {
     # user authentication
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'ebagis.authentication.ExpiringTokenAuthentication',
         ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAdminUser',
@@ -241,3 +331,6 @@ SWAGGER_SETTINGS = {
     },
     'doc_expansion': 'none',
 }
+
+# django sites
+SITE_ID = 1
