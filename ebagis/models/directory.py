@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import glob
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
@@ -50,6 +51,13 @@ class Maps(Directory):
     @property
     def subdirectory_of(self):
         return self.aoi.path
+
+    @classmethod
+    def create(cls, path, user, aoi):
+        mapdir = super(Maps, cls).create(aoi, user, constants.MAPS_DIR_NAME)
+        for mapdoc in glob.glob(os.path.join(path, "*" + constants.MAP_EXT)):
+            MapDocument.create(mapdoc, mapdir, user)
+        return mapdir
 
     def export(self, output_dir, querydate=timezone.now()):
         super(Maps, self).export(output_dir, querydate)
