@@ -157,7 +157,7 @@ class FileWrapper(object):
             self.close = filelike.close
 
     def __getitem__(self, key):
-        self._read(key=key)
+        return self._read(key=key)
 
     def __iter__(self):
         return self
@@ -188,6 +188,6 @@ class FileWrapper(object):
 
     def next(self):
         try:
-            self._read()
+            return self._read()
         except IndexError:
             raise StopIteration
