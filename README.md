@@ -16,5 +16,5 @@ And then add it to your Django `INSTALLED_APPS`:
 
     INSTALLED_APPS = (
         # ...
-        'django-ebagis',
+        'ebagis',
     )
