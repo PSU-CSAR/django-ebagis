@@ -94,7 +94,7 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             2) change the name of an existing AOI and not have to change
                anything in the file system (except the metadata file)
         """
-        return self.id
+        return str(self.id)
 
     @property
     def _parent_object(self):
