@@ -28,9 +28,10 @@ AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 @python_2_unicode_compatible
 class ExpiringToken(models.Model):
     """
-    The default authorization token model.
+    Based on the default authorization token model. However, cannot
+    inherit as primary key is changed.
     """
-    token = models.CharField(_("Token"), max_length=40, unique=True)
+    key = models.CharField(_("Key"), max_length=40, unique=True)
     user = models.OneToOneField(
         AUTH_USER_MODEL,
         related_name='token',
@@ -50,14 +51,14 @@ class ExpiringToken(models.Model):
         verbose_name_plural = _("Tokens")
 
     def save(self, *args, **kwargs):
-        if not self.token:
-            self.token = self.generate_token()
+        if not self.key:
+            self.key = self.generate_key()
         return super(ExpiringToken, self).save(*args, **kwargs)
 
     def update(self):
         self.created = timezone.now()
         while True:
-            self.token = self.generate_token()
+            self.key = self.generate_key()
             try:
                 self.save()
             except:
@@ -65,11 +66,11 @@ class ExpiringToken(models.Model):
             else:
                 break
 
-    def generate_token(self):
+    def generate_key(self):
         return binascii.hexlify(os.urandom(20)).decode()
 
     def __str__(self):
-        return self.token
+        return self.key
 
     @property
     def is_valid(self):

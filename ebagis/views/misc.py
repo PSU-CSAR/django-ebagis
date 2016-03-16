@@ -11,11 +11,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from ..models import ExpiringToken
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @authentication_classes((TokenAuthentication, ))
 @permission_classes((IsAuthenticated, ))
 def validate_token(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         return Response({"message": "you're logged in",
                          "user": request.user.username})
 
