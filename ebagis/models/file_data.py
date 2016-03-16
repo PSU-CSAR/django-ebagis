@@ -10,7 +10,7 @@ from django.contrib.gis.db import models
 from django.db import transaction
 
 from .. import constants
-from ..utils.validation import hash_file, generate_uuid
+from ..utils.validation import hash_file, generate_uuid, sanitize_uuid
 
 from .base import ABC
 from .mixins import (
@@ -76,7 +76,7 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
         now = timezone.now()
         ext = os.path.splitext(os.path.basename(input_file))[1]
         path = os.path.join(File.path,
-                            id + ext)
+                            str(id) + ext)
         shutil.copy(input_file, path)
 
         try:
@@ -100,7 +100,7 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
     def export(self, output_dir, name=None, copy_function=shutil.copy):
         if not name:
             name = self.name
-        copy_function(self.path, os.path.join(output_dir, name))
+        copy_function(self._main_path, os.path.join(output_dir, name))
 
 # "Data" types must match their enclosing layer type, e.g., a vector
 # data instance can only relate to a vector layer instance. Thus,
@@ -146,13 +146,14 @@ class LayerData(FileData):
         # the following line is dead now that IDs are used for file names,
         # but I want to keep it around for reference in case I need later
         #output_name = arcpy_ext_layer.name + now.strftime("_%Y%m%d%H%M%S")
-        newlyr = arcpy_ext_layer.copy_to_file(output_dir, outname=id)
+        newlyr = arcpy_ext_layer.copy_to_file(output_dir,
+                                              outname=sanitize_uuid(str(id)))
 
         try:
             data_obj = cls(aoi=File.aoi,
                            content_type=content_type,
                            object_id=File.id,
-                           path=newlyr.path,
+                           path=os.path.splitext(newlyr.path)[0],
                            created_by=user,
                            created_at=now,
                            id=id,
@@ -177,7 +178,7 @@ class VectorData(LayerData):
 
     @property
     def _main_path(self):
-        return self.path + constants.VECTOR_EXT
+        return self.path + constants.FC_EXT
 
     def export(self, output_dir, name=None):
         from arcpy.management import CopyFeatures

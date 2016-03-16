@@ -31,6 +31,10 @@ def generate_uuid(model_class):
     return id
 
 
+def sanitize_uuid(uuid):
+    return uuid.replace("-", "_")
+
+
 def validate_path(path, allow_whitespace=False,
                   invalid_chars=[":", "/", "\\", "*", "?", ".", "%", "$"]):
     """Validate a user-given path to ensure it does not have any
