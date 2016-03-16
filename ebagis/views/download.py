@@ -2,8 +2,6 @@ from __future__ import absolute_import
 import logging
 import mimetypes
 
-
-from django.http import HttpResponse
 from django.contrib.contenttypes.models import ContentType
 from django.http import StreamingHttpResponse
 
@@ -35,6 +33,7 @@ class DownloadViewSet(viewsets.ModelViewSet):
         import re
         from ..utils.filesystem import FileWrapper
         from ..constants import CHUNK_SIZE
+        #import pdb; pdb.set_trace()
 
         instance = self.get_object()
 
@@ -61,18 +60,13 @@ class DownloadViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
                     )
 
-            # This was causing incomplete downloads, so reverting to a
-            # less-awesome solution for the time-being.
-            #fwrapper = FileWrapper(open(file_path, 'rb'),
-            #                       blksize=CHUNK_SIZE,
-            #                       start=start,
-            #                       end=end)
-            with open(file_path, 'rb') as f:
-                if not end:
-                    end = file_size
-                f.seek(start)
-                fwrapper = f.read(end-start)
-            response = HttpResponse(
+            fwrapper = FileWrapper(
+                open(file_path, 'rb'),
+                blksize=CHUNK_SIZE,
+                start=start,
+                end=end
+            )
+            response = StreamingHttpResponse(
                 fwrapper,
                 content_type=mimetypes.guess_type(file_path)[0]
             )
