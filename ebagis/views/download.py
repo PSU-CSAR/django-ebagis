@@ -1,9 +1,6 @@
 from __future__ import absolute_import
-import logging
-import mimetypes
 
 from django.contrib.contenttypes.models import ContentType
-from django.http import StreamingHttpResponse
 
 from rest_framework import status
 from rest_framework import viewsets
@@ -20,8 +17,8 @@ from ..serializers.download import DownloadSerializer
 # other
 from ..tasks import export_data
 
-
-logger = logging.getLogger(__name__)
+# utils
+from ..utils.http import stream_file
 
 
 class DownloadViewSet(viewsets.ModelViewSet):
@@ -29,60 +26,10 @@ class DownloadViewSet(viewsets.ModelViewSet):
     serializer_class = DownloadSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        import os
-        import re
-        from ..utils.filesystem import FileWrapper
-        from ..constants import CHUNK_SIZE
-        #import pdb; pdb.set_trace()
-
         instance = self.get_object()
 
         if instance.file:
-            file_path = instance.file.file.name
-            file_size = os.path.getsize(file_path)
-            start = 0
-            end = None
-
-            if "HTTP_RANGE" in request.META:
-                try:
-                    start, end = re.findall(r"/d+", request.META["HTTP_RANGE"])
-                except TypeError:
-                    logger.exception(
-                        "Malformed HTTP_RANGE in download request: {}"
-                        .format(request.META["HTTP_RANGE"])
-                    )
-                    return Response(
-                        status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
-                    )
-
-                if start > end or end > file_size:
-                    return Response(
-                        status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
-                    )
-
-            fwrapper = FileWrapper(
-                open(file_path, 'rb'),
-                blksize=CHUNK_SIZE,
-                start=start,
-                end=end
-            )
-            response = StreamingHttpResponse(
-                fwrapper,
-                content_type=mimetypes.guess_type(file_path)[0]
-            )
-            name = os.path.basename(file_path)
-            response["Content-Disposition"] = \
-                'attachment; filename="' + name + '"'
-            response["Content-Length"] = file_size
-            response["Accept-Ranges"] = 'bytes'
-
-            if "HTTP_RANGE" in request.META:
-                response["status"] = 206
-                response["Content-Range"] = "bytes {}-{}/{}".format(start,
-                                                                    end,
-                                                                    file_size)
-
-            return response
+            return stream_file(instance.file.file.name, request)
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
