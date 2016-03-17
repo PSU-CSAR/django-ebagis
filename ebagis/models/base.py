@@ -52,9 +52,15 @@ class ABC(models.Model):
         metadata creation/updates for models with archive fields
         """
         # if a writable field has been updated, then we also
-        # know we need to update the metadata file, though we
-        # can check to_update first as a slight optimization
-        if self._has_metadata and not to_update:
+        # know we need to update the metadata file
+        # however, if it is a new model, we are by default updating,
+        # and we can know it is new if it does not have the original
+        # values attribute
+        if self._has_metadata and not hasattr(self, "_original_values"):
+            to_update = True
+        # otherwise let's check to see if any fields have changed
+        # also, we can check to_update first as a slight optimization
+        elif self._has_metadata and not to_update:
             for field in self._archive_fields["writable"]:
                 if getattr(self, field) != self._original_values[field]:
                     to_update = True
@@ -90,14 +96,20 @@ class ABC(models.Model):
         # now add the "writable" field values to
         # a dict on the returned model instance
         instance._original_values = {
-            k: dict(zip(field_names, values))
-            for k in cls._archive_fields["writable"]
+            key: dict(zip(field_names, values))
+            for key in cls._archive_fields["writable"]
         }
         # return the modified model instance
         return instance
 
     def get_url(self, request, no_model_name=False, no_s=False):
         pk = str(self.pk)
+
+        # the following bit of code is used to resolve object URLs
+        # with heirarchy. It is not currently needed, but
+        # am not certain if I am going to keep the current behavior
+        # or revert to this method
+
         #if not self._parent_object:
         #    view = self._classname + "-base:detail"
         #    kwargs = {"pk": pk}
@@ -115,6 +127,7 @@ class ABC(models.Model):
 
         #return url
 
+        # this simply returns the URL directly to the object
         view = self._classname + "-base:detail"
         kwargs = {"pk": pk}
         return reverse(view, kwargs=kwargs, request=request)
