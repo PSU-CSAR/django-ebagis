@@ -28,3 +28,10 @@ EXPIRATION_DELTA = getattr(settings, 'EBAGIS_DOWNLOAD_EXPIRATION_DELTA',
 DEFAULT_GEO_WKID = 4326
 GEO_WKID = getattr(settings, 'EBAGIS_GEO_WKID',
                    DEFAULT_GEO_WKID)
+
+# Conf Files
+CONF_DIR = getattr(settings, "EBAGIS_CONF_DIR", r"C:\ebagis")
+DESKTOP_SETTINGS = getattr(settings, "EBAGIS_DESKTOP_SETTINGS",
+                           os.path.join(CONF_DIR, "desktop_settings.yaml"))
+LAYER_FILE = getattr(settings, "EBAGIS_LAYER_FILE",
+                     os.path.join(CONF_DIR, "BAGIS_Reference_Maps.lyr"))

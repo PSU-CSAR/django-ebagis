@@ -280,6 +280,10 @@ urlpatterns = patterns(
         permission_detail,
         name="permission-detail"),
 
+    # desktop stuff
+    url(r"^desktop/settings/$", views.get_settings),
+    url(r"^desktop/lyr/$", views.get_lyr),
+
     # upload URLs
     url(r"^uploads/$", views.UploadView.as_view(), name="upload-list"),
     url(r"^uploads/{}/$".format(PK_QUERY),

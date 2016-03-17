@@ -7,7 +7,9 @@ from .directory import PrismViewSet, HRUZonesViewSet, HRUZonesDataViewSet
 from .download import DownloadViewSet
 from .file import FileViewSet
 from .geodatabase import GeodatabaseViewSet
-from .misc import validate_token, ObtainExpiringAuthToken
+from .misc import (
+    validate_token, ObtainExpiringAuthToken, get_settings, get_lyr
+)
 from .mixins import (
     MultiSerializerMixin, UploadMixin, UpdateMixin, DownloadMixin
 )
