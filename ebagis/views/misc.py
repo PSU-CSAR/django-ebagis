@@ -6,11 +6,11 @@ from rest_framework.decorators import (
     api_view, authentication_classes, permission_classes
 )
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from ..models import ExpiringToken
+from ..authentication import ExpiringTokenAuthentication
 
 from ..settings import DESKTOP_SETTINGS, LAYER_FILE
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(["GET"])
-@authentication_classes((TokenAuthentication, ))
+@authentication_classes((ExpiringTokenAuthentication, ))
 @permission_classes((IsAuthenticated, ))
 def validate_token(request):
     if request.method == "GET":
