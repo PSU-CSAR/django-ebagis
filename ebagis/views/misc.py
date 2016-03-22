@@ -6,7 +6,7 @@ from rest_framework.decorators import (
     api_view, authentication_classes, permission_classes
 )
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from ..models import ExpiringToken
@@ -41,6 +41,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def get_settings(request):
     # load the desktop settings yaml file;
     # to increase performance, the could be placed outside
@@ -54,5 +55,6 @@ def get_settings(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny, ))
 def get_lyr(request):
     return stream_file(LAYER_FILE, request)
