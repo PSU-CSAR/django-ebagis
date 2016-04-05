@@ -14,5 +14,5 @@ from .mixins import (
     MultiSerializerMixin, UploadMixin, UpdateMixin, DownloadMixin
 )
 from .root import APIRoot
-from .upload import UploadView
+from .upload import UploadView, cancel_upload
 from .users import UserViewSet, GroupViewSet, PermissionViewSet

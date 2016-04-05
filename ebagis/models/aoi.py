@@ -5,7 +5,6 @@ from logging import exception
 
 from django.utils import timezone
 from django.contrib.gis.db import models
-from django.db import transaction
 
 from rest_framework.reverse import reverse
 
@@ -17,7 +16,7 @@ from ..exceptions import AOIError
 
 from ..utils.validation import validate_aoi
 from ..utils.misc import make_short_name
-from ..utils import gis
+from ..utils import gis, transaction
 
 from .base import ABC
 from .mixins import CreatedByMixin, DirectoryMixin

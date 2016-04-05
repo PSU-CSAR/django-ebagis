@@ -4,8 +4,8 @@ import os
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
 from django.utils import timezone
-from django.db import transaction
 
+from ..utils import transaction
 from .. import constants
 
 from .base import ABC

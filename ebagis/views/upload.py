@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 
 import logging
-import uuid
 
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework import status
 
 from drf_chunked_upload.views import ChunkedUploadView
@@ -21,6 +21,23 @@ from ..serializers.upload import UploadSerializer
 # other
 from ..tasks import process_upload
 from ..utils.validation import generate_uuid
+
+
+@api_view(['POST'])
+def cancel_upload(request, pk):
+    try:
+        upload = Upload.objects.get(pk=pk)
+    except upload.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    cancelled = upload.cancel()
+
+    if cancelled is True:
+        return Response(status=status.HTTP_200_OK)
+    elif cancelled is False:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class UploadView(ChunkedUploadView):

@@ -2,12 +2,12 @@ from __future__ import absolute_import
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import timezone
-from django.db import transaction
 
 from arcpy_extensions.geodatabase import Geodatabase as arcpyGeodatabase
 #from arcpy_extensions.layer import Layer as arcpyLayer
 
 from .. import constants
+from ..utils import transaction
 
 from .mixins import ProxyMixin
 from .directory import Directory

@@ -3,9 +3,9 @@ import os
 
 from django.utils import timezone
 from django.contrib.gis.db import models
-from django.db import transaction
 
 from .. import constants
+from ..utils import transaction
 
 from .directory import Directory
 from .geodatabase import HRUZonesGDB, ParamGDB

@@ -289,6 +289,9 @@ urlpatterns = patterns(
     url(r"^uploads/{}/$".format(PK_QUERY),
         views.UploadView.as_view(),
         name="upload-detail"),
+    url(r"^uploads/{}/cancel$".format(PK_QUERY),
+        views.cancel_upload,
+        name="upload-cancel"),
 
     # download URLs
     url(r"^downloads/$", download_list, name="download-list"),

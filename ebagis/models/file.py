@@ -7,8 +7,8 @@ from django.contrib.contenttypes.fields import (
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.contrib.gis.db import models
-from django.db import transaction
 
+from ..utils import transaction
 from ..utils.validation import hash_file
 
 from .base import ABC

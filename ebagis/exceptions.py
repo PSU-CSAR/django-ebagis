@@ -8,3 +8,7 @@ class DirectoryError(Exception):
 
 class LimitError(Exception):
     pass
+
+
+class AbortedError(Exception):
+    pass

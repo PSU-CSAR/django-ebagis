@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from celery import shared_task
 import os
 
 from django.contrib.contenttypes.models import ContentType
@@ -10,12 +9,13 @@ from .models.download import Download
 
 from .utils.filesystem import tempdirectory, get_path_from_tempdir
 from .utils.zipfile import unzipfile, zip_directory
+from .utils.transaction import abortable_task
 
 from .settings import TEMP_DIRECTORY, DOWNLOADS_DIRECTORY
 
 
-@shared_task
-def export_data(download_id):
+@abortable_task
+def export_data(self, download_id):
     download = Download.objects.get(pk=download_id)
     out_dir = os.path.join(DOWNLOADS_DIRECTORY, download_id)
     os.makedirs(out_dir)
@@ -38,9 +38,11 @@ def export_data(download_id):
     return download.id
 
 
-@shared_task
-def process_upload(upload_id):
-
+@abortable_task
+def process_upload(self, upload_id):
+    # I was hoping the upload_id arg could go away,
+    # and we could do upload = self.upload.get()
+    # however, self is a Task, not TaskMeta, and does not have relations
     upload = Upload.objects.get(pk=upload_id)
     upload_class = ContentType.model_class(upload.content_type)
     zip_path = upload.file
@@ -56,12 +58,15 @@ def process_upload(upload_id):
 
         print "Upload to import is {}.".format(temp_path)
 
+        self.if_aborted()
+
         if upload.is_update:
             imported_obj = upload_class.update(upload, temp_path)
         elif not upload.is_update:
-            imported_obj = upload_class.create_from_upload(upload, temp_path)
+            imported_obj = upload_class.create_from_upload(
+                upload, temp_path
+            )
         else:
             raise Exception("Unexpected fatal error: " +
                             "is_update not set on upload")
-
     return "{},{}".format(imported_obj.id, upload.content_type)
