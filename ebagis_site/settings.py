@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
     # user authentication
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'ebagis.authentication.ExpiringTokenAuthentication',
         ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAdminUser',
