@@ -127,8 +127,14 @@ MapDocumentData._meta.get_field('content_type').limit_choices_to =\
 
 
 class LayerData(FileData):
+    ext = ""
+
     class Meta:
         proxy = True
+
+    @property
+    def _main_path(self):
+        return self.path + self.ext
 
     @classmethod
     @transaction.atomic
@@ -172,13 +178,10 @@ class LayerData(FileData):
 class VectorData(LayerData):
 #    srs_wkt = models.CharField(max_length=1000)
 #    geom_type = models.CharField(max_length=50)
+    ext = constants.FC_EXT
 
     class Meta:
         proxy = True
-
-    @property
-    def _main_path(self):
-        return self.path + constants.FC_EXT
 
     def export(self, output_dir, name=None):
         from arcpy.management import CopyFeatures
@@ -191,13 +194,10 @@ VectorData._meta.get_field('content_type').limit_choices_to =\
 class RasterData(LayerData):
     #srs_wkt = models.CharField(max_length=1000)
     #resolution = models.FloatField()
+    ext = constants.RASTER_EXT
 
     class Meta:
         proxy = True
-
-    @property
-    def _main_path(self):
-        return self.path + constants.RASTER_EXT
 
     def export(self, output_dir, name=None):
         from arcpy.management import CopyRaster
@@ -208,12 +208,10 @@ RasterData._meta.get_field('content_type').limit_choices_to =\
 
 
 class TableData(LayerData):
+    ext = constants.TABLE_EXT
+
     class Meta:
         proxy = True
-
-    @property
-    def _main_path(self):
-        return self.path + constants.TABLE_EXT
 
     def export(self, output_dir, name=None):
         from arcpy.management import CopyRows
