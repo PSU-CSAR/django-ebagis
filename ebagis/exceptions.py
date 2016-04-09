@@ -1,14 +1,18 @@
-class AOIError(Exception):
+class ebagisError(Exception):
     pass
 
 
-class DirectoryError(Exception):
+class AOIError(ebagisError):
     pass
 
 
-class LimitError(Exception):
+class DirectoryError(ebagisError):
     pass
 
 
-class AbortedError(Exception):
+class LimitError(ebagisError):
+    pass
+
+
+class AbortedError(ebagisError):
     pass
