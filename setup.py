@@ -32,10 +32,11 @@ setup(
         'django-celery>=3.1.16',
         'djangorestframework>=3.0.1',
         'GDAL>=1.11.2',
-        'drf-chunked-upload>=0.1.2',
-        'arcpy-extensions>=0.0.2',
+        'drf-chunked-upload>=0.1.7',
+        'arcpy-extensions>=0.0.4',
         'djangorestframework-gis>=0.8.1',
         'django-rest-swagger>=0.2.9',
+        'django-filter>=0.13.0',
     ],
     license='',
 )
