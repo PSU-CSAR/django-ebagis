@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from __future__ import absolute_import
 import pytz
+from ebagis import setup as ebagis_setup
 from . import secret, email
 
 
@@ -58,11 +59,6 @@ INSTALLED_APPS = (
     'django_windows_tools',
     'djcelery',
 
-    'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_swagger',
-    'drf_chunked_upload',
-
     #'debug_toolbar',
 
     # theme
@@ -76,6 +72,7 @@ INSTALLED_APPS = (
 
     #project
     'ebagis',
+    'ebagis_ui',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -120,7 +117,7 @@ EMAIL_HOST_USER = email.USER
 EMAIL_HOST_PASSWORD = email.PASSWORD
 EMAIL_SUBJECT_PREFIX = email.SUBJECT_PREFIX
 EMAIL_USE_SSL = email.USE_SSL
-DEFAULT_FROM_EMAIL = email.EMAIL_USER
+DEFAULT_FROM_EMAIL = email.USER
 
 # User account management via pinax django-user-accounts
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
@@ -146,7 +143,6 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERYD_CONCURRENCY = 4
-#CELERY_TRACK_STARTED = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -155,13 +151,15 @@ CELERYD_CONCURRENCY = 4
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 SITE_STATIC_ROOT = os.path.join(BASE_DIR, 'local_static')
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    )
+)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -169,7 +167,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'account.context_processors.account',
     'django.core.context_processors.request',
     'pinax_theme_bootstrap.context_processors.theme',
-    )
+)
 
 TEMPLATES = [
     {
@@ -196,14 +194,13 @@ TEMPLATES = [
     },
 ]
 
-# media/upload settings
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-DRF_CHUNKED_UPLOAD_PATH = os.path.join(MEDIA_ROOT, "uploads" + "/%Y/%m/%d")
-
 
 # AOI storage/temp unzip location
 EBAGIS_AOI_DIRECTORY = os.path.join(BASE_DIR, 'AOIs')
-EBAGIS_TEMP_DIRECTORY = None  # None is windows temp folder
+EBAGIS_UPLOADS_DIRECTORY = os.path.join(MEDIA_ROOT, "uploads" + "/%Y/%m/%d")
+
+# call the setup function to add relevant settings
+ebagis_setup(__name__)
 
 
 # authentication settings
@@ -224,21 +221,13 @@ CACHES = {
 }
 
 
+## URL PATH SETTINGS
+# TODO: move into urls.py?
+# settings for UI
+UI_ROOT = r"^ui/"
+
 # settings for rest framework
 REST_ROOT = r"^api/rest/"
-
-REST_FRAMEWORK = {
-    # user authentication
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'ebagis.authentication.ExpiringTokenAuthentication',
-        ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAdminUser',
-        ),
-    'PAGINATE_BY': 100,
-    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
-}
 
 
 # settings for graphing data model
@@ -296,40 +285,6 @@ LOGGING = {
             'level': 'DEBUG',
         },
     }
-}
-
-
-# Swagger Settings
-SWAGGER_SETTINGS = {
-    'exclude_namespaces': [],
-    'api_version': '0.1',
-    'enabled_methods': [
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete'
-    ],
-    'api_key': 'special-key',
-    'is_authenticated': False,
-    'is_superuser': True,
-    'permission_denied_handler': None,
-    'info': {
-        'contact': 'apiteam@wordnik.com',
-        'description': 'This is a sample server Petstore server. '
-                       'You can find out more about Swagger at '
-                       '<a href="http://swagger.wordnik.com">'
-                       'http://swagger.wordnik.com</a> '
-                       'or on irc.freenode.net, #swagger. '
-                       'For this sample, you can use the api key '
-                       '"special-key" to test '
-                       'the authorization filters',
-        'license': 'Apache 2.0',
-        'licenseUrl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
-        'termsOfServiceUrl': 'http://helloreverb.com/terms/',
-        'title': 'Swagger Sample App',
-    },
-    'doc_expansion': 'none',
 }
 
 # django sites
