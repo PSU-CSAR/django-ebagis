@@ -49,6 +49,7 @@ coverage.xml
 
 # Django stuff:
 *secret.py
+*email.py
 *.log
 static/
 *web.config
