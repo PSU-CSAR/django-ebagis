@@ -1,0 +1,72 @@
+SETUP_STR = "EBAGIS_IS_SETUP"
+
+
+# apps to be appended to installed apps list in main settings
+# these will be added via the setup function
+EBAGIS_INSTALLED_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_swagger',
+    'drf_chunked_upload',
+]
+
+
+# settings for the above apps
+# these apply to django_ebagis only, not the whole site
+# these will be set via the setup function
+EBAGIS_APP_SETTINGS = {
+
+    "REST_FRAMEWORK": {
+        # user authentication
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.SessionAuthentication',
+            'ebagis.authentication.ExpiringTokenAuthentication',
+            ),
+        'DEFAULT_PERMISSION_CLASSES': (
+            'rest_framework.permissions.IsAdminUser',
+            ),
+        'PAGINATE_BY': 100,
+        'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+        'DEFAULT_FILTER_BACKENDS': (
+            'rest_framework.filters.DjangoFilterBackend',
+            'rest_framework.filters.SearchFilter'
+        ),
+    },
+
+    "SWAGGER_SETTINGS": {
+        'exclude_namespaces': [],
+        'api_version': '0.1',
+        'enabled_methods': [
+            'get',
+            'post',
+            'put',
+            'patch',
+            'delete'
+        ],
+        'api_key': 'special-key',
+        'is_authenticated': False,
+        'is_superuser': True,
+        'permission_denied_handler': None,
+        'info': {
+            'contact': 'apiteam@wordnik.com',
+            'description': 'This is a sample server Petstore server. '
+                           'You can find out more about Swagger at '
+                           '<a href="http://swagger.wordnik.com">'
+                           'http://swagger.wordnik.com</a> '
+                           'or on irc.freenode.net, #swagger. '
+                           'For this sample, you can use the api key '
+                           '"special-key" to test '
+                           'the authorization filters',
+            'license': 'Apache 2.0',
+            'licenseUrl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'termsOfServiceUrl': 'http://helloreverb.com/terms/',
+            'title': 'Swagger Sample App',
+        },
+        'doc_expansion': 'none',
+    },
+
+    # need to set a variable to test that setup was actually run
+    # if not run we want to provide a useful error message
+    SETUP_STR: True
+
+}
