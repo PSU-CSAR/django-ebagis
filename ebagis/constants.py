@@ -10,6 +10,7 @@ RASTER_EXT = ".img"
 FC_EXT = ".shp"
 TABLE_EXT = ".dbf"
 GDB_EXT = ".gdb"
+MAP_EXT = ".mxd"
 
 # Geodatabase Archiving Rule Values
 NO_ARCHIVING = 'NONE'
@@ -64,6 +65,8 @@ REQUIRED_LAYERS[LAYERS_GDB] = []
 
 ANALYSIS_GDB = "analysis.gdb"
 REQUIRED_LAYERS[ANALYSIS_GDB] = []
+
+MAPS_DIR = "maps"
 
 PRISM_GDB = "prism.gdb"
 REQUIRED_LAYERS[PRISM_GDB] = [("Jan", RASTER_TYPECODE),

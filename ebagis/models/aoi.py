@@ -233,9 +233,13 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             # import param/paramdata.gdb
 
             # import map docs in maps directory
-            aoi._maps = Maps.create(aoi=aoi,
-                                    user=user,
-                                    name=constants.MAPS_DIR_NAME)
+            aoi._maps = Maps.create(
+                os.path.join(temp_aoi_path,
+                             constants.MAPS_DIR),
+                user,
+                aoi,
+            )
+
             aoi.save()
 
         except:

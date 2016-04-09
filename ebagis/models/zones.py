@@ -95,7 +95,10 @@ class HRUZonesData(Directory):
     def export(self, output_dir, querydate=timezone.now()):
         self.xml.export(output_dir, querydate)
         self.hruzonesgdb.export(output_dir, querydate)
-        self.paramgdb.export(output_dir, querydate)
+        try:
+            self.paramgdb.export(output_dir, querydate)
+        except AttributeError:
+            pass
 
 
 class HRUZones(Directory):

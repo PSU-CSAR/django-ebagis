@@ -107,11 +107,15 @@ class MapDocument(File):
     class Meta:
         proxy = True
 
+    @property
+    def _parent_object(self):
+        return self.aoi
+
     def get_url(self, request):
         if not self.aoi:
             return super(File, self).get_url(request)
-        url = self.aoi.get_url()
-        url += self._classname + "s/" + self.pk
+        url = self.aoi.get_url(request)
+        url += "maps/" + str(self.pk)
         return url
 
     @classmethod
