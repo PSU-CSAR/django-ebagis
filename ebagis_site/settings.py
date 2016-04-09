@@ -8,7 +8,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from __future__ import absolute_import
-import pytz
 from ebagis import setup as ebagis_setup
 from . import secret, email
 
@@ -61,18 +60,8 @@ INSTALLED_APPS = (
 
     #'debug_toolbar',
 
-    # theme
-    "bootstrapform",
-    "pinax_theme_bootstrap",
-
-    # external
-    "account",
-    "metron",
-#    "pinax.eventlog",
-
     #project
     'ebagis',
-    'ebagis_ui',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -119,14 +108,6 @@ EMAIL_SUBJECT_PREFIX = email.SUBJECT_PREFIX
 EMAIL_USE_SSL = email.USE_SSL
 DEFAULT_FROM_EMAIL = email.USER
 
-# User account management via pinax django-user-accounts
-ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
-ACCOUNT_TIMEZONES = list(zip(pytz.country_timezones('us'),
-                             pytz.country_timezones('us')))
-ACCOUNT_LANGUAGES = [
-    ("en", "English"),
-    #("es-mx", u"espa\u00F1ol de Mexico"),
-]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -164,35 +145,7 @@ STATICFILES_FINDERS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.static',
-    'account.context_processors.account',
-    'django.core.context_processors.request',
-    'pinax_theme_bootstrap.context_processors.theme',
 )
-
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            os.path.join(PACKAGE_ROOT, "templates"),
-        ],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "debug": DEBUG,
-            "context_processors": [
-                "django.contrib.auth.context_processors.auth",
-                "django.template.context_processors.debug",
-                "django.template.context_processors.i18n",
-                "django.template.context_processors.media",
-                "django.template.context_processors.static",
-                "django.template.context_processors.tz",
-                "django.template.context_processors.request",
-                "django.contrib.messages.context_processors.messages",
-                "account.context_processors.account",
-                "pinax_theme_bootstrap.context_processors.theme",
-            ],
-        },
-    },
-]
 
 
 # AOI storage/temp unzip location
