@@ -10,8 +10,11 @@ from drf_chunked_upload.models import ChunkedUpload
 
 from celery.states import state, REVOKED
 
+from ..settings import UPLOADS_DIRECTORY
+
 
 class Upload(ChunkedUpload):
+    upload_dir = UPLOADS_DIRECTORY
     ABORTED = 4
     STATUS_CHOICES = ChunkedUpload.STATUS_CHOICES + (
         (ABORTED, 'Aborted'),
