@@ -48,6 +48,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
                   "maps",
                   "zones",
                   "parent_aoi", "child_aois",
+                  "modified_at",
                   )
         extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
