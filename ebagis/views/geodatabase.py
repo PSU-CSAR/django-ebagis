@@ -26,7 +26,7 @@ class GeodatabaseViewSet(UpdateMixin, DownloadMixin,
         filter = {}
 
         if "zones" in self.kwargs:
-            filter["hruzonesdata"] = self.kwargs["version_id"]
+            filter["hru_zones_data"] = self.kwargs["version_id"]
         elif "aoi_id" in self.kwargs:
             filter["aoi_id"] = self.kwargs["aoi_id"]
 

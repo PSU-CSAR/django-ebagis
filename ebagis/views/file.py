@@ -33,8 +33,8 @@ class FileViewSet(UploadMixin, UpdateMixin, DownloadMixin,
             filter["object_id"] = self.kwargs["version_id"]
         elif "zones" in self.kwargs and "geodatabase_type" in self.kwargs:
             filter["object_id"] = self.kwargs["geodatabase_type"].objects.get(
-                hruzonesdata=self.kwargs["version_id"]
-            )
+                hru_zones_data=self.kwargs["version_id"]
+            ).id
         elif "geodatabase_type" in self.kwargs and "aoi_id" in self.kwargs:
             filter["content_type"] = ContentType.objects.get_for_model(
                 self.kwargs["geodatabase_type"],
