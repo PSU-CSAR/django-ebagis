@@ -10,7 +10,12 @@ class DownloadSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(view_name="user-detail",
                                                read_only=True)
     task = TaskSerializer(read_only=True)
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = Download
         read_only_fields = ('status', 'completed_at', 'task')
+
+    def get_name(self, obj):
+        name = obj.content_object.name
+        return name if name else ""
