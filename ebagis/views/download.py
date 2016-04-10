@@ -19,6 +19,8 @@ from ..tasks import export_data
 
 # utils
 from ..utils.http import stream_file
+from ..utils.queries import admin_queryset_filter
+
 from .filters import make_model_filter
 
 
@@ -27,6 +29,10 @@ class DownloadViewSet(viewsets.ModelViewSet):
     serializer_class = DownloadSerializer
     search_fields = ("name",)
     filter_class = make_model_filter(model)
+
+    def get_queryset(self):
+        query = self.model.objects.all()
+        return admin_queryset_filter(query, self.request)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

@@ -21,6 +21,7 @@ from ..serializers.upload import UploadSerializer
 # other
 from ..tasks import process_upload
 from ..utils.validation import generate_uuid
+from ..utils.queries import admin_queryset_filter
 
 from .filters import (
     CreatedAtMixin, FilterSet, make_model_filter, filters
@@ -45,9 +46,19 @@ class UploadFilterSet(CreatedAtMixin, CreatedByMixin, FilterSet):
 
 @api_view(['POST'])
 def cancel_upload(request, pk):
+
     try:
-        upload = Upload.objects.get(pk=pk)
+        if request.user.is_staff:
+            # allow admin users to get any user's upload
+            upload = Upload.objects.get(pk=pk)
+        else:
+            # normal users can only get their own uploads
+            upload = Upload.objects.get(pk=pk, user=request.user)
     except upload.DoesNotExist:
+        # per queries above, this could be thrown even
+        # if an upload exists such as when a user tries
+        # to call this on an upload that is not theirs
+        # and they are not admin
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     cancelled = upload.cancel()
@@ -65,6 +76,14 @@ class UploadView(ChunkedUploadView):
     serializer_class = UploadSerializer
     search_fields = ("filename",)
     filter_class = make_model_filter(model, base=UploadFilterSet)
+
+    def get_queryset(self):
+        """
+        Get (and filter) Upload queryset.
+        By default, user can only continue uploading his/her own uploads.
+        """
+        query = self.model.objects.all()
+        return admin_queryset_filter(query, self.request)
 
     def on_completion(self, upload, request):
         result = process_upload.delay(str(upload.id))
