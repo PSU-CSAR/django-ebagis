@@ -19,11 +19,14 @@ from ..tasks import export_data
 
 # utils
 from ..utils.http import stream_file
+from .filters import make_model_filter
 
 
 class DownloadViewSet(viewsets.ModelViewSet):
-    queryset = Download.objects.all()
+    model = Download
     serializer_class = DownloadSerializer
+    search_fields = ("name",)
+    filter_class = make_model_filter(model)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

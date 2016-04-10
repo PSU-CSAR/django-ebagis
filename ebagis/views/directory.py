@@ -9,12 +9,15 @@ from ..serializers.data import (
 
 from .base import BaseViewSet
 from .mixins import UploadMixin, UpdateMixin, DownloadMixin
+from .filters import make_model_filter
 
 
 class PrismViewSet(UploadMixin, UpdateMixin, DownloadMixin,
                    BaseViewSet):
     serializer_class = PrismDirSerializer
     _query_class = PrismDir
+    search_fields = ("name",)
+    filter_class = make_model_filter(PrismDir)
 
     @property
     def _filter_args(self):

@@ -17,6 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    search_fields = ("username", "email")
 
 
 class GroupViewSet(viewsets.ModelViewSet):

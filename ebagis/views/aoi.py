@@ -24,6 +24,8 @@ from .mixins import (
     UpdateMixin, DownloadMixin, MultiSerializerMixin,
 )
 
+from .filters import make_model_filter
+
 
 class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
                  viewsets.ModelViewSet):
@@ -32,8 +34,8 @@ class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
     """
     queryset = AOI.objects.all()
     serializers = {
-        'default': AOISerializer,
-        'list': AOIListSerializer,
+        "default": AOISerializer,
+        "list": AOIListSerializer,
     }
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
     parser_classes = (
@@ -41,6 +43,8 @@ class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
         FormParser,
         MultiPartParser,
     )
+    search_fields = ("name", "shortname")
+    filter_class = make_model_filter(AOI)
 
     def create(self, request, *args, **kwargs):
         # if the user supplied a parent id for an AOI upload, we know

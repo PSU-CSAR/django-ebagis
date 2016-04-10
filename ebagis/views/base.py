@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from rest_framework import viewsets
 
+from .filters import make_model_filter
+
 
 # so the idea here for getting a detail view without a pk is to override the
 # default detail method with one that will take an optional pk. Then, if no
@@ -14,6 +16,13 @@ class BaseViewSet(viewsets.ModelViewSet):
     _filter_args = None
     _prefetch_related_fields = None
     _related_fields = None
+    _filter_exclude_fields = []
+    search_fields = ("name",)
+
+    @property
+    def filter_class(self):
+        return make_model_filter(self._query_class,
+                                 exclude_fields=self._filter_exclude_fields)
 
     def get_queryset(self):
         return self._query_class.objects.filter(**self._filter_args)

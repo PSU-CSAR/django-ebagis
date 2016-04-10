@@ -22,6 +22,26 @@ from ..serializers.upload import UploadSerializer
 from ..tasks import process_upload
 from ..utils.validation import generate_uuid
 
+from .filters import (
+    CreatedAtMixin, FilterSet, make_model_filter, filters
+)
+
+
+class CreatedByMixin(FilterSet):
+    user_field = "user"
+    created_by = filters.CharFilter(
+        name="{}__username".format(user_field),
+        lookup_expr="icontains",
+    )
+
+    class Meta:
+        abstract = True
+
+
+class UploadFilterSet(CreatedAtMixin, CreatedByMixin, FilterSet):
+    class Meta:
+        abstract = True
+
 
 @api_view(['POST'])
 def cancel_upload(request, pk):
@@ -43,6 +63,8 @@ def cancel_upload(request, pk):
 class UploadView(ChunkedUploadView):
     model = Upload
     serializer_class = UploadSerializer
+    search_fields = ("filename",)
+    filter_class = make_model_filter(model, base=UploadFilterSet)
 
     def on_completion(self, upload, request):
         result = process_upload.delay(str(upload.id))
