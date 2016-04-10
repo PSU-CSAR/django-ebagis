@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.conf import settings
 
 from .exceptions import ebagisError
-from .initialize import SETUP_STR
+from .app_settings import SETUP_STR
 
 
 # Path where AOI files will be stored
