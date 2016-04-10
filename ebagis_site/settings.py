@@ -9,7 +9,15 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from __future__ import absolute_import
 from ebagis import setup as ebagis_setup
-from . import secret, email
+from . import secret
+
+try:
+    from . import email
+except ImportError:
+    raise Exception(
+        "Please copy ebagis_site/email_template.py to " +
+        "ebagis_site/email.py and edit the values as required."
+    )
 
 
 # this is a really stupid hack for arc 10.3

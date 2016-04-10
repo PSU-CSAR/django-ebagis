@@ -1,0 +1,6 @@
+HOST = ""
+PORT = ""
+USER = ""
+PASSWORD = ""
+SUBJECT_PREFIX = ""
+USE_SSL = True
