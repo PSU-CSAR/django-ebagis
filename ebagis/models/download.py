@@ -13,10 +13,10 @@ from djcelery.models import TaskMeta
 
 from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 
-from .mixins import DateMixin
+from .mixins import DateMixin, NameMixin
 
 
-class Download(DateMixin, models.Model):
+class Download(DateMixin, NameMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
                              related_name="%(class)s",
