@@ -28,6 +28,7 @@ class DateMixin(models.Model):
     to a model. Also implements a a querydate validation function for
     date-related export functions."""
     created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
     removed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
@@ -48,6 +49,14 @@ class DateMixin(models.Model):
                 " That is most excellent, but my name isn't Bill nor Ted," +
                 " so I don't know the future, brah."
             )
+
+    def save(self, set_modified=True, *args, **kwargs):
+        """Overrides the default save method to always update
+        the modified date unless explicitly specified otherwise
+        """
+        if set_modified:
+            self.modified_at = timezone.now()
+        return super(DateMixin, self).save(*args, **kwargs)
 
     def export(self, output_dir, querydate, *args, **kwargs):
         self._valid_querydate(querydate)
@@ -135,6 +144,7 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
               is created for this directory object within its
               enclosing file system folder
         """
+        set_modified = True
         if not getattr(self, '_path', None):
             # while a default created_at datetime is set by the
             # date mixin, we have to explictly set the created_at
@@ -142,9 +152,14 @@ class DirectoryMixin(DateMixin, NameMixin, models.Model):
             # when creating the new directory and only would be set
             # by default when the save method is called (after the
             # path method has already been called)
-            self.created_at = timezone.now()
+            set_modified = False
+            now = timezone.now()
+            self.created_at = now
+            self.modified_at = now
             self.path
-        return super(DirectoryMixin, self).save(*args, **kwargs)
+        return super(DirectoryMixin, self).save(
+            set_modified=set_modified, *args, **kwargs
+        )
 
     def delete(self, delete_file=True, *args, **kwargs):
         """Overrides the default delete method adding the following:
