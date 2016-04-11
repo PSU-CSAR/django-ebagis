@@ -46,7 +46,7 @@ class UploadFilterSet(CreatedAtMixin, CreatedByMixin, FilterSet):
 def cancel_upload(request, pk):
 
     try:
-        if request.user.is_staff:
+        if request.user.is_superuser:
             # allow admin users to get any user's upload
             upload = Upload.objects.get(pk=pk)
         else:
