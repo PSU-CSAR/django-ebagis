@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-import logging
-
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework.response import Response
@@ -102,12 +100,8 @@ class UploadView(ChunkedUploadView):
         # create the upload from our new request object
         upload_view = cls()
 
-        print request
-        print request.data
-
         # set the upload object content_type
         upload_model_class_name_lower = upload_model_class.__name__.lower()
-        print upload_model_class_name_lower
         request.data["content_type"] = \
             ContentType.objects.get(model=upload_model_class_name_lower).pk
 
@@ -136,10 +130,6 @@ class UploadView(ChunkedUploadView):
                 ContentType.objects.get_for_model(parent_object_instance).pk
             request.data["parent_object_id"] = \
                 parent_object_instance.id
-
-        print request
-        print request.data
-        logging.info(request.data)
 
         if request.method == 'PUT':
             return upload_view.put(request)
