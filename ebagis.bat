@@ -590,8 +590,8 @@ GOTO :EOF
         call activate %name%
         python manage.py winfcgi_install --site-name %name% --monitor-changes-to %touch_file% --binding=https://*:443
 
-        :: add max upload setting of 1GB to web.config file 
-        set cfg_str='    ^<security^>\n      ^<requestFiltering^>\n         ^<requestLimits maxAllowedContentLength=\"1024000000\"/^>\n      ^</requestFiltering^>\n    ^</security^>\n'
+        :: add HTTPS redirect and max upload setting of 1GB to web.config file 
+        set cfg_str='    ^<rewrite^>\n      ^<rules^>\n        ^<rule name="HTTP to HTTPS Redirect" enabled="true" stopProcessing="true"^>\n        ^<match url="(.*)" /^>\n        ^<conditions logicalGrouping="MatchAny"^>\n          ^<add input="{SERVER_PORT_SECURE}" pattern="^0$" /^>\n        ^</conditions^>\n        ^<action type="Redirect" url="https://{HTTP_HOST}{REQUEST_URI}" redirectType="Permanent" /^>\n        ^</rule^>\n      ^</rules^>\n    ^</rewrite^>\n    ^<security^>\n      ^<requestFiltering^>\n         ^<requestLimits maxAllowedContentLength=\"1024000000\"/^>\n      ^</requestFiltering^>\n    ^</security^>\n'
         set cfg='web.config'
         python -c "f=open(%cfg%); content=[l for l in f]; f.close(); content.insert(3, %cfg_str%); f=open(%cfg%,'w'); f.write(''.join(content)); f.close()"
 
@@ -621,6 +621,7 @@ GOTO :EOF
             @echo ^<?xml version="1.0" encoding="UTF-8"?^>> %static_config%
             @echo ^<configuration^>>> %static_config%
             @echo   ^<system.webServer^>>> %static_config%
+
             @echo     ^<^^!-- this configuration overrides the FastCGI handler to let IIS serve the static files --^>>> %static_config%
             @echo     ^<handlers^>>> %static_config%
             @echo     ^<clear/^>>> %static_config%
