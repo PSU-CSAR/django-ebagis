@@ -43,10 +43,11 @@ class DownloadViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    def download(self, request, content_type, object_id):
-        download = Download(user=request.user,
-                            content_type=content_type,
-                            object_id=object_id)
+    def download(self, request, content_type, object_id, name=""):
+        download = self.model(user=request.user,
+                              content_type=content_type,
+                              object_id=object_id,
+                              name=name)
         download.save()
         result = export_data.delay(str(download.pk))
         download.task, created = \
@@ -63,7 +64,8 @@ class DownloadViewSet(viewsets.ModelViewSet):
             return download_view.download(
                 request,
                 ContentType.objects.get_for_model(object),
-                object.pk
+                object.pk,
+                name=object.name,
             )
         else:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
