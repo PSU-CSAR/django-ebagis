@@ -37,6 +37,7 @@ setup(
         'djangorestframework-gis>=0.10.1',
         'django-rest-swagger>=0.3.3',
         'django-filter>=0.13.0',
+	'django-redis>=4.3.0',
     ],
     license='',
 )
