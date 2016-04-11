@@ -20,12 +20,24 @@ class BaseViewSet(viewsets.ModelViewSet):
     search_fields = ("name",)
 
     @property
+    def _query_class(self):
+        raise NotImplementedError(
+            "Subclasses need to define _query_class with a valid model!"
+        )
+
+    @property
     def filter_class(self):
         return make_model_filter(self._query_class,
                                  exclude_fields=self._filter_exclude_fields)
 
+    @property
+    def queryset(self):
+        return self._query_class.objects.all()
+
     def get_queryset(self):
-        return self._query_class.objects.filter(**self._filter_args)
+        return super(BaseViewSet, self).get_queryset().filter(
+            **self._filter_args
+        )
 
     def get_object(self):
         if "pk" not in self.kwargs:
