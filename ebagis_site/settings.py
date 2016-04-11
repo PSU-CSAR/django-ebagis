@@ -8,7 +8,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from __future__ import absolute_import
+from ebagis import setup as ebagis_setup
 from . import secret
+
+try:
+    from . import email
+except ImportError:
+    raise Exception(
+        "Please copy ebagis_site/email_template.py to " +
+        "ebagis_site/email.py and edit the values as required."
+    )
 
 
 # this is a really stupid hack for arc 10.3
@@ -24,6 +33,7 @@ except Exception as e:
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -50,33 +60,61 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django.contrib.sites',
+
     'django_extensions',
     'django_windows_tools',
     'djcelery',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_swagger',
-    'drf_chunked_upload',
+
+    #'debug_toolbar',
+
+    #project
     'ebagis',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'account.middleware.LocaleMiddleware',
+    #'account.middleware.TimezoneMiddleware',
 )
 
 ROOT_URLCONF = 'ebagis_site.urls'
 WSGI_APPLICATION = 'ebagis_site.wsgi.application'
 
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+]
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 DATABASES = secret.DATABASE_SETTINGS
+
+# Email
+EMAIL_HOST = email.HOST
+EMAIL_PORT = email.PORT
+EMAIL_HOST_USER = email.USER
+EMAIL_HOST_PASSWORD = email.PASSWORD
+EMAIL_SUBJECT_PREFIX = email.SUBJECT_PREFIX
+EMAIL_USE_SSL = email.USE_SSL
+DEFAULT_FROM_EMAIL = email.USER
 
 
 # Internationalization
@@ -94,7 +132,6 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERYD_CONCURRENCY = 4
-#CELERY_TRACK_STARTED = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -103,28 +140,28 @@ CELERYD_CONCURRENCY = 4
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 SITE_STATIC_ROOT = os.path.join(BASE_DIR, 'local_static')
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    )
+)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.static',
-    )
-
-
-# media/upload settings
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-DRF_CHUNKED_UPLOAD_PATH = os.path.join(MEDIA_ROOT, "uploads" + "/%Y/%m/%d")
+)
 
 
 # AOI storage/temp unzip location
 EBAGIS_AOI_DIRECTORY = os.path.join(BASE_DIR, 'AOIs')
-EBAGIS_TEMP_DIRECTORY = None  # None is windows temp folder
+EBAGIS_UPLOADS_DIRECTORY = os.path.join(MEDIA_ROOT, "uploads" + "/%Y/%m/%d")
+
+# call the setup function to add relevant settings
+ebagis_setup(__name__)
 
 
 # authentication settings
@@ -133,22 +170,25 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# cache settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
+## URL PATH SETTINGS
+# TODO: move into urls.py?
+# settings for UI
+UI_ROOT = r"^ui/"
 
 # settings for rest framework
 REST_ROOT = r"^api/rest/"
-
-REST_FRAMEWORK = {
-    # user authentication
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'ebagis.authentication.ExpiringTokenAuthentication',
-        ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAdminUser',
-        ),
-    'PAGINATE_BY': 100,
-    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
-}
 
 
 # settings for graphing data model
@@ -208,36 +248,5 @@ LOGGING = {
     }
 }
 
-
-# Swagger Settings
-SWAGGER_SETTINGS = {
-    'exclude_namespaces': [],
-    'api_version': '0.1',
-    'enabled_methods': [
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete'
-    ],
-    'api_key': 'special-key',
-    'is_authenticated': False,
-    'is_superuser': True,
-    'permission_denied_handler': None,
-    'info': {
-        'contact': 'apiteam@wordnik.com',
-        'description': 'This is a sample server Petstore server. '
-                       'You can find out more about Swagger at '
-                       '<a href="http://swagger.wordnik.com">'
-                       'http://swagger.wordnik.com</a> '
-                       'or on irc.freenode.net, #swagger. '
-                       'For this sample, you can use the api key '
-                       '"special-key" to test '
-                       'the authorization filters',
-        'license': 'Apache 2.0',
-        'licenseUrl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
-        'termsOfServiceUrl': 'http://helloreverb.com/terms/',
-        'title': 'Swagger Sample App',
-    },
-    'doc_expansion': 'none',
-}
+# django sites
+SITE_ID = 1

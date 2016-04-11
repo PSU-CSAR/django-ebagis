@@ -47,13 +47,11 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
-*secret.py
+# Django stuff
 *.log
 static/
 *web.config
-uploads/
-aois/
+media/
 
 # Sphinx documentation
 docs/_build/
@@ -61,8 +59,13 @@ docs/_build/
 # PyBuilder
 target/
 
+# ebagis stuff
+start_celery.bat
+*secret.py
+ebagis_site/email.py
+aois/
+
 # Other
 *.db
 *~
 .DS_Store
-start_celery.bat
