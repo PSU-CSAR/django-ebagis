@@ -13,7 +13,7 @@ from .filters import make_model_filter
 
 
 class BaseViewSet(viewsets.ModelViewSet):
-    _filter_args = None
+    _filter_args = {}
     _prefetch_related_fields = None
     _related_fields = None
     _filter_exclude_fields = []
