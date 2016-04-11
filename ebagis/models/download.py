@@ -16,6 +16,11 @@ from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 from .mixins import DateMixin, NameMixin
 
 
+# The name field is not strictly required--it seems that I should
+# be able to query based on the generic foreign key. However, in some
+# cases it seems the reverse relation needs to exist (generic relation)
+# but that is complicated. So I chose just to put the name field on the
+# download model via the NameMixin.
 class Download(DateMixin, NameMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,
