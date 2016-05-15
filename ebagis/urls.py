@@ -269,6 +269,10 @@ urlpatterns = patterns(
         include("rest_framework.urls", namespace="rest_framework")),
     url(r"^docs/", include("rest_framework_swagger.urls")),
 
+    # rest_auth urls
+    url(r'^account/', include('rest_auth.urls')),
+    url(r'^account/registration/', include('rest_auth.registration.urls')),
+
     # user URLs
     url(r"^users/$", user_list, name="user-list"),
     url(r"^users/(?P<pk>[0-9]+)/$", user_detail, name="user-detail"),

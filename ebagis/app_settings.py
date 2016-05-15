@@ -8,6 +8,9 @@ EBAGIS_INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_swagger',
     'drf_chunked_upload',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
 
 
@@ -15,6 +18,14 @@ EBAGIS_INSTALLED_APPS = [
 # these apply to django_ebagis only, not the whole site
 # these will be set via the setup function
 EBAGIS_APP_SETTINGS = {
+
+    "ACCOUNT_AUTHENTICATION_METHOD": "username_email",
+    "ACCOUNT_EMAIL_REQUIRED": True,
+    "ACCOUNT_EMAIL_VERIFICATION": "mandatory",
+    "ACCOUNT_DEFAULT_HTTP_PROTOCOL": "https",
+
+    "REST_AUTH_TOKEN_MODEL":
+        'ebagis.models.ExpiringToken',
 
     "REST_FRAMEWORK": {
         # user authentication
