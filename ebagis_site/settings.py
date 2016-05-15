@@ -11,8 +11,10 @@ from __future__ import absolute_import
 from ebagis import setup as ebagis_setup
 from . import secret
 
+
+#email settings from external file
 try:
-    from . import email
+    from .email import *
 except ImportError:
     raise Exception(
         "Please copy ebagis_site/email_template.py to " +
@@ -80,8 +82,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'account.middleware.LocaleMiddleware',
-    #'account.middleware.TimezoneMiddleware',
 )
 
 ROOT_URLCONF = 'ebagis_site.urls'
@@ -106,15 +106,6 @@ DEBUG_TOOLBAR_PANELS = [
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 DATABASES = secret.DATABASE_SETTINGS
-
-# Email
-EMAIL_HOST = email.HOST
-EMAIL_PORT = email.PORT
-EMAIL_HOST_USER = email.USER
-EMAIL_HOST_PASSWORD = email.PASSWORD
-EMAIL_SUBJECT_PREFIX = email.SUBJECT_PREFIX
-EMAIL_USE_SSL = email.USE_SSL
-DEFAULT_FROM_EMAIL = email.USER
 
 
 # Internationalization
