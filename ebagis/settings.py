@@ -49,5 +49,5 @@ LAYER_FILE = getattr(settings, "EBAGIS_LAYER_FILE",
 # Test to make sure setup was run; if run, then SETUP_STR will be True
 if not getattr(settings, SETUP_STR, False):
     raise ebagisError(
-        "In your settings.py you need to import and call ebagis.settings.setup"
+        "In your settings.py you need to import and call ebagis.setup."
     )
