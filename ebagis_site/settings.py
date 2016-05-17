@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_windows_tools',
     'djcelery',
+    'corsheaders',
 
     #'debug_toolbar',
 
@@ -82,6 +83,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
 
 ROOT_URLCONF = 'ebagis_site.urls'
@@ -106,6 +109,20 @@ DEBUG_TOOLBAR_PANELS = [
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 DATABASES = secret.DATABASE_SETTINGS
+
+
+# CORS - Cross-Origin Resource Sharing
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+CORS_ORIGIN_ALLOW_ALL = True
+
+# explicit whitelist doesn't work, likely wrong host
+# need to address this for security
+#CORS_ORIGIN_WHITELIST = (
+#    'http://localhost:3000',
+#)
+
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Internationalization

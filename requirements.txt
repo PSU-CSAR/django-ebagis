@@ -2,3 +2,4 @@ bin\psycopg2-2.5.5-cp27-none-win32.whl
 
 django-extensions>=1.4.9
 django-windows-tools>=0.1.1
+django-cors-middleware>=1.2.0
