@@ -19,7 +19,7 @@ EBAGIS_INSTALLED_APPS = [
 # these will be set via the setup function
 EBAGIS_APP_SETTINGS = {
 
-    "ACCOUNT_AUTHENTICATION_METHOD": "username_email",
+    "ACCOUNT_AUTHENTICATION_METHOD": "username",
     "ACCOUNT_EMAIL_REQUIRED": True,
     "ACCOUNT_EMAIL_VERIFICATION": "mandatory",
     "ACCOUNT_DEFAULT_HTTP_PROTOCOL": "https",
