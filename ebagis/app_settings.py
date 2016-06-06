@@ -34,8 +34,8 @@ EBAGIS_APP_SETTINGS = {
     "REST_FRAMEWORK": {
         # user authentication
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.SessionAuthentication',
             'ebagis.authentication.ExpiringTokenAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
             ),
         'DEFAULT_PERMISSION_CLASSES': (
             'rest_framework.permissions.IsAdminUser',
