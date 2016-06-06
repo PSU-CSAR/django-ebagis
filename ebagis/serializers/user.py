@@ -19,9 +19,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
         roles = []
 
         if user and user.is_staff:
-            roles.append["ROLE_STAFF"]
+            roles.append("ROLE_STAFF")
         if user and user.is_superuser:
-            roles.append["ROLE_ADMIN"]
+            roles.append("ROLE_ADMIN")
 
         return roles
 
