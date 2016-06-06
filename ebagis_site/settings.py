@@ -113,16 +113,21 @@ DATABASES = secret.DATABASE_SETTINGS
 
 # CORS - Cross-Origin Resource Sharing
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
-CORS_ORIGIN_ALLOW_ALL = True
 
-# explicit whitelist doesn't work, likely wrong host
-# need to address this for security
-#CORS_ORIGIN_WHITELIST = (
-#    'http://localhost:3000',
-#)
+# we can allow all if needed, but that's a bigger security risk
+#CORS_ORIGIN_ALLOW_ALL = True
 
+# so let's just allow our dev origin
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000',
+)
+
+# and we only want to allow access to the api
 CORS_URLS_REGEX = r'^/api/.*$'
-CORS_ALLOW_CREDENTIALS = True
+
+# we can also allow cookies, but this is a security risk
+# and doesn't seem to be necessary
+#CORS_ALLOW_CREDENTIALS = True
 
 
 # Internationalization
