@@ -11,6 +11,26 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username')
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    roles = serializers.SerializerMethodField()
+
+    def get_roles(self, obj):
+        user = obj
+        roles = []
+
+        if user and user.is_staff:
+            roles.append["ROLE_STAFF"]
+        if user and user.is_superuser:
+            roles.append["ROLE_ADMIN"]
+
+        return roles
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'roles')
+        read_only_fields = ('email', 'roles')
+
+
 class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Permission

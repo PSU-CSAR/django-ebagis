@@ -26,6 +26,10 @@ EBAGIS_APP_SETTINGS = {
 
     "REST_AUTH_TOKEN_MODEL":
         'ebagis.models.ExpiringToken',
+    "REST_AUTH_SERIALIZERS": {
+        'USER_DETAILS_SERIALIZER':
+            'ebagis.serializers.user.UserDetailSerializer',
+    },
 
     "REST_FRAMEWORK": {
         # user authentication
