@@ -25,8 +25,12 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated, ))
 def validate_token(request):
     if request.method == "GET":
-        return Response({"message": "you're logged in",
-                         "user": request.user.username})
+        return Response({
+            "message": "you're logged in",
+            "user": request.user.username,
+            "warning":
+                "this endpoint is deprecated -- use /api/rest/account/user/",
+        })
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):
