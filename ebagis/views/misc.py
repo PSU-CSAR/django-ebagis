@@ -34,6 +34,8 @@ def validate_token(request):
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):
+    permission_classes = (AllowAny, )
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
