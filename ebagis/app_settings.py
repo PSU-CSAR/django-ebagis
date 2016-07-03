@@ -1,3 +1,9 @@
+def get_expiring_token(token_class, user, serializer):
+    token, created = token_class.objects.get_or_create(user=user)
+    if not created and not token.is_valid:
+        token.update()
+    return token
+
 SETUP_STR = "EBAGIS_IS_SETUP"
 
 
@@ -26,6 +32,7 @@ EBAGIS_APP_SETTINGS = {
 
     "REST_AUTH_TOKEN_MODEL":
         'ebagis.models.ExpiringToken',
+    "REST_AUTH_TOKEN_CREATOR": get_expiring_token,
     "REST_AUTH_SERIALIZERS": {
         'USER_DETAILS_SERIALIZER':
             'ebagis.serializers.user.UserDetailSerializer',
