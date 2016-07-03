@@ -100,6 +100,10 @@ class UploadView(ChunkedUploadView):
         # create the upload from our new request object
         upload_view = cls()
 
+        # request.data is a QueryDict instance and may be immutable;
+        # set the _mutable parameter to true so we can modify as needed
+        request.data._mutable = True
+
         # set the upload object content_type
         upload_model_class_name_lower = upload_model_class.__name__.lower()
         request.data["content_type"] = \
