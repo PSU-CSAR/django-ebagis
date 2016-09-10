@@ -1,3 +1,6 @@
+# defined api versions
+api_versions = [0.1, 0.2]
+
 # callable to generate a token for rest auth login
 def get_expiring_token(token_class, user, serializer):
     token, created = token_class.objects.get_or_create(user=user)
@@ -60,8 +63,12 @@ EBAGIS_APP_SETTINGS = {
         'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
         'DEFAULT_FILTER_BACKENDS': (
             'rest_framework.filters.DjangoFilterBackend',
-            'rest_framework.filters.SearchFilter'
+            'rest_framework.filters.SearchFilter',
         ),
+        'DEFAULT_VERSIONING_CLASS': \
+            'rest_framework.versioning.AcceptHeaderVersioning',
+        'ALLOWED_VERSIONS': api_versions,
+        'DEFAULT_VERSION': max(api_versions),
     },
 
     "SWAGGER_SETTINGS": {

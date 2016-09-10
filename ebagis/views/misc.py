@@ -64,3 +64,8 @@ def get_settings(request):
 @permission_classes((AllowAny, ))
 def get_lyr(request):
     return stream_file(LAYER_FILE, request)
+
+
+@api_view(['GET'])
+def check_api_version(request):
+    return Response(request.version)

@@ -262,6 +262,9 @@ urlpatterns = [
     # API Root
     url(r"^$", views.APIRoot.as_view()),
 
+    # API version test
+    url(r"^api-version/$", views.check_api_version),
+
     # rest framework auth
     url(r"^token/$", views.ObtainExpiringAuthToken.as_view()),
     url(r"^api-auth/",
