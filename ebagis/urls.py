@@ -267,7 +267,8 @@ urlpatterns = patterns(
     url(r"^token/$", views.ObtainExpiringAuthToken.as_view()),
     url(r"^api-auth/",
         include("rest_framework.urls", namespace="rest_framework")),
-    url(r"^docs/", include("rest_framework_swagger.urls")),
+    # Swagger was upgraded from 0.3.5 to 2.0.4 and it broke; need to fix it
+    #url(r"^docs/", include("rest_framework_swagger.urls")),
 
     # rest_auth urls
     url(r'^account/', include('rest_auth.urls')),
