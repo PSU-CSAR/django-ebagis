@@ -29,6 +29,7 @@ EBAGIS_APP_SETTINGS = {
     "ACCOUNT_EMAIL_REQUIRED": True,
     "ACCOUNT_EMAIL_VERIFICATION": "mandatory",
     "ACCOUNT_DEFAULT_HTTP_PROTOCOL": "https",
+    "ACCOUNT_ADAPTER": "ebagis.user.adapter.AccountAdapter",
 
     "REST_AUTH_TOKEN_MODEL":
         'ebagis.models.ExpiringToken',
@@ -36,6 +37,8 @@ EBAGIS_APP_SETTINGS = {
     "REST_AUTH_SERIALIZERS": {
         'USER_DETAILS_SERIALIZER':
             'ebagis.serializers.user.UserDetailSerializer',
+        'PASSWORD_RESET_SERIALIZER':
+            'ebagis.serializers.auth.PasswordResetSerializer',
     },
 
     "REST_FRAMEWORK": {
