@@ -13,9 +13,10 @@ admin.autodiscover()
 # standard django url patterns
 urlpatterns = [
     # login/logout
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login',
-        {'template_name': 'admin/login.html'}),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
+    # I'm not sure what these are for, actually...
+    #url(r'^accounts/login/$', 'django.contrib.auth.views.login',
+    #    {'template_name': 'admin/login.html'}),
+    #url(r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
 
     # admin site base url
     url(r'^admin/', include(admin.site.urls)),
