@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 from . import views
 from . import models
@@ -209,7 +209,7 @@ zones_data_patterns = [
     url(r"^{}/$".format(PK_QUERY),
         hruzonesdata_detail,
         name="detail"),
-    url(r"^{}/xml/$".format(VERSION_QUERY),
+    url(r"^{}/xml/".format(VERSION_QUERY),
         include((file_patterns_no_id, "file", "hru-xml")),
         {"file_type": models.XML}),
     url(r"^{}/param/".format(VERSION_QUERY),
@@ -258,8 +258,7 @@ aoi_patterns = [
 ]
 
 
-urlpatterns = patterns(
-    "",
+urlpatterns = [
     # API Root
     url(r"^$", views.APIRoot.as_view()),
 
@@ -367,4 +366,4 @@ urlpatterns = patterns(
     url(r"^xmls/",
         include((file_patterns, "file", "xml-base")),
         {'file_type': models.XML}),
-)
+]
