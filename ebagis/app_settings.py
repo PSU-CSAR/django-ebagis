@@ -67,8 +67,8 @@ EBAGIS_APP_SETTINGS = {
         ),
         'DEFAULT_VERSIONING_CLASS': \
             'rest_framework.versioning.AcceptHeaderVersioning',
-        'ALLOWED_VERSIONS': api_versions,
-        'DEFAULT_VERSION': max(api_versions),
+        'ALLOWED_VERSIONS': [str(x) for x in api_versions],
+        'DEFAULT_VERSION': str(max(api_versions)),
     },
 
     "SWAGGER_SETTINGS": {
