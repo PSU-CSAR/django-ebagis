@@ -223,6 +223,9 @@ class HRUZonesGDB(Geodatabase_ReadOnly):
         # that has not been created yet, so we need to "force" the
         # relation on this end to make the subdirectory_of property
         # actually be calculable and allow saving HRUZonesGDB instance
+        #
+        # this is a magic value defined on the HRUZonesData class
+        # as the related_name for the hruzonesgdb field
         gdb_obj.hru_zones_data = hruzonedata
         gdb_obj.save()
 
@@ -259,15 +262,15 @@ class ParamGDB(Geodatabase_ReadOnly):
 
     @property
     def subdirectory_of(self):
-        return self.hru_zones_data.path
+        return self.hru_zones_params.path
 
     @property
     def _parent_object(self):
-        return self.hru_zones_data
+        return self.hru_zones_params
 
     @classmethod
     @transaction.atomic
-    def create(cls, geodatabase_path, user, aoi, hruzonedata,
+    def create(cls, geodatabase_path, user, aoi, hruzoneparams,
                id=None, comment=""):
         # specifically calling super on geodatabase as need to get to
         # create method on directory class, not the create method
@@ -285,7 +288,10 @@ class ParamGDB(Geodatabase_ReadOnly):
         # that has not been created yet, so we need to "force" the
         # relation on this end to make the subdirectory_of property
         # actually be calculable and allow saving ParamGDB instance
-        gdb_obj.hru_zones_data = hruzonedata
+        #
+        # this is a magic value defined on the HRUZonesData class
+        # as the related_name for the paramgdb field
+        gdb_obj.hru_zones_params = hruzoneparams
         gdb_obj.save()
 
         # get all geodatabase layers

@@ -19,7 +19,7 @@ class HRUZonesData(Directory):
                                        related_name="hru_zones_data")
     paramgdb = models.OneToOneField(ParamGDB,
                                     null=True,
-                                    related_name="hru_zones_data")
+                                    related_name="hru_zones_params")
     hruzones = models.ForeignKey("HRUZones", related_name="versions")
 
     def __init__(self, *args, **kwargs):
