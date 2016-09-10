@@ -1,8 +1,14 @@
+# callable to generate a token for rest auth login
 def get_expiring_token(token_class, user, serializer):
     token, created = token_class.objects.get_or_create(user=user)
     if not created and not token.is_valid:
         token.update()
     return token
+
+
+# ----------- EBAGIS SETTINGS BELOW ------------ #
+# used to setup ebagis when setup function
+# from init is called in project settings.py
 
 SETUP_STR = "EBAGIS_IS_SETUP"
 
