@@ -55,6 +55,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = (
+    # project
+    'ebagis',
+
+    # django libs
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,15 +68,13 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django.contrib.sites',
 
+    # 3rd-party libs
     'django_extensions',
     'django_windows_tools',
     'djcelery',
     'corsheaders',
 
     #'debug_toolbar',
-
-    #project
-    'ebagis',
 )
 
 MIDDLEWARE_CLASSES = (
