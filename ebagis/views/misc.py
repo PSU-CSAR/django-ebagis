@@ -69,4 +69,4 @@ def get_lyr(request):
 @api_view(['GET'])
 @permission_classes((AllowAny, ))
 def check_api_version(request):
-    return Response(request.version)
+    return Response(float(request.version))
