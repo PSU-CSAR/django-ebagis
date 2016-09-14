@@ -15,7 +15,6 @@ class UploadSerializer(serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(view_name="user-detail",
                                                read_only=True)
     task = TaskSerializer(read_only=True)
-    md5 = serializers.CharField(required=False)
 
 # TODO: move the validation to the model classes, and call the necessary methods here
 #    def validate(self, data):
@@ -40,5 +39,5 @@ class UploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Upload
         read_only_fields = (
-            'id', 'status', 'completed_at', 'task', 'offset',
+            'id', 'status', 'completed_at', 'task', 'offset', 'md5'
         )
