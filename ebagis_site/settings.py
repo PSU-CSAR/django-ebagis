@@ -55,6 +55,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     # project
     'ebagis',
+    'ebagis_ui',
 
     # django libs
     'django.contrib.admin',
@@ -75,17 +76,18 @@ INSTALLED_APPS = (
     #'debug_toolbar',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # Session auth causes problems with token auth logout for some reason
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-)
+]
 
 ROOT_URLCONF = 'ebagis_site.urls'
 WSGI_APPLICATION = 'ebagis_site.wsgi.application'
@@ -180,10 +182,16 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'ebagis_ui.context_processors.site'
             ],
         },
     }
 ]
+
+
+## URL PATH SETTINGS
+# settings for rest framework
+REST_ROOT = "api/rest/"
 
 
 # AOI storage/temp unzip location
@@ -192,6 +200,9 @@ EBAGIS_UPLOADS_DIRECTORY = os.path.join(MEDIA_ROOT, "uploads" + "/%Y/%m/%d")
 
 # call the setup function to add relevant settings
 ebagis_setup(__name__)
+
+# ebagis_ui settings
+EBAGIS_UI_REST_URL = REST_ROOT
 
 
 # authentication settings
@@ -210,15 +221,6 @@ CACHES = {
         }
     }
 }
-
-
-## URL PATH SETTINGS
-# TODO: move into urls.py?
-# settings for UI
-UI_ROOT = r"^ui/"
-
-# settings for rest framework
-REST_ROOT = r"^api/rest/"
 
 
 # settings for graphing data model
