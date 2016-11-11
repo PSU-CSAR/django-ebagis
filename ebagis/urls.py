@@ -275,6 +275,9 @@ urlpatterns = [
     # rest_auth urls
     url(r'^account/', include('rest_auth.urls')),
     url(r'^account/registration/', include('rest_auth.registration.urls')),
+    url(r'^account/registration/blackhole',
+        user_detail,
+        name='account_email_verification_sent'),
 
     # user URLs
     url(r"^users/$", user_list, name="user-list"),
