@@ -62,7 +62,7 @@ EBAGIS_APP_SETTINGS = {
             'rest_framework.authentication.SessionAuthentication',
             ),
         'DEFAULT_PERMISSION_CLASSES': (
-            'ebagis.permissions.IsStaffOrAuthenticated',
+            'ebagis.permissions.IsAdminOrStaffOrAuthenticated',
             ),
         'PAGINATE_BY': 100,
         'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',

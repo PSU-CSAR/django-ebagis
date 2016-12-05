@@ -20,12 +20,12 @@ class IsAdminOrStaffOrAuthenticated(permissions.BasePermission):
                  # admin user trying to DELETE
                  (request.method in ADMIN_METHODS and
                   request.user and
-                  request.user.is_superuser())
+                  request.user.is_superuser)
             or
                  # staff user trying to do anthing else
                  (request.user and
                   request.user.is_authenticated() and
-                  request.user.is_staff())
+                  request.user.is_staff)
         ):
             return True
         # user not authenticated or trying to do something
