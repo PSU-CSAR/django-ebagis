@@ -90,3 +90,11 @@
 ## blocking operations like the connection attempt.
 
 #EMAIL_TIMEOUT = None
+
+
+## Default email address to use for various automated
+## correspondence from the site manager(s).
+## This doesn’t include error messages sent to ADMINS and MANAGERS;
+## for that, see SERVER_EMAIL.
+
+#DEFAULT_FROM_EMAIL = "webmaster@localhost"
