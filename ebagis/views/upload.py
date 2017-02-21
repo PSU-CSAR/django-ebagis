@@ -73,7 +73,9 @@ class UploadView(ChunkedUploadView):
     model = Upload
     serializer_class = UploadSerializer
     search_fields = ("filename",)
-    filter_class = make_model_filter(model, base=UploadFilterSet)
+    filter_class = make_model_filter(model,
+                                     base=UploadFilterSet,
+                                     exclude_fields=['file'])
 
     def get_queryset(self):
         """

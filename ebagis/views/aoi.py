@@ -44,7 +44,7 @@ class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
         MultiPartParser,
     )
     search_fields = ("name", "shortname")
-    filter_class = make_model_filter(AOI)
+    filter_class = make_model_filter(AOI, exclude_fields=['boundary'])
 
     def create(self, request, *args, **kwargs):
         # if the user supplied a parent id for an AOI upload, we know

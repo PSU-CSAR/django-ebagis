@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-import django_filters as filters
+from django_filters import rest_framework as filters
 from rest_framework import ISO_8601
 
 
@@ -26,12 +26,12 @@ class CreatedAtMixin(FilterSet):
     )
     created_after = filters.IsoDateTimeFilter(
         name=created_at_field,
-        lookup_type="gte",
+        lookup_expr="gte",
         input_formats=(ISO_8601, "%m/%d/%Y %H:%M:%S"),
     )
     created_before = filters.IsoDateTimeFilter(
         name=created_at_field,
-        lookup_type="lte",
+        lookup_expr="lte",
         input_formats=(ISO_8601, "%m/%d/%Y %H:%M:%S"),
     )
 
@@ -46,12 +46,12 @@ class ModifiedAtMixin(FilterSet):
     )
     modified_after = filters.IsoDateTimeFilter(
         name=modified_at_field,
-        lookup_type="gte",
+        lookup_expr="gte",
         input_formats=(ISO_8601, "%m/%d/%Y %H:%M:%S"),
     )
     modified_before = filters.IsoDateTimeFilter(
         name=modified_at_field,
-        lookup_type="lte",
+        lookup_expr="lte",
         input_formats=(ISO_8601, "%m/%d/%Y %H:%M:%S"),
     )
 
@@ -65,13 +65,23 @@ class BaseFilterSet(CreatedAtMixin, CreatedByMixin, ModifiedAtMixin,
         abstract = True
 
 
-def make_model_filter(model, base=BaseFilterSet, exclude_fields=[]):
+def make_model_filter(model, base=BaseFilterSet,
+                      filter_fields=None, exclude_fields=None):
+    meta = {"model": model}
+
+    if exclude_fields is None and filter_fields is None:
+        meta["fields"] = '__all__'
+    elif not exclude_fields is None and filter_fields is None:
+        meta["exclude"] = exclude_fields
+    else:
+        meta["fields"] = filter_fields
+
     return type(
         "{}Filter".format(model.__class__.__name__),
         (base,),
         {'Meta': type(
             'Meta',
             (object, ),
-            {"model": model, "exclude": exclude_fields}
+            meta
         )},
     )

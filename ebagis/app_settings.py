@@ -21,6 +21,7 @@ SETUP_STR = "EBAGIS_IS_SETUP"
 EBAGIS_INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_gis',
     'rest_framework_swagger',
     'drf_chunked_upload',
     'allauth',
@@ -67,7 +68,7 @@ EBAGIS_APP_SETTINGS = {
         'PAGINATE_BY': 100,
         'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
         'DEFAULT_FILTER_BACKENDS': (
-            'rest_framework.filters.DjangoFilterBackend',
+            'django_filters.rest_framework.DjangoFilterBackend',
             'rest_framework.filters.SearchFilter',
         ),
         'DEFAULT_VERSIONING_CLASS': \

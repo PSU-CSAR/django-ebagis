@@ -28,7 +28,7 @@ class DownloadViewSet(viewsets.ModelViewSet):
     model = Download
     serializer_class = DownloadSerializer
     search_fields = ("name",)
-    filter_class = make_model_filter(model)
+    filter_class = make_model_filter(model, exclude_fields=['file'])
 
     def get_queryset(self):
         query = self.model.objects.all()
