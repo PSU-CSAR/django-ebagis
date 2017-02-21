@@ -38,6 +38,8 @@ class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
         "list": AOIListSerializer,
     }
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
+    # not sure if the following setting is still required
+    # probably want to test and remove if no longer used
     parser_classes = (
         JSONParser,
         FormParser,

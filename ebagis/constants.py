@@ -88,8 +88,9 @@ REQUIRED_LAYERS[PRISM_GDB] = [("Jan", RASTER_TYPECODE),
                               ("Annual", RASTER_TYPECODE)]
 
 
-# name of layer from which to get postgis geometry
+# name of layers from which to get postgis geometries
 AOI_BOUNDARY_LAYER = "aoi_v"
+AOI_POURPOINT_LAYER = "pourpoint"
 
 # directory names
 ZONES_DIR_NAME = "zones"

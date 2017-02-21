@@ -23,18 +23,13 @@ from .mixins import CreatedByMixin, DirectoryMixin
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
 from .directory import PrismDir, Maps
 from .zones import Zones
-
-
-class AOIManager(models.GeoManager):
-    def get_queryset(self):
-        return super(AOIManager, self).get_queryset().select_related()
+from .pourpoint import PourPoint
 
 
 class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(srid=GEO_WKID)
-    #objects = AOIManager()
-    objects = models.GeoManager()
+    pourpoint = models.ForeignKey(PourPoint, related_name="aois")
 
     # allow recursive parent-child relations
     # db_constraint as false means an AOI with the given ID
@@ -143,24 +138,33 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             raise AOIError(errormsg)
 
         # get multipolygon WKT from AOI Boundary Layer
-        wkt, crs_wkt = gis.get_multipart_wkt_geometry(
+        wkt = gis.get_multipart_wkt_geometry_and_reproject(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
+            GEO_WKID,
             layername=constants.AOI_BOUNDARY_LAYER
         )
 
-        crs = gis.create_spatial_ref_from_wkt(crs_wkt)
+        # get pour point WKT from AOI Pourpoint layer
+        pourpoint = gis.get_wkt_geometry_and_reproject(
+            os.path.join(temp_aoi_path, constants.AOI_GDB),
+            GEO_WKID,
+            layername=constants.AOI_POURPOINT_LAYER
+        )
 
-        if gis.get_authority_code_from_spatial_ref(crs) != GEO_WKID:
-            dst_crs = gis.create_spatial_ref_from_EPSG(GEO_WKID)
-            wkt = gis.reproject_wkt(wkt, crs, dst_crs)
+        # find or create pourpoint
+        closest_pourpoint = PourPoint.match(pourpoint, aoi_name)
 
-        aoi = cls(name=aoi_name,
-                  shortname=aoi_shortname,
-                  boundary=wkt,
-                  created_by=user,
-                  comment=comment,
-                  id=id,
-                  parent_aoi_id=parent_aoi_id)
+        aoi = cls(
+            name=aoi_name,
+            shortname=aoi_shortname,
+            boundary=wkt,
+            created_by=user,
+            comment=comment,
+            id=id,
+            parent_aoi_id=parent_aoi_id,
+            pourpoint=closest_pourpoint,
+        )
+
         try:
             aoi.save()
 

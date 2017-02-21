@@ -32,6 +32,8 @@ from .mixins import (
     DownloadMixin,
 )
 
+from .pourpoint import PourPointViewSet
+
 from .root import APIRoot
 
 from .upload import (

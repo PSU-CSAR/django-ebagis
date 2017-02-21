@@ -20,5 +20,6 @@ from .mixins import (
     AOIRelationMixin, DateMixin, CreatedByMixin, NameMixin, UniqueNameMixin,
     DirectoryMixin, ProxyManager, ProxyMixin,
 )
+from .pourpoint import PourPoint
 from .upload import Upload
 from .zones import HRUZonesData, HRUZones, Zones

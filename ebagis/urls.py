@@ -139,6 +139,21 @@ download_detail = views.DownloadViewSet.as_view({
     "get": "retrieve",
 })
 
+pourpoint_list = views.PourPointViewSet.as_view({
+    "get": "list",
+    "put": "create",
+    "post": "create",
+})
+pourpoint_detail = views.PourPointViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
+})
+pourpoint_aois = views.PourPointViewSet.as_view({
+    "get": "aois",
+})
+
 
 file_patterns = [
     url(r"^$", file_list, name="list"),
@@ -257,6 +272,12 @@ aoi_patterns = [
         {"file_type": models.MapDocument}),
 ]
 
+pourpoint_patterns = [
+    url(r"^$", pourpoint_list, name="list"),
+    url(r"^{}/$".format(PK_QUERY), pourpoint_detail, name="detail"),
+    url(r"^{}/aois/$".format(PK_QUERY), pourpoint_aois, name="aois"),
+]
+
 
 urlpatterns = [
     # API Root
@@ -372,4 +393,9 @@ urlpatterns = [
     url(r"^xmls/",
         include((file_patterns, "file", "xml-base")),
         {'file_type': models.XML}),
+
+    # Pourpoint URLs
+    url(r"^pourpoints/", include((pourpoint_patterns,
+                                 "pourpoint",
+                                 "pourpoint-base"))),
 ]

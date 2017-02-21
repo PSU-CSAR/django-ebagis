@@ -39,6 +39,15 @@ DEFAULT_GEO_WKID = 4326
 GEO_WKID = getattr(settings, 'EBAGIS_GEO_WKID',
                    DEFAULT_GEO_WKID)
 
+# AWDB Web Service settings
+url = ' http://localhost/arcgis/rest/services/AWDB_ALL/stations_USGS_ALL/MapServer/0/query'
+AWDB_QUERY_URL = getattr(settings, "EBAGIS_AWDB_QUERY_URL", url)
+# note that the search buffer actually turns into a retangular
+# search envelope, so take care in setting as not all found points
+# may be within the specified distance from the search point
+AWDB_SEARCH_BUFFER = getattr(settings, "EBAGIS_AWDB_SEARCH_BUFFER",
+                             "100 Meters")
+
 # Conf Files
 CONF_DIR = getattr(settings, "EBAGIS_CONF_DIR", r"C:\ebagis")
 DESKTOP_SETTINGS = getattr(settings, "EBAGIS_DESKTOP_SETTINGS",

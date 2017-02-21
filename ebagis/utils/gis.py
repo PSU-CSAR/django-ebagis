@@ -1,8 +1,34 @@
 from __future__ import absolute_import
 
+
+def get_multipart_wkt_geometry_and_reproject(sourcefile,
+                                             destEPSG,
+                                             layername=None):
+        wkt, crs_wkt = get_multipart_wkt_geometry(sourcefile,
+                                                  layername=layername)
+
+        crs = create_spatial_ref_from_wkt(crs_wkt)
+
+        if get_authority_code_from_spatial_ref(crs) != destEPSG:
+            dst_crs = create_spatial_ref_from_EPSG(destEPSG)
+            wkt = reproject_wkt(wkt, crs, dst_crs)
+
+        return wkt
+
+
 def get_multipart_wkt_geometry(sourcefile, layername=None):
     """extract a single multipolygon geometry from an sourcefile
     containing polygon geometries"""
+    geometries, crs_wkt = get_wkt_geometry(sourcefile, layername=layername)
+    return (wkt_polygons_to_multipolygon(geometries), crs_wkt)
+
+
+def get_wkt_geometry_and_reproject(sourcefile, destEPSG, layername=None):
+    wkt, src_crs = get_wkt_geometry(sourcefile, layername=layername)
+    return reproject_wkt(wkt, src_crs, destEPSG)
+
+
+def get_wkt_geometry(sourcefile, layername=None):
     from osgeo import ogr
 
     ogr.UseExceptions()
@@ -42,7 +68,7 @@ def get_multipart_wkt_geometry(sourcefile, layername=None):
     layer = None
     dataset = None
 
-    return (wkt_polygons_to_multipolygon(geometries), crs_wkt)
+    return (geometries, crs_wkt)
 
 
 def wkt_polygons_to_multipolygon(wkt_polygons):
@@ -57,7 +83,7 @@ def wkt_polygons_to_multipolygon(wkt_polygons):
         elif wkt.startswith("MULTIPOLYGON"):
             wkt = wkt[14:-1]
         else:
-            raise Exception("Invalid or unknown geometry type detected.")
+            raise TypeError("Invalid or unknown geometry type detected.")
 
         # append the geometry to this list, sans geometry type tag
         cleaned_wkts.append(wkt)
@@ -90,3 +116,14 @@ def create_spatial_ref_from_wkt(wkt):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromWkt(wkt)
     return spatial_ref
+
+
+def generate_envelope(point, bufferdist):
+    from osgeo import ogr
+    x, y, z = ogr.CreateGeometryFromWkt(point).GetPoint()
+    return (
+        x - bufferdist/2.0,
+        y - bufferdist/2.0,
+        x + bufferdist/2.0,
+        y + bufferdist/2.0,
+    )
