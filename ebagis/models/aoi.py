@@ -28,7 +28,7 @@ from .pourpoint import PourPoint
 
 class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
-    boundary = models.MultiPolygonField(srid=GEO_WKID)
+    boundary = models.MultiPolygonField(geography=True, srid=GEO_WKID)
     pourpoint = models.ForeignKey(PourPoint, related_name="aois")
 
     # allow recursive parent-child relations

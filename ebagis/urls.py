@@ -274,8 +274,8 @@ aoi_patterns = [
 
 pourpoint_patterns = [
     url(r"^$", pourpoint_list, name="list"),
-    url(r"^{}/$".format(PK_QUERY), pourpoint_detail, name="detail"),
-    url(r"^{}/aois/$".format(PK_QUERY), pourpoint_aois, name="aois"),
+    url(r"^{}/$".format(r"(?P<pk>[0-9]+)"), pourpoint_detail, name="detail"),
+    url(r"^{}/aois/$".format(r"(?P<pk>[0-9]+)"), pourpoint_aois, name="aois"),
 ]
 
 

@@ -25,7 +25,7 @@ def get_multipart_wkt_geometry(sourcefile, layername=None):
 
 def get_wkt_geometry_and_reproject(sourcefile, destEPSG, layername=None):
     wkt, src_crs = get_wkt_geometry(sourcefile, layername=layername)
-    return reproject_wkt(wkt, src_crs, destEPSG)
+    return reproject_wkt(wkt[0], src_crs, destEPSG)
 
 
 def get_wkt_geometry(sourcefile, layername=None):
@@ -94,6 +94,10 @@ def wkt_polygons_to_multipolygon(wkt_polygons):
 
 def reproject_wkt(wkt, src_crs, dst_crs):
     from osgeo import ogr, osr
+
+    src_crs = validate_spatial_ref(src_crs)
+    dst_crs = validate_spatial_ref(dst_crs)
+
     tf = osr.CoordinateTransformation(src_crs, dst_crs)
     geom = ogr.CreateGeometryFromWkt(wkt)
     geom.Transform(tf)
@@ -102,6 +106,16 @@ def reproject_wkt(wkt, src_crs, dst_crs):
 
 def get_authority_code_from_spatial_ref(spatial_ref):
     return spatial_ref.GetAttrValue("AUTHORTIY", 1)
+
+
+def validate_spatial_ref(sr):
+    from osgeo import osr
+    if not isinstance(sr, osr.SpatialReference):
+        try:
+            sr = create_spatial_ref_from_EPSG(sr)
+        except:
+            sr = create_spatial_ref_from_wkt(sr)
+    return sr
 
 
 def create_spatial_ref_from_EPSG(epsg_code):

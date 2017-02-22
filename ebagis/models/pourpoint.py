@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import GEOSGeometry
 
 from arcpy import Geometry, SpatialReference, FromWKT
 
@@ -13,19 +15,26 @@ from .mixins import NameMixin
 
 
 class PourPoint(NameMixin):
-    location = models.PointField(srid=GEO_WKID)
+    location = models.PointField(geography=True, srid=GEO_WKID)
     awdb_id = models.CharField(max_length=30, null=True, blank=True)
 
     @classmethod
     def match(cls, point, aoi_name=None, awdb_id=None, sr=GEO_WKID):
         # first we try to match to existing points in the table
-        existing_point = cls.objects.filter(
-            location__distance_lte=(point, D(ft=100))
-        ).distance(point).order_by('distance')[0]
+        pnt = GEOSGeometry(point, srid=sr)
+        existing_points = cls.objects.filter(
+            location__distance_lte=(pnt, D(ft=100))
+        )
 
-        # if we find one we are done
-        if existing_point:
-            return existing_point
+        # if we find only one we can just take it
+        if len(existing_points) == 1:
+            return existing_points[0]
+
+        # if we find more than one we want just the closest one
+        elif len(existing_points) > 1:
+            return existing_points.annotate(
+                distance=Distance('location', pnt)
+            ).order_by('distance')[0]
 
         # if we didn't find one we want to look at the AWDB USGS
         # stations; maybe it's a new station we don't yet have
