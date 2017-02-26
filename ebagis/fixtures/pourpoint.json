@@ -1,0 +1,6502 @@
+[
+{
+    "model": "ebagis.pourpoint",
+    "pk": 1,
+    "fields": {
+        "name": "Lake Sherburne Inflow",
+        "location": "SRID=4326;POINT (-113.5173205 48.83025980000002)",
+        "boundary": null,
+        "awdb_id": "5016000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 2,
+    "fields": {
+        "name": "St. Mary R nr Babb",
+        "location": "SRID=4326;POINT (-113.41982 48.83331497)",
+        "boundary": null,
+        "awdb_id": "5017500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 3,
+    "fields": {
+        "name": "St. Mary R at Int'l Boundary",
+        "location": "SRID=4326;POINT (-113.299167 49.01194400000002)",
+        "boundary": null,
+        "awdb_id": "5020500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 4,
+    "fields": {
+        "name": "Lima Reservoir Inflow",
+        "location": "SRID=4326;POINT (-112.371389 44.65602346000002)",
+        "boundary": null,
+        "awdb_id": "6012500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 5,
+    "fields": {
+        "name": "Clark Canyon Inflow",
+        "location": "SRID=4326;POINT (-112.8536363 45.0032541)",
+        "boundary": null,
+        "awdb_id": "6015400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 6,
+    "fields": {
+        "name": "Beaverhead R at Barretts",
+        "location": "SRID=4326;POINT (-112.7505793 45.11631010000001)",
+        "boundary": null,
+        "awdb_id": "6016000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 7,
+    "fields": {
+        "name": "Ruby R Reservoir Inflow",
+        "location": "SRID=4326;POINT (-112.1424864 45.19242228000002)",
+        "boundary": null,
+        "awdb_id": "6019500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 8,
+    "fields": {
+        "name": "Big Hole R at Wisdom",
+        "location": "SRID=4326;POINT (-113.4578373 45.6185342)",
+        "boundary": null,
+        "awdb_id": "6024450"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 9,
+    "fields": {
+        "name": "Big Hole R nr Melrose",
+        "location": "SRID=4326;POINT (-112.7016902 45.52659327000002)",
+        "boundary": null,
+        "awdb_id": "6025500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 10,
+    "fields": {
+        "name": "Jefferson R nr Twin Bridges",
+        "location": "SRID=4326;POINT (-112.3305576 45.61242600000002)",
+        "boundary": null,
+        "awdb_id": "6026500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 11,
+    "fields": {
+        "name": "Boulder R nr Boulder",
+        "location": "SRID=4326;POINT (-112.0916649 46.2110389)",
+        "boundary": null,
+        "awdb_id": "6033000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 12,
+    "fields": {
+        "name": "Willow Ck Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.7410894 45.72298385000001)",
+        "boundary": null,
+        "awdb_id": "6035000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 13,
+    "fields": {
+        "name": "Jefferson R nr Three Forks",
+        "location": "SRID=4326;POINT (-111.596639 45.89770587000001)",
+        "boundary": null,
+        "awdb_id": "6036650"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 14,
+    "fields": {
+        "name": "Hebgen Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.338288 44.86659267000003)",
+        "boundary": null,
+        "awdb_id": "6038500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 15,
+    "fields": {
+        "name": "Ennis Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.6341382 45.49020577000002)",
+        "boundary": null,
+        "awdb_id": "6041000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 16,
+    "fields": {
+        "name": "Gallatin R nr Gateway",
+        "location": "SRID=4326;POINT (-111.2705107 45.49742860000001)",
+        "boundary": null,
+        "awdb_id": "6043500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 17,
+    "fields": {
+        "name": "E Gallatin R bl Bridger Ck nr Bozeman",
+        "location": "SRID=4326;POINT (-111.0696708 45.72493016)",
+        "boundary": null,
+        "awdb_id": "6048700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 18,
+    "fields": {
+        "name": "Hyalite Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.070781 45.56159687000002)",
+        "boundary": null,
+        "awdb_id": "6049450"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 19,
+    "fields": {
+        "name": "Gallatin R at Logan",
+        "location": "SRID=4326;POINT (-111.4382983 45.88520600000002)",
+        "boundary": null,
+        "awdb_id": "6052500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 20,
+    "fields": {
+        "name": "Missouri R at Toston",
+        "location": "SRID=4326;POINT (-111.4205199 46.14604036000001)",
+        "boundary": null,
+        "awdb_id": "6054500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 21,
+    "fields": {
+        "name": "Dearborn R nr Craig",
+        "location": "SRID=4326;POINT (-112.0963938 47.19911229000002)",
+        "boundary": null,
+        "awdb_id": "6073500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 22,
+    "fields": {
+        "name": "Sheep Ck nr White Sulphur Springs",
+        "location": "SRID=4326;POINT (-110.8099362 46.7680153)",
+        "boundary": null,
+        "awdb_id": "6077000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 23,
+    "fields": {
+        "name": "Smith R bl Eagle Ck",
+        "location": "SRID=4326;POINT (-111.192174 46.82800477)",
+        "boundary": null,
+        "awdb_id": "6077200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 24,
+    "fields": {
+        "name": "Gibson Reservoir Inflow",
+        "location": "SRID=4326;POINT (-112.8603248 47.64077737000002)",
+        "boundary": null,
+        "awdb_id": "6078600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 25,
+    "fields": {
+        "name": "Missouri R at Fort Benton",
+        "location": "SRID=4326;POINT (-110.6671586 47.81746979)",
+        "boundary": null,
+        "awdb_id": "6090800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 26,
+    "fields": {
+        "name": "Two Medicine R nr Browning",
+        "location": "SRID=4326;POINT (-112.8046837 48.47169068000002)",
+        "boundary": null,
+        "awdb_id": "6091700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 27,
+    "fields": {
+        "name": "Badger Ck nr Browning",
+        "location": "SRID=4326;POINT (-112.841764 48.34618900000002)",
+        "boundary": null,
+        "awdb_id": "6093200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 28,
+    "fields": {
+        "name": "Swift Reservoir Inflow",
+        "location": "SRID=4326;POINT (-112.8703391 48.16662769000002)",
+        "boundary": null,
+        "awdb_id": "6094100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 29,
+    "fields": {
+        "name": "Dupuyer Ck nr Valier",
+        "location": "SRID=4326;POINT (-112.3980977 48.23608398999999)",
+        "boundary": null,
+        "awdb_id": "6095400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 30,
+    "fields": {
+        "name": "Cut Bank Ck nr Browning",
+        "location": "SRID=4326;POINT (-112.3469963 48.63331700000001)",
+        "boundary": null,
+        "awdb_id": "6098500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 31,
+    "fields": {
+        "name": "Marias R nr Shelby",
+        "location": "SRID=4326;POINT (-111.8897445 48.42720498000001)",
+        "boundary": null,
+        "awdb_id": "6099500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 32,
+    "fields": {
+        "name": "Teton R bl SF nr Choteau",
+        "location": "SRID=4326;POINT (-112.611984 47.88300600000002)",
+        "boundary": null,
+        "awdb_id": "6102500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 33,
+    "fields": {
+        "name": "Teton R nr Dutton",
+        "location": "SRID=4326;POINT (-111.5527635 47.93024085999998)",
+        "boundary": null,
+        "awdb_id": "6108000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 34,
+    "fields": {
+        "name": "Missouri R nr Virgelle",
+        "location": "SRID=4326;POINT (-110.2577078 48.00497340000001)",
+        "boundary": null,
+        "awdb_id": "6109500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 35,
+    "fields": {
+        "name": "Missouri R nr Landusky",
+        "location": "SRID=4326;POINT (-108.6876523 47.63082320000002)",
+        "boundary": null,
+        "awdb_id": "6115200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 36,
+    "fields": {
+        "name": "NF Musselshell R nr Delpine",
+        "location": "SRID=4326;POINT (-110.5757565 46.60995170000003)",
+        "boundary": null,
+        "awdb_id": "6115500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 37,
+    "fields": {
+        "name": "SF Musselshell R ab Martinsdale",
+        "location": "SRID=4326;POINT (-110.3821361 46.45328086000001)",
+        "boundary": null,
+        "awdb_id": "6118500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 38,
+    "fields": {
+        "name": "Musselshell R at Harlowton",
+        "location": "SRID=4326;POINT (-109.8407389 46.42995640000002)",
+        "boundary": null,
+        "awdb_id": "6120500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 39,
+    "fields": {
+        "name": "Musselshell R nr Roundup",
+        "location": "SRID=4326;POINT (-108.5726352 46.42801920000001)",
+        "boundary": null,
+        "awdb_id": "6126500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 40,
+    "fields": {
+        "name": "Missouri R bl Fort Peck Dam",
+        "location": "SRID=4326;POINT (-106.3564212 48.04418477)",
+        "boundary": null,
+        "awdb_id": "6132000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 41,
+    "fields": {
+        "name": "Milk R at Western Crossing of Int'l Bndry, AB",
+        "location": "SRID=4326;POINT (-112.5459018 49.00749225000001)",
+        "boundary": null,
+        "awdb_id": "6133000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 42,
+    "fields": {
+        "name": "Milk R at Milk River, AB",
+        "location": "SRID=4326;POINT (-112.078889 49.14361100000003)",
+        "boundary": null,
+        "awdb_id": "6134500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 43,
+    "fields": {
+        "name": "Milk R at Eastern Crossing of Int'l Bndry",
+        "location": "SRID=4326;POINT (-110.4227218 48.9747304)",
+        "boundary": null,
+        "awdb_id": "6135000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 44,
+    "fields": {
+        "name": "Beaver Ck nr Havre",
+        "location": "SRID=4326;POINT (-109.7777878 48.48074360000002)",
+        "boundary": null,
+        "awdb_id": "6140000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 45,
+    "fields": {
+        "name": "Yellowstone R at Yellowstone Lake Outlet",
+        "location": "SRID=4326;POINT (-110.3807556 44.56744150000002)",
+        "boundary": null,
+        "awdb_id": "6186500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 46,
+    "fields": {
+        "name": "Yellowstone R at Corwin Springs",
+        "location": "SRID=4326;POINT (-110.7943813 45.1118797)",
+        "boundary": null,
+        "awdb_id": "6191500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 47,
+    "fields": {
+        "name": "Yellowstone R at Livingston",
+        "location": "SRID=4326;POINT (-110.5660394 45.5971581)",
+        "boundary": null,
+        "awdb_id": "6192500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 48,
+    "fields": {
+        "name": "Shields R nr Livingston",
+        "location": "SRID=4326;POINT (-110.4799253 45.73826870000001)",
+        "boundary": null,
+        "awdb_id": "6195600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 49,
+    "fields": {
+        "name": "Boulder R at Big Timber",
+        "location": "SRID=4326;POINT (-109.9387978 45.83410617999999)",
+        "boundary": null,
+        "awdb_id": "6200000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 50,
+    "fields": {
+        "name": "West Rosebud Ck nr Roscoe",
+        "location": "SRID=4326;POINT (-109.7312845 45.24299835000004)",
+        "boundary": null,
+        "awdb_id": "6204050"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 51,
+    "fields": {
+        "name": "Stillwater R nr Absarokee",
+        "location": "SRID=4326;POINT (-109.3873875 45.5510534)",
+        "boundary": null,
+        "awdb_id": "6205000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 52,
+    "fields": {
+        "name": "Clarks Fk Yellowstone R nr Belfry",
+        "location": "SRID=4326;POINT (-109.0654219 45.01022510000002)",
+        "boundary": null,
+        "awdb_id": "6207500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 53,
+    "fields": {
+        "name": "Cooney Reservoir Inflow",
+        "location": "SRID=4326;POINT (-109.1857122 45.44966700000001)",
+        "boundary": null,
+        "awdb_id": "6212500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 54,
+    "fields": {
+        "name": "Yellowstone R at Billings",
+        "location": "SRID=4326;POINT (-108.4673563 45.79995280000001)",
+        "boundary": null,
+        "awdb_id": "6214500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 55,
+    "fields": {
+        "name": "Dinwoody Ck nr Burris",
+        "location": "SRID=4326;POINT (-109.410143 43.34551138000001)",
+        "boundary": null,
+        "awdb_id": "6221400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 56,
+    "fields": {
+        "name": "Bull Lake Ck nr Lenore",
+        "location": "SRID=4326;POINT (-109.0229052 43.24245665000001)",
+        "boundary": null,
+        "awdb_id": "6225000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 57,
+    "fields": {
+        "name": "Wind R at Riverton",
+        "location": "SRID=4326;POINT (-108.3767701 43.01051478000001)",
+        "boundary": null,
+        "awdb_id": "6228000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 58,
+    "fields": {
+        "name": "SF Little Wind R nr Fort Washakie",
+        "location": "SRID=4326;POINT (-109.037628 42.96828927000002)",
+        "boundary": null,
+        "awdb_id": "6228350"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 59,
+    "fields": {
+        "name": "Little Popo Agie R nr Lander",
+        "location": "SRID=4326;POINT (-108.6434455 42.7166259)",
+        "boundary": null,
+        "awdb_id": "6233000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 60,
+    "fields": {
+        "name": "Little Wind R nr Riverton",
+        "location": "SRID=4326;POINT (-108.3754167 42.99750000000001)",
+        "boundary": null,
+        "awdb_id": "6235500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 61,
+    "fields": {
+        "name": "Boysen Reservoir Inflow",
+        "location": "SRID=4326;POINT (-108.1789858 43.42495750000001)",
+        "boundary": null,
+        "awdb_id": "6259000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 62,
+    "fields": {
+        "name": "Greybull R nr Meeteetse",
+        "location": "SRID=4326;POINT (-108.877075 44.15551000000002)",
+        "boundary": null,
+        "awdb_id": "6276500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 63,
+    "fields": {
+        "name": "Shell Ck nr Shell",
+        "location": "SRID=4326;POINT (-107.7128666 44.56496097000001)",
+        "boundary": null,
+        "awdb_id": "6278500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 64,
+    "fields": {
+        "name": "Bighorn R at Kane",
+        "location": "SRID=4326;POINT (-108.1814972 44.75856618)",
+        "boundary": null,
+        "awdb_id": "6279500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 65,
+    "fields": {
+        "name": "NF Shoshone R at Wapiti",
+        "location": "SRID=4326;POINT (-109.4304399 44.46967158000001)",
+        "boundary": null,
+        "awdb_id": "6279940"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 66,
+    "fields": {
+        "name": "SF Shoshone R nr Valley",
+        "location": "SRID=4326;POINT (-109.5548879 44.20828238000001)",
+        "boundary": null,
+        "awdb_id": "6280300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 67,
+    "fields": {
+        "name": "SF Shoshone R ab Buffalo Bill Reservoir",
+        "location": "SRID=4326;POINT (-109.2579293 44.41911816)",
+        "boundary": null,
+        "awdb_id": "6281000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 68,
+    "fields": {
+        "name": "Buffalo Bill Reservoir Inflow",
+        "location": "SRID=4326;POINT (-109.0979218 44.51661960000001)",
+        "boundary": null,
+        "awdb_id": "6282000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 69,
+    "fields": {
+        "name": "Bighorn R nr St. Xavier",
+        "location": "SRID=4326;POINT (-107.918721 45.31662628)",
+        "boundary": null,
+        "awdb_id": "6287000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 70,
+    "fields": {
+        "name": "Little Bighorn R nr Hardin",
+        "location": "SRID=4326;POINT (-107.5573051 45.73581230000001)",
+        "boundary": null,
+        "awdb_id": "6294000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 71,
+    "fields": {
+        "name": "Tongue R nr Dayton",
+        "location": "SRID=4326;POINT (-107.3045253 44.84941230000002)",
+        "boundary": null,
+        "awdb_id": "6298000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 72,
+    "fields": {
+        "name": "Big Goose Ck nr Sheridan",
+        "location": "SRID=4326;POINT (-107.1814618 44.70219130000002)",
+        "boundary": null,
+        "awdb_id": "6302000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 73,
+    "fields": {
+        "name": "Little Goose Ck nr Bighorn",
+        "location": "SRID=4326;POINT (-107.040065 44.59608130000002)",
+        "boundary": null,
+        "awdb_id": "6303500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 74,
+    "fields": {
+        "name": "Tongue River Reservoir Inflow",
+        "location": "SRID=4326;POINT (-106.836178 45.00886319999999)",
+        "boundary": null,
+        "awdb_id": "6306300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 75,
+    "fields": {
+        "name": "Yellowstone R at Miles City",
+        "location": "SRID=4326;POINT (-105.8611149 46.42166950000001)",
+        "boundary": null,
+        "awdb_id": "6309000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 76,
+    "fields": {
+        "name": "MF Powder R nr Barnum",
+        "location": "SRID=4326;POINT (-107.1383995 43.57773999000002)",
+        "boundary": null,
+        "awdb_id": "6309200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 77,
+    "fields": {
+        "name": "NF Powder R nr Hazelton",
+        "location": "SRID=4326;POINT (-107.0808955 44.02774228000002)",
+        "boundary": null,
+        "awdb_id": "6311000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 78,
+    "fields": {
+        "name": "Rock Ck nr Buffalo",
+        "location": "SRID=4326;POINT (-106.878945 44.4560828)",
+        "boundary": null,
+        "awdb_id": "6320000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 79,
+    "fields": {
+        "name": "Piney Ck at Kearny",
+        "location": "SRID=4326;POINT (-106.8222783 44.53552818000001)",
+        "boundary": null,
+        "awdb_id": "6323000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 80,
+    "fields": {
+        "name": "Powder R at Moorehead",
+        "location": "SRID=4326;POINT (-105.878067 45.05776485000002)",
+        "boundary": null,
+        "awdb_id": "6324500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 81,
+    "fields": {
+        "name": "Powder R nr Locate",
+        "location": "SRID=4326;POINT (-105.309983 46.43000386000001)",
+        "boundary": null,
+        "awdb_id": "6326500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 82,
+    "fields": {
+        "name": "Yellowstone R nr Sidney",
+        "location": "SRID=4326;POINT (-104.156603 47.67835000000002)",
+        "boundary": null,
+        "awdb_id": "6329500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 83,
+    "fields": {
+        "name": "Lake Sakakawea Inflow",
+        "location": "SRID=4326;POINT (-103.7146446 48.10807920000001)",
+        "boundary": null,
+        "awdb_id": "6330000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 84,
+    "fields": {
+        "name": "Deerfield Reservoir Inflow",
+        "location": "SRID=4326;POINT (-103.7818652 44.02914848000002)",
+        "boundary": null,
+        "awdb_id": "6410000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 85,
+    "fields": {
+        "name": "Pactola Reservoir Inflow",
+        "location": "SRID=4326;POINT (-103.482134 44.07665378000001)",
+        "boundary": null,
+        "awdb_id": "6411500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 86,
+    "fields": {
+        "name": "North Platte R nr Northgate",
+        "location": "SRID=4326;POINT (-106.3391944 40.93663889000001)",
+        "boundary": null,
+        "awdb_id": "6620000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 87,
+    "fields": {
+        "name": "Encampment R nr Encampment",
+        "location": "SRID=4326;POINT (-106.7153129 41.30329849000002)",
+        "boundary": null,
+        "awdb_id": "6625000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 88,
+    "fields": {
+        "name": "Rock Ck nr Arlington",
+        "location": "SRID=4326;POINT (-106.2227908 41.58524549000001)",
+        "boundary": null,
+        "awdb_id": "6632400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 89,
+    "fields": {
+        "name": "Medicine Bow R nr Hanna",
+        "location": "SRID=4326;POINT (-106.513083 42.00968440000001)",
+        "boundary": null,
+        "awdb_id": "6635000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 90,
+    "fields": {
+        "name": "Seminoe Reservoir Inflow",
+        "location": "SRID=4326;POINT (-106.876432 42.17829280000001)",
+        "boundary": null,
+        "awdb_id": "6635500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 91,
+    "fields": {
+        "name": "Sweetwater R nr Alcova",
+        "location": "SRID=4326;POINT (-107.1339449 42.48995905000001)",
+        "boundary": null,
+        "awdb_id": "6639000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 92,
+    "fields": {
+        "name": "Deer Ck at Glenrock",
+        "location": "SRID=4326;POINT (-105.866115 42.86385525000001)",
+        "boundary": null,
+        "awdb_id": "6646600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 93,
+    "fields": {
+        "name": "La Prele Ck ab La Prele Reservoir",
+        "location": "SRID=4326;POINT (-105.63055 42.68107806999998)",
+        "boundary": null,
+        "awdb_id": "6649000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 94,
+    "fields": {
+        "name": "North Platte R - Alcova to Orin Gain",
+        "location": "SRID=4326;POINT (-105.1591434 42.65249599)",
+        "boundary": null,
+        "awdb_id": "6652000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 95,
+    "fields": {
+        "name": "North Platte R bl Glendo Reservoir",
+        "location": "SRID=4326;POINT (-104.9477477 42.4569134)",
+        "boundary": null,
+        "awdb_id": "6652800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 96,
+    "fields": {
+        "name": "North Platte R bl Guernsey Reservoir",
+        "location": "SRID=4326;POINT (-104.7546868 42.28052427000002)",
+        "boundary": null,
+        "awdb_id": "6656000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 97,
+    "fields": {
+        "name": "Laramie R nr Woods",
+        "location": "SRID=4326;POINT (-105.9808395 41.13803039000002)",
+        "boundary": null,
+        "awdb_id": "6659500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 98,
+    "fields": {
+        "name": "Little Laramie R nr Filmore",
+        "location": "SRID=4326;POINT (-106.034729 41.29497270000002)",
+        "boundary": null,
+        "awdb_id": "6661000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 99,
+    "fields": {
+        "name": "Antero Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.889444 38.55722200000001)",
+        "boundary": null,
+        "awdb_id": "6694650"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 100,
+    "fields": {
+        "name": "Spinney Mountain Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.681111 38.98611099999999)",
+        "boundary": null,
+        "awdb_id": "6694920"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 101,
+    "fields": {
+        "name": "Elevenmile Canyon Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.58139 38.96749238000001)",
+        "boundary": null,
+        "awdb_id": "6695000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 102,
+    "fields": {
+        "name": "Cheesman Lake Inflow",
+        "location": "SRID=4326;POINT (-105.2677725 39.20915717999999)",
+        "boundary": null,
+        "awdb_id": "6701000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 103,
+    "fields": {
+        "name": "South Platte R at South Platte",
+        "location": "SRID=4326;POINT (-105.1699899 39.40915580000001)",
+        "boundary": null,
+        "awdb_id": "6707500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 104,
+    "fields": {
+        "name": "Bear Ck ab Evergreen",
+        "location": "SRID=4326;POINT (-105.3369444 39.63316666999999)",
+        "boundary": null,
+        "awdb_id": "6710385"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 105,
+    "fields": {
+        "name": "Bear Ck at Morrison",
+        "location": "SRID=4326;POINT (-105.1958219 39.6530433)",
+        "boundary": null,
+        "awdb_id": "6710500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 106,
+    "fields": {
+        "name": "Clear Ck at Golden",
+        "location": "SRID=4326;POINT (-105.2352667 39.75304299)",
+        "boundary": null,
+        "awdb_id": "6719505"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 107,
+    "fields": {
+        "name": "St. Vrain Ck at Lyons",
+        "location": "SRID=4326;POINT (-105.2599887 40.21804094000001)",
+        "boundary": null,
+        "awdb_id": "6724000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 108,
+    "fields": {
+        "name": "Boulder Ck nr Orodell",
+        "location": "SRID=4326;POINT (-105.3308254 40.00637480000001)",
+        "boundary": null,
+        "awdb_id": "6727000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 109,
+    "fields": {
+        "name": "South Boulder Ck nr Eldorado Springs",
+        "location": "SRID=4326;POINT (-105.2958242 39.93109740000001)",
+        "boundary": null,
+        "awdb_id": "6729500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 110,
+    "fields": {
+        "name": "Big Thompson R at Canyon Mouth",
+        "location": "SRID=4326;POINT (-105.2266522 40.42165038000002)",
+        "boundary": null,
+        "awdb_id": "6738000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 111,
+    "fields": {
+        "name": "Cache La Poudre at Canyon Mouth",
+        "location": "SRID=4326;POINT (-105.2244271 40.66442620000001)",
+        "boundary": null,
+        "awdb_id": "6752000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 112,
+    "fields": {
+        "name": "Chalk Ck nr Nathrop",
+        "location": "SRID=4326;POINT (-106.1600184 38.73360756000002)",
+        "boundary": null,
+        "awdb_id": "7091000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 113,
+    "fields": {
+        "name": "Arkansas R at Salida",
+        "location": "SRID=4326;POINT (-106.0105693 38.5458304)",
+        "boundary": null,
+        "awdb_id": "7091500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 114,
+    "fields": {
+        "name": "Grape Ck nr Westcliffe",
+        "location": "SRID=4326;POINT (-105.4836125 38.18611049000002)",
+        "boundary": null,
+        "awdb_id": "7095000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 115,
+    "fields": {
+        "name": "Pueblo Reservoir Inflow",
+        "location": "SRID=4326;POINT (-104.718033 38.27166940000003)",
+        "boundary": null,
+        "awdb_id": "7099400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 116,
+    "fields": {
+        "name": "Huerfano R nr Redwing",
+        "location": "SRID=4326;POINT (-105.351395 37.72778160000001)",
+        "boundary": null,
+        "awdb_id": "7111000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 117,
+    "fields": {
+        "name": "Cucharas R nr La Veta",
+        "location": "SRID=4326;POINT (-105.0527781 37.42001275)",
+        "boundary": null,
+        "awdb_id": "7114000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 118,
+    "fields": {
+        "name": "Trinidad Lake Inflow",
+        "location": "SRID=4326;POINT (-104.509152 37.17085210000001)",
+        "boundary": null,
+        "awdb_id": "7124500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 119,
+    "fields": {
+        "name": "Vermejo R nr Dawson",
+        "location": "SRID=4326;POINT (-104.7863944 36.68102778000002)",
+        "boundary": null,
+        "awdb_id": "7203000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 120,
+    "fields": {
+        "name": "Eagle Nest Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.2281444 36.53212500000002)",
+        "boundary": null,
+        "awdb_id": "7206000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 121,
+    "fields": {
+        "name": "Cimarron R nr Cimarron",
+        "location": "SRID=4326;POINT (-104.9786111 36.5198333)",
+        "boundary": null,
+        "awdb_id": "7207000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 122,
+    "fields": {
+        "name": "Ponil Ck nr Cimarron",
+        "location": "SRID=4326;POINT (-104.9468056 36.57369444000001)",
+        "boundary": null,
+        "awdb_id": "7207500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 123,
+    "fields": {
+        "name": "Rayado Ck nr Cimarron",
+        "location": "SRID=4326;POINT (-104.9692889 36.37234444)",
+        "boundary": null,
+        "awdb_id": "7208500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 124,
+    "fields": {
+        "name": "Mora R nr Golondrinas",
+        "location": "SRID=4326;POINT (-105.1636194 35.8908722)",
+        "boundary": null,
+        "awdb_id": "7216500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 125,
+    "fields": {
+        "name": "Conchas Reservoir Inflow",
+        "location": "SRID=4326;POINT (-104.1699758 35.4089371)",
+        "boundary": null,
+        "awdb_id": "7223500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 126,
+    "fields": {
+        "name": "Rio Grande at Thirty Mile Bridge",
+        "location": "SRID=4326;POINT (-107.2556094 37.72472199000001)",
+        "boundary": null,
+        "awdb_id": "8213500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 127,
+    "fields": {
+        "name": "Rio Grande at Wagon Wheel Gap",
+        "location": "SRID=4326;POINT (-106.831433 37.76694638000001)",
+        "boundary": null,
+        "awdb_id": "8217500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 128,
+    "fields": {
+        "name": "SF Rio Grande at South Fork",
+        "location": "SRID=4326;POINT (-106.6492082 37.65694884000001)",
+        "boundary": null,
+        "awdb_id": "8219500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 129,
+    "fields": {
+        "name": "Rio Grande nr Del Norte",
+        "location": "SRID=4326;POINT (-106.46115 37.68944750000001)",
+        "boundary": null,
+        "awdb_id": "8220000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 130,
+    "fields": {
+        "name": "Saguache Ck nr Saguache",
+        "location": "SRID=4326;POINT (-106.290583 38.16333294000001)",
+        "boundary": null,
+        "awdb_id": "8227000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 131,
+    "fields": {
+        "name": "Alamosa Ck ab Terrace Reservoir",
+        "location": "SRID=4326;POINT (-106.3347558 37.37472769000002)",
+        "boundary": null,
+        "awdb_id": "8236000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 132,
+    "fields": {
+        "name": "La Jara Ck nr Capulin",
+        "location": "SRID=4326;POINT (-106.1883626 37.20889689999999)",
+        "boundary": null,
+        "awdb_id": "8238000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 133,
+    "fields": {
+        "name": "Trinchera Ck ab Turners Ranch",
+        "location": "SRID=4326;POINT (-105.2950101 37.37473305999998)",
+        "boundary": null,
+        "awdb_id": "8240500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 134,
+    "fields": {
+        "name": "Sangre de Cristo Ck",
+        "location": "SRID=4326;POINT (-105.4150108 37.42500877)",
+        "boundary": null,
+        "awdb_id": "8241500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 135,
+    "fields": {
+        "name": "Ute Ck nr Fort Garland",
+        "location": "SRID=4326;POINT (-105.4258333 37.4472222)",
+        "boundary": null,
+        "awdb_id": "8242500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 136,
+    "fields": {
+        "name": "Platoro Reservoir Inflow",
+        "location": "SRID=4326;POINT (-106.5442035 37.35500590000002)",
+        "boundary": null,
+        "awdb_id": "8245000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 137,
+    "fields": {
+        "name": "Conejos R nr Mogote",
+        "location": "SRID=4326;POINT (-106.1875269 37.05390016000002)",
+        "boundary": null,
+        "awdb_id": "8246500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 138,
+    "fields": {
+        "name": "San Antonio R at Ortiz",
+        "location": "SRID=4326;POINT (-106.0386325 36.99306944000001)",
+        "boundary": null,
+        "awdb_id": "8247500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 139,
+    "fields": {
+        "name": "Los Pinos R nr Ortiz",
+        "location": "SRID=4326;POINT (-106.0736334 36.98223590000001)",
+        "boundary": null,
+        "awdb_id": "8248000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 140,
+    "fields": {
+        "name": "Culebra Ck at San Luis",
+        "location": "SRID=4326;POINT (-105.4258333 37.18388888999998)",
+        "boundary": null,
+        "awdb_id": "8250000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 141,
+    "fields": {
+        "name": "Rio Grande nr Lobatos Obs USGS",
+        "location": "SRID=4326;POINT (-105.7569444 37.07861109999999)",
+        "boundary": null,
+        "awdb_id": "8251500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 142,
+    "fields": {
+        "name": "Costilla Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.2836667 36.87280556)",
+        "boundary": null,
+        "awdb_id": "8254000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 143,
+    "fields": {
+        "name": "Costilla Ck nr Costilla",
+        "location": "SRID=4326;POINT (-105.5071111 36.96686110000002)",
+        "boundary": null,
+        "awdb_id": "8255500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 144,
+    "fields": {
+        "name": "Red R bl Fish Hatchery nr Questa",
+        "location": "SRID=4326;POINT (-105.6541222 36.68283889000001)",
+        "boundary": null,
+        "awdb_id": "8266820"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 145,
+    "fields": {
+        "name": "Rio Hondo nr Valdez",
+        "location": "SRID=4326;POINT (-105.5565222 36.5417972)",
+        "boundary": null,
+        "awdb_id": "8267500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 146,
+    "fields": {
+        "name": "Rio Pueblo de Taos nr Taos",
+        "location": "SRID=4326;POINT (-105.5036111 36.43944444000001)",
+        "boundary": null,
+        "awdb_id": "8269000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 147,
+    "fields": {
+        "name": "Rio Lucero nr Arroyo Seco",
+        "location": "SRID=4326;POINT (-105.5309639 36.50828889)",
+        "boundary": null,
+        "awdb_id": "8271000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 148,
+    "fields": {
+        "name": "Rio Pueblo de Taos bl Los Cordovas",
+        "location": "SRID=4326;POINT (-105.6678333 36.37933330000001)",
+        "boundary": null,
+        "awdb_id": "8276300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 149,
+    "fields": {
+        "name": "Embudo Ck at Dixon",
+        "location": "SRID=4326;POINT (-105.9136306 36.21085556000001)",
+        "boundary": null,
+        "awdb_id": "8279000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 150,
+    "fields": {
+        "name": "El Vado Reservoir Inflow",
+        "location": "SRID=4326;POINT (-106.7247667 36.58038330000002)",
+        "boundary": null,
+        "awdb_id": "8285500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 151,
+    "fields": {
+        "name": "Santa Cruz R at Cundiyo",
+        "location": "SRID=4326;POINT (-105.9047222 35.96472220000003)",
+        "boundary": null,
+        "awdb_id": "8291000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 152,
+    "fields": {
+        "name": "Nambe Falls Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.9097222 35.8461111)",
+        "boundary": null,
+        "awdb_id": "8294210"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 153,
+    "fields": {
+        "name": "Tesuque Ck ab diversions",
+        "location": "SRID=4326;POINT (-105.8983333 35.74000000000001)",
+        "boundary": null,
+        "awdb_id": "8302500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 154,
+    "fields": {
+        "name": "Rio Grande at Otowi Bridge",
+        "location": "SRID=4326;POINT (-106.1424444 35.87449999999998)",
+        "boundary": null,
+        "awdb_id": "8313000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 155,
+    "fields": {
+        "name": "Santa Fe R nr Santa Fe",
+        "location": "SRID=4326;POINT (-105.8436111 35.68644444)",
+        "boundary": null,
+        "awdb_id": "8316000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 156,
+    "fields": {
+        "name": "Jemez R nr Jemez",
+        "location": "SRID=4326;POINT (-106.7434389 35.66198330000001)",
+        "boundary": null,
+        "awdb_id": "8324000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 157,
+    "fields": {
+        "name": "Jemez R bl Jemez Canyon Dam",
+        "location": "SRID=4326;POINT (-106.53461 35.39041665999999)",
+        "boundary": null,
+        "awdb_id": "8329000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 158,
+    "fields": {
+        "name": "Bluewater Lake Inflow",
+        "location": "SRID=4326;POINT (-108.0995087 35.30364249000002)",
+        "boundary": null,
+        "awdb_id": "8341500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 159,
+    "fields": {
+        "name": "Rio Grande at San Marcial",
+        "location": "SRID=4326;POINT (-106.997 33.67908330000002)",
+        "boundary": null,
+        "awdb_id": "8358400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 160,
+    "fields": {
+        "name": "Pecos R nr Pecos",
+        "location": "SRID=4326;POINT (-105.6827028 35.70834999999998)",
+        "boundary": null,
+        "awdb_id": "8378500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 161,
+    "fields": {
+        "name": "Pecos R nr Anton Chico",
+        "location": "SRID=4326;POINT (-105.1088028 35.17866944000001)",
+        "boundary": null,
+        "awdb_id": "8379500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 162,
+    "fields": {
+        "name": "Gallinas Ck nr Montezuma",
+        "location": "SRID=4326;POINT (-105.3188306 35.65199444000001)",
+        "boundary": null,
+        "awdb_id": "8380500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 163,
+    "fields": {
+        "name": "Santa Rosa Lake Inflow",
+        "location": "SRID=4326;POINT (-104.6888888 35.02416660000002)",
+        "boundary": null,
+        "awdb_id": "8382830"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 164,
+    "fields": {
+        "name": "Rio Ruidoso at Hollywood",
+        "location": "SRID=4326;POINT (-105.6253333 33.32669167)",
+        "boundary": null,
+        "awdb_id": "8387000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 165,
+    "fields": {
+        "name": "Mimbres R at Mimbres",
+        "location": "SRID=4326;POINT (-107.9737889 32.85467500000002)",
+        "boundary": null,
+        "awdb_id": "8477110"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 166,
+    "fields": {
+        "name": "Lake Granby Inflow",
+        "location": "SRID=4326;POINT (-105.8672348 40.1441524)",
+        "boundary": null,
+        "awdb_id": "9019000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 167,
+    "fields": {
+        "name": "Willow Ck Reservoir Inflow",
+        "location": "SRID=4326;POINT (-105.9400156 40.14581899)",
+        "boundary": null,
+        "awdb_id": "9021000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 168,
+    "fields": {
+        "name": "Williams Fk bl Williams Fk Reservoir",
+        "location": "SRID=4326;POINT (-106.2053026 40.03526320000002)",
+        "boundary": null,
+        "awdb_id": "9038500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 169,
+    "fields": {
+        "name": "Muddy Ck bl Wolford Mtn Reservoir nr Kremmling",
+        "location": "SRID=4326;POINT (-106.4133333 40.10861110999999)",
+        "boundary": null,
+        "awdb_id": "9041400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 170,
+    "fields": {
+        "name": "Blue R bl Dillon",
+        "location": "SRID=4326;POINT (-106.0664082 39.62554199999999)",
+        "boundary": null,
+        "awdb_id": "9050700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 171,
+    "fields": {
+        "name": "Blue R bl Green Mountain Reservoir",
+        "location": "SRID=4326;POINT (-106.3339175 39.88026354000003)",
+        "boundary": null,
+        "awdb_id": "9057500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 172,
+    "fields": {
+        "name": "Eagle R bl Gypsum",
+        "location": "SRID=4326;POINT (-106.9536554 39.64942953999999)",
+        "boundary": null,
+        "awdb_id": "9070000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 173,
+    "fields": {
+        "name": "Colorado R nr Dotsero",
+        "location": "SRID=4326;POINT (-107.0780139 39.64461110000001)",
+        "boundary": null,
+        "awdb_id": "9070500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 174,
+    "fields": {
+        "name": "Ruedi Reservoir Inflow",
+        "location": "SRID=4326;POINT (-106.8180556 39.36388889000001)",
+        "boundary": null,
+        "awdb_id": "9080190"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 175,
+    "fields": {
+        "name": "Roaring Fk at Glenwood Springs",
+        "location": "SRID=4326;POINT (-107.3294984 39.54359307000001)",
+        "boundary": null,
+        "awdb_id": "9085000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 176,
+    "fields": {
+        "name": "Colorado R nr Cameo",
+        "location": "SRID=4326;POINT (-108.2661946 39.23914629999999)",
+        "boundary": null,
+        "awdb_id": "9095500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 177,
+    "fields": {
+        "name": "Taylor Park Reservoir Inflow",
+        "location": "SRID=4326;POINT (-106.6091977 38.8183269)",
+        "boundary": null,
+        "awdb_id": "9109209"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 178,
+    "fields": {
+        "name": "Slate R nr Crested Butte",
+        "location": "SRID=4326;POINT (-106.969489 38.8697146)",
+        "boundary": null,
+        "awdb_id": "9111500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 179,
+    "fields": {
+        "name": "East R at Almont",
+        "location": "SRID=4326;POINT (-106.848095 38.66443715000001)",
+        "boundary": null,
+        "awdb_id": "9112500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 180,
+    "fields": {
+        "name": "Gunnison R near Gunnison",
+        "location": "SRID=4326;POINT (-106.9497661 38.54193566999999)",
+        "boundary": null,
+        "awdb_id": "9114500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 181,
+    "fields": {
+        "name": "Tomichi Ck at Sargents",
+        "location": "SRID=4326;POINT (-106.422625 38.39502778000002)",
+        "boundary": null,
+        "awdb_id": "9115500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 182,
+    "fields": {
+        "name": "Cochetopa Ck bl Rock Ck nr Parlin",
+        "location": "SRID=4326;POINT (-106.77226 38.3355486)",
+        "boundary": null,
+        "awdb_id": "9118450"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 183,
+    "fields": {
+        "name": "Tomichi Ck at Gunnison",
+        "location": "SRID=4326;POINT (-106.9409583 38.52111110000001)",
+        "boundary": null,
+        "awdb_id": "9119000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 184,
+    "fields": {
+        "name": "Lake Fk at Gateview",
+        "location": "SRID=4326;POINT (-107.2300557 38.2988834)",
+        "boundary": null,
+        "awdb_id": "9124500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 185,
+    "fields": {
+        "name": "Blue Mesa Reservoir Inflow",
+        "location": "SRID=4326;POINT (-107.3481119 38.45221354)",
+        "boundary": null,
+        "awdb_id": "9124800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 186,
+    "fields": {
+        "name": "Paonia Reservoir Inflow",
+        "location": "SRID=4326;POINT (-107.3581084 38.9399901)",
+        "boundary": null,
+        "awdb_id": "9131400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 187,
+    "fields": {
+        "name": "NF Gunnison R nr Somerset",
+        "location": "SRID=4326;POINT (-107.4342211 38.9258228)",
+        "boundary": null,
+        "awdb_id": "9132500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 188,
+    "fields": {
+        "name": "Surface Ck at Cedaredge",
+        "location": "SRID=4326;POINT (-107.921176 38.90164869999999)",
+        "boundary": null,
+        "awdb_id": "9143500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 189,
+    "fields": {
+        "name": "Ridgway Reservoir Inflow",
+        "location": "SRID=4326;POINT (-107.7603056 38.24055555999999)",
+        "boundary": null,
+        "awdb_id": "9147025"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 190,
+    "fields": {
+        "name": "Uncompahgre R at Colona",
+        "location": "SRID=4326;POINT (-107.7795038 38.33137690000001)",
+        "boundary": null,
+        "awdb_id": "9147500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 191,
+    "fields": {
+        "name": "Gunnison R nr Grand Junction",
+        "location": "SRID=4326;POINT (-108.4506446 38.98331575000002)",
+        "boundary": null,
+        "awdb_id": "9152500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 192,
+    "fields": {
+        "name": "Dolores R at Dolores",
+        "location": "SRID=4326;POINT (-108.4975908 37.47249296)",
+        "boundary": null,
+        "awdb_id": "9166500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 193,
+    "fields": {
+        "name": "McPhee Reservoir Inflow",
+        "location": "SRID=4326;POINT (-108.5719444 37.57694443999999)",
+        "boundary": null,
+        "awdb_id": "9169000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 194,
+    "fields": {
+        "name": "San Miguel R nr Placerville",
+        "location": "SRID=4326;POINT (-108.13333 38.0425)",
+        "boundary": null,
+        "awdb_id": "9172500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 195,
+    "fields": {
+        "name": "Cone Reservoir Inlet",
+        "location": "SRID=4326;POINT (-108.251893 37.98367399999999)",
+        "boundary": null,
+        "awdb_id": "9172600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 196,
+    "fields": {
+        "name": "Gurley Reservoir Inlet",
+        "location": "SRID=4326;POINT (-108.241468 38.0149916)",
+        "boundary": null,
+        "awdb_id": "9172700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 197,
+    "fields": {
+        "name": "Lilylands Reservoir Inlet",
+        "location": "SRID=4326;POINT (-108.3361949 37.91082550000001)",
+        "boundary": null,
+        "awdb_id": "9174800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 198,
+    "fields": {
+        "name": "Colorado R nr Cisco",
+        "location": "SRID=4326;POINT (-109.2934493 38.81054095)",
+        "boundary": null,
+        "awdb_id": "9180500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 199,
+    "fields": {
+        "name": "Mill Ck at Sheley Tunnel nr Moab",
+        "location": "SRID=4326;POINT (-109.4040043 38.48304030000002)",
+        "boundary": null,
+        "awdb_id": "9183500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 200,
+    "fields": {
+        "name": "Green R at Warren Bridge",
+        "location": "SRID=4326;POINT (-110.1182205 43.0188291)",
+        "boundary": null,
+        "awdb_id": "9188500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 201,
+    "fields": {
+        "name": "Pine Creek ab Fremont Lake",
+        "location": "SRID=4326;POINT (-109.7701526 43.03050170000002)",
+        "boundary": null,
+        "awdb_id": "9196500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 202,
+    "fields": {
+        "name": "New Fork R nr Big Piney",
+        "location": "SRID=4326;POINT (-109.930151 42.56716597999998)",
+        "boundary": null,
+        "awdb_id": "9205000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 203,
+    "fields": {
+        "name": "Fontenelle Reservoir Inflow",
+        "location": "SRID=4326;POINT (-110.0498056 42.0209722)",
+        "boundary": null,
+        "awdb_id": "9211150"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 204,
+    "fields": {
+        "name": "Big Sandy R nr Farson",
+        "location": "SRID=4326;POINT (-109.4856866 42.31689495000001)",
+        "boundary": null,
+        "awdb_id": "9213500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 205,
+    "fields": {
+        "name": "Green R nr Green River, WY",
+        "location": "SRID=4326;POINT (-109.4490234 41.51635366)",
+        "boundary": null,
+        "awdb_id": "9217000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 206,
+    "fields": {
+        "name": "Blacks Fk nr Robertson",
+        "location": "SRID=4326;POINT (-110.5801656 40.95911310000001)",
+        "boundary": null,
+        "awdb_id": "9217900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 207,
+    "fields": {
+        "name": "EF of Smiths Fork nr Robertson",
+        "location": "SRID=4326;POINT (-110.3984924 41.0541143)",
+        "boundary": null,
+        "awdb_id": "9220000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 208,
+    "fields": {
+        "name": "Hams Fk bl Pole Ck nr Frontier",
+        "location": "SRID=4326;POINT (-110.7096212 42.11049390000001)",
+        "boundary": null,
+        "awdb_id": "9223000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 209,
+    "fields": {
+        "name": "Viva Naughton Reservoir Inflow",
+        "location": "SRID=4326;POINT (-110.6601056 41.96336667)",
+        "boundary": null,
+        "awdb_id": "9223100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 210,
+    "fields": {
+        "name": "Flaming Gorge Reservoir Inflow",
+        "location": "SRID=4326;POINT (-109.422914 40.90829296)",
+        "boundary": null,
+        "awdb_id": "9234400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 211,
+    "fields": {
+        "name": "Yampa R ab Stagecoach Reservoir",
+        "location": "SRID=4326;POINT (-106.88125 40.26925000000001)",
+        "boundary": null,
+        "awdb_id": "9237450"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 212,
+    "fields": {
+        "name": "Yampa R at Steamboat Springs",
+        "location": "SRID=4326;POINT (-106.8324306 40.48298610000001)",
+        "boundary": null,
+        "awdb_id": "9239500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 213,
+    "fields": {
+        "name": "Elk R nr Milner",
+        "location": "SRID=4326;POINT (-106.9539407 40.5146975)",
+        "boundary": null,
+        "awdb_id": "9242500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 214,
+    "fields": {
+        "name": "Elkhead Ck ab Long Gulch",
+        "location": "SRID=4326;POINT (-107.3202778 40.59166665999999)",
+        "boundary": null,
+        "awdb_id": "9246200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 215,
+    "fields": {
+        "name": "Yampa R nr Maybell",
+        "location": "SRID=4326;POINT (-108.0334152 40.50274666000001)",
+        "boundary": null,
+        "awdb_id": "9251000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 216,
+    "fields": {
+        "name": "Little Snake R nr Slater",
+        "location": "SRID=4326;POINT (-107.143388 40.99941048000002)",
+        "boundary": null,
+        "awdb_id": "9253000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 217,
+    "fields": {
+        "name": "Little Snake R nr Dixon",
+        "location": "SRID=4326;POINT (-107.5492327 41.02829815000001)",
+        "boundary": null,
+        "awdb_id": "9257000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 218,
+    "fields": {
+        "name": "Little Snake R nr Lily",
+        "location": "SRID=4326;POINT (-108.4242646 40.548578)",
+        "boundary": null,
+        "awdb_id": "9260000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 219,
+    "fields": {
+        "name": "Big Brush Ck ab Red Fleet Reservoir",
+        "location": "SRID=4326;POINT (-109.4654138 40.58884837000001)",
+        "boundary": null,
+        "awdb_id": "9261700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 220,
+    "fields": {
+        "name": "Ashley Ck nr Vernal",
+        "location": "SRID=4326;POINT (-109.6220859 40.57745816000001)",
+        "boundary": null,
+        "awdb_id": "9266500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 221,
+    "fields": {
+        "name": "WF Duchesne R at VAT Diversion",
+        "location": "SRID=4326;POINT (-111.0036111 40.45027770000002)",
+        "boundary": null,
+        "awdb_id": "9274899"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 222,
+    "fields": {
+        "name": "Duchesne R nr Tabiona",
+        "location": "SRID=4326;POINT (-110.602381 40.30023027000001)",
+        "boundary": null,
+        "awdb_id": "9277500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 223,
+    "fields": {
+        "name": "Upper Stillwater Reservoir Inflow",
+        "location": "SRID=4326;POINT (-110.6979414 40.55744514)",
+        "boundary": null,
+        "awdb_id": "9277800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 224,
+    "fields": {
+        "name": "Rock Ck nr Mountain Home",
+        "location": "SRID=4326;POINT (-110.5782169 40.4932799)",
+        "boundary": null,
+        "awdb_id": "9279000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 225,
+    "fields": {
+        "name": "Duchesne R ab Knight Diversion",
+        "location": "SRID=4326;POINT (-110.4426567 40.27051045999999)",
+        "boundary": null,
+        "awdb_id": "9279150"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 226,
+    "fields": {
+        "name": "Strawberry R nr Soldier Springs",
+        "location": "SRID=4326;POINT (-111.024887 40.13328794000002)",
+        "boundary": null,
+        "awdb_id": "9285000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 227,
+    "fields": {
+        "name": "Currant Ck Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.0496107 40.33078384999999)",
+        "boundary": null,
+        "awdb_id": "9286700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 228,
+    "fields": {
+        "name": "Strawberry R nr Duchesne",
+        "location": "SRID=4326;POINT (-110.5548785 40.15467930000001)",
+        "boundary": null,
+        "awdb_id": "9288180"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 229,
+    "fields": {
+        "name": "Lake Fork R ab Moon Lake Reservoir",
+        "location": "SRID=4326;POINT (-110.5271066 40.6066125)",
+        "boundary": null,
+        "awdb_id": "9289500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 230,
+    "fields": {
+        "name": "Yellowstone R nr Altonah",
+        "location": "SRID=4326;POINT (-110.3415491 40.51189299000001)",
+        "boundary": null,
+        "awdb_id": "9292500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 231,
+    "fields": {
+        "name": "Duchesne R at Myton",
+        "location": "SRID=4326;POINT (-110.0637613 40.20023757000001)",
+        "boundary": null,
+        "awdb_id": "9295000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 232,
+    "fields": {
+        "name": "Uinta R bl Powerplant Diversion nr Neola",
+        "location": "SRID=4326;POINT (-110.1136111 40.59138888)",
+        "boundary": null,
+        "awdb_id": "9296800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 233,
+    "fields": {
+        "name": "Whiterocks R nr Whiterocks",
+        "location": "SRID=4326;POINT (-109.9316666 40.59361111000001)",
+        "boundary": null,
+        "awdb_id": "9299500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 234,
+    "fields": {
+        "name": "Duchesne R nr Randlett",
+        "location": "SRID=4326;POINT (-109.7813889 40.21027778000002)",
+        "boundary": null,
+        "awdb_id": "9302000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 235,
+    "fields": {
+        "name": "White R nr Meeker",
+        "location": "SRID=4326;POINT (-107.8622946 40.03358490000002)",
+        "boundary": null,
+        "awdb_id": "9304500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 236,
+    "fields": {
+        "name": "Fish Ck ab Reservoir nr Scofield",
+        "location": "SRID=4326;POINT (-111.1902778 39.77444439999999)",
+        "boundary": null,
+        "awdb_id": "9310500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 237,
+    "fields": {
+        "name": "Price R nr Scofield Reservoir",
+        "location": "SRID=4326;POINT (-111.1201697 39.78690558000002)",
+        "boundary": null,
+        "awdb_id": "9311000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 238,
+    "fields": {
+        "name": "White R bl Tabbyune Creek",
+        "location": "SRID=4326;POINT (-111.0373878 39.87579280000001)",
+        "boundary": null,
+        "awdb_id": "9312600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 239,
+    "fields": {
+        "name": "Green R at Green River, UT",
+        "location": "SRID=4326;POINT (-110.1512475 38.9860831)",
+        "boundary": null,
+        "awdb_id": "9315000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 240,
+    "fields": {
+        "name": "Electric Lake Inflow",
+        "location": "SRID=4326;POINT (-111.2086 39.59920000000003)",
+        "boundary": null,
+        "awdb_id": "9317801"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 241,
+    "fields": {
+        "name": "Huntington Ck nr Huntington",
+        "location": "SRID=4326;POINT (-111.0882249 39.38524460000001)",
+        "boundary": null,
+        "awdb_id": "9317997"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 242,
+    "fields": {
+        "name": "Joe's Valley Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.2694444 39.2888888)",
+        "boundary": null,
+        "awdb_id": "9323900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 243,
+    "fields": {
+        "name": "Ferron Ck (Upper Station) nr Ferron",
+        "location": "SRID=4326;POINT (-111.2165589 39.10413724000001)",
+        "boundary": null,
+        "awdb_id": "9326500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 244,
+    "fields": {
+        "name": "Seven Mile Ck nr Fish Lake",
+        "location": "SRID=4326;POINT (-111.6472222 38.6277777)",
+        "boundary": null,
+        "awdb_id": "9329050"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 245,
+    "fields": {
+        "name": "Muddy Ck nr Emery",
+        "location": "SRID=4326;POINT (-111.2493363 38.98191884999999)",
+        "boundary": null,
+        "awdb_id": "9330500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 246,
+    "fields": {
+        "name": "Pine Ck nr Escalante",
+        "location": "SRID=4326;POINT (-111.6352778 37.8625)",
+        "boundary": null,
+        "awdb_id": "9337000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 247,
+    "fields": {
+        "name": "Rio Blanco at Blanco Diversion",
+        "location": "SRID=4326;POINT (-106.8122222 37.20361110000002)",
+        "boundary": null,
+        "awdb_id": "9343300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 248,
+    "fields": {
+        "name": "Navajo R at Oso Diversion",
+        "location": "SRID=4326;POINT (-106.7372222 37.03027778000001)",
+        "boundary": null,
+        "awdb_id": "9344400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 249,
+    "fields": {
+        "name": "San Juan R nr Carracas",
+        "location": "SRID=4326;POINT (-107.312267 37.01361667000001)",
+        "boundary": null,
+        "awdb_id": "9346400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 250,
+    "fields": {
+        "name": "Piedra R nr Arboles",
+        "location": "SRID=4326;POINT (-107.397826 37.08833797)",
+        "boundary": null,
+        "awdb_id": "9349800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 251,
+    "fields": {
+        "name": "Vallecito Reservoir Inflow",
+        "location": "SRID=4326;POINT (-107.5775577 37.38277997000002)",
+        "boundary": null,
+        "awdb_id": "9353500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 252,
+    "fields": {
+        "name": "Navajo Reservoir Inflow",
+        "location": "SRID=4326;POINT (-107.6986389 36.80188888999999)",
+        "boundary": null,
+        "awdb_id": "9355200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 253,
+    "fields": {
+        "name": "Animas R at Durango",
+        "location": "SRID=4326;POINT (-107.8803445 37.27916880000002)",
+        "boundary": null,
+        "awdb_id": "9361500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 254,
+    "fields": {
+        "name": "Lemon Reservoir Inflow",
+        "location": "SRID=4326;POINT (-107.6611111 37.37916667)",
+        "boundary": null,
+        "awdb_id": "9363100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 255,
+    "fields": {
+        "name": "La Plata R at Hesperus",
+        "location": "SRID=4326;POINT (-108.0406277 37.28972246)",
+        "boundary": null,
+        "awdb_id": "9365500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 256,
+    "fields": {
+        "name": "Mancos R nr Mancos",
+        "location": "SRID=4326;POINT (-108.254803 37.35721839999999)",
+        "boundary": null,
+        "awdb_id": "9370500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 257,
+    "fields": {
+        "name": "South Ck ab Lloyd's Reservoir nr Monticello",
+        "location": "SRID=4326;POINT (-109.3695625 37.84666080000002)",
+        "boundary": null,
+        "awdb_id": "9378170"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 258,
+    "fields": {
+        "name": "San Juan R near Bluff",
+        "location": "SRID=4326;POINT (-109.864844 37.14694610000002)",
+        "boundary": null,
+        "awdb_id": "9379500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 259,
+    "fields": {
+        "name": "Lake Powell Inflow",
+        "location": "SRID=4326;POINT (-111.4834913 36.92165499999999)",
+        "boundary": null,
+        "awdb_id": "9379900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 260,
+    "fields": {
+        "name": "Little Colorado R ab Lyman Lake",
+        "location": "SRID=4326;POINT (-109.362315 34.31448634999999)",
+        "boundary": null,
+        "awdb_id": "9384000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 261,
+    "fields": {
+        "name": "Rio Nutria nr Ramah",
+        "location": "SRID=4326;POINT (-108.552975 35.28255278000002)",
+        "boundary": null,
+        "awdb_id": "9386900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 262,
+    "fields": {
+        "name": "Ramah Reservoir Inflow",
+        "location": "SRID=4326;POINT (-108.4889 35.14500000000001)",
+        "boundary": null,
+        "awdb_id": "9386921"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 263,
+    "fields": {
+        "name": "Zuni R ab Black Rock Reservoir",
+        "location": "SRID=4326;POINT (-108.7516667 35.10027778000003)",
+        "boundary": null,
+        "awdb_id": "9386950"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 264,
+    "fields": {
+        "name": "Little Colorado R at Woodruff",
+        "location": "SRID=4326;POINT (-110.0442837 34.78280760000003)",
+        "boundary": null,
+        "awdb_id": "9394500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 265,
+    "fields": {
+        "name": "Blue Ridge Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.1840253 34.5553042)",
+        "boundary": null,
+        "awdb_id": "9398300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 266,
+    "fields": {
+        "name": "Lake Mary Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.583649 35.112528)",
+        "boundary": null,
+        "awdb_id": "9400910"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 267,
+    "fields": {
+        "name": "Virgin R at Virgin",
+        "location": "SRID=4326;POINT (-113.1807789 37.20414939999999)",
+        "boundary": null,
+        "awdb_id": "9406000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 268,
+    "fields": {
+        "name": "Virgin R nr Hurricane",
+        "location": "SRID=4326;POINT (-113.3952285 37.16276007000001)",
+        "boundary": null,
+        "awdb_id": "9408150"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 269,
+    "fields": {
+        "name": "Santa Clara R nr Pine Valley",
+        "location": "SRID=4326;POINT (-113.483288 37.38331324999998)",
+        "boundary": null,
+        "awdb_id": "9408400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 270,
+    "fields": {
+        "name": "Virgin R at Littlefield",
+        "location": "SRID=4326;POINT (-113.9244098 36.89164370000003)",
+        "boundary": null,
+        "awdb_id": "9415000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 271,
+    "fields": {
+        "name": "Gila R at Gila",
+        "location": "SRID=4326;POINT (-108.5373861 33.06150278000001)",
+        "boundary": null,
+        "awdb_id": "9430500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 272,
+    "fields": {
+        "name": "Gila R bl Blue Ck nr Virden",
+        "location": "SRID=4326;POINT (-108.8458906 32.64813199999997)",
+        "boundary": null,
+        "awdb_id": "9432000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 273,
+    "fields": {
+        "name": "San Francisco R at Glenwood",
+        "location": "SRID=4326;POINT (-108.88 33.24716667)",
+        "boundary": null,
+        "awdb_id": "9444000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 274,
+    "fields": {
+        "name": "San Francisco R at Clifton",
+        "location": "SRID=4326;POINT (-109.2959047 33.04950776000001)",
+        "boundary": null,
+        "awdb_id": "9444500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 275,
+    "fields": {
+        "name": "Gila R nr Solomon",
+        "location": "SRID=4326;POINT (-109.511186 32.86839728)",
+        "boundary": null,
+        "awdb_id": "9448500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 276,
+    "fields": {
+        "name": "San Carlos Reservoir Inflow",
+        "location": "SRID=4326;POINT (-110.5312109 33.16950550000001)",
+        "boundary": null,
+        "awdb_id": "9469499"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 277,
+    "fields": {
+        "name": "Salt R nr Roosevelt",
+        "location": "SRID=4326;POINT (-110.9208333 33.61944440000002)",
+        "boundary": null,
+        "awdb_id": "9498500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 278,
+    "fields": {
+        "name": "Tonto Ck ab Gun Ck nr Roosevelt",
+        "location": "SRID=4326;POINT (-111.3034659 33.98004130000001)",
+        "boundary": null,
+        "awdb_id": "9499000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 279,
+    "fields": {
+        "name": "Verde R bl Tangle Ck ab Horseshoe Dam",
+        "location": "SRID=4326;POINT (-111.7162569 34.07309220000001)",
+        "boundary": null,
+        "awdb_id": "9508500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 280,
+    "fields": {
+        "name": "Bear R nr UT-WY State Line",
+        "location": "SRID=4326;POINT (-110.8535079 40.96522540000001)",
+        "boundary": null,
+        "awdb_id": "10011500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 281,
+    "fields": {
+        "name": "Bear R ab Resv nr Woodruff",
+        "location": "SRID=4326;POINT (-111.0176863 41.43438989999998)",
+        "boundary": null,
+        "awdb_id": "10020100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 282,
+    "fields": {
+        "name": "Bg Ck nr Randolph",
+        "location": "SRID=4326;POINT (-111.2540876 41.60994177)",
+        "boundary": null,
+        "awdb_id": "10023000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 283,
+    "fields": {
+        "name": "Smit Fk nr Border",
+        "location": "SRID=4326;POINT (-110.8724064 42.2932662)",
+        "boundary": null,
+        "awdb_id": "10032000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 284,
+    "fields": {
+        "name": "Bear R bl Stewart Dam",
+        "location": "SRID=4326;POINT (-111.2938142 42.25381699)",
+        "boundary": null,
+        "awdb_id": "10046500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 285,
+    "fields": {
+        "name": "Little Bear at Paradise",
+        "location": "SRID=4326;POINT (-111.8552203 41.57548980000001)",
+        "boundary": null,
+        "awdb_id": "10105900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 286,
+    "fields": {
+        "name": "Logan R nr Logan",
+        "location": "SRID=4326;POINT (-111.78272 41.74326439000002)",
+        "boundary": null,
+        "awdb_id": "10109000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 287,
+    "fields": {
+        "name": "Blacksmith Fk nr Hyrum",
+        "location": "SRID=4326;POINT (-111.7388286 41.6235452)",
+        "boundary": null,
+        "awdb_id": "10113500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 288,
+    "fields": {
+        "name": "Smith & Morehouse Resv Inflow",
+        "location": "SRID=4326;POINT (-111.1124036 40.78578206000001)",
+        "boundary": null,
+        "awdb_id": "10128000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 289,
+    "fields": {
+        "name": "Weber R nr Oakley",
+        "location": "SRID=4326;POINT (-111.2479652 40.73717210000002)",
+        "boundary": null,
+        "awdb_id": "10128500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 290,
+    "fields": {
+        "name": "Rockport Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.404918 40.79272607000002)",
+        "boundary": null,
+        "awdb_id": "10129500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 291,
+    "fields": {
+        "name": "Weber R nr Coalville",
+        "location": "SRID=4326;POINT (-111.4018633 40.89522527)",
+        "boundary": null,
+        "awdb_id": "10130500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 292,
+    "fields": {
+        "name": "Chalk Ck at Coalville",
+        "location": "SRID=4326;POINT (-111.4015858 40.92050285000003)",
+        "boundary": null,
+        "awdb_id": "10131000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 293,
+    "fields": {
+        "name": "Echo Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.437699 40.96772450000002)",
+        "boundary": null,
+        "awdb_id": "10132000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 294,
+    "fields": {
+        "name": "Lost Ck Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.4004755 41.18466598000001)",
+        "boundary": null,
+        "awdb_id": "10132490"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 295,
+    "fields": {
+        "name": "East Canyon Ck nr Jeremy Ranch",
+        "location": "SRID=4326;POINT (-111.5640912 40.75966978999998)",
+        "boundary": null,
+        "awdb_id": "10133800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 296,
+    "fields": {
+        "name": "East Canyon Ck nr Morgan",
+        "location": "SRID=4326;POINT (-111.6071504 40.92244629)",
+        "boundary": null,
+        "awdb_id": "10134500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 297,
+    "fields": {
+        "name": "Weber R at Gateway",
+        "location": "SRID=4326;POINT (-111.8324384 41.1368878)",
+        "boundary": null,
+        "awdb_id": "10136500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 298,
+    "fields": {
+        "name": "SF Ogden R nr Huntsville",
+        "location": "SRID=4326;POINT (-111.6741004 41.26855226000001)",
+        "boundary": null,
+        "awdb_id": "10137500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 299,
+    "fields": {
+        "name": "Pineview Reservoir Inflow",
+        "location": "SRID=4326;POINT (-111.8410502 41.25549788000003)",
+        "boundary": null,
+        "awdb_id": "10139001"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 300,
+    "fields": {
+        "name": "Wheeler Ck nr Huntsville",
+        "location": "SRID=4326;POINT (-111.8429947 41.25383128)",
+        "boundary": null,
+        "awdb_id": "10139300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 301,
+    "fields": {
+        "name": "Centerville Ck",
+        "location": "SRID=4326;POINT (-111.8629931 40.91633389000003)",
+        "boundary": null,
+        "awdb_id": "10143500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 302,
+    "fields": {
+        "name": "Salt Ck at Nephi",
+        "location": "SRID=4326;POINT (-111.8043759 39.71301186)",
+        "boundary": null,
+        "awdb_id": "10146000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 303,
+    "fields": {
+        "name": "Spanish Fk at Castilla",
+        "location": "SRID=4326;POINT (-111.5479705 40.04967810000002)",
+        "boundary": null,
+        "awdb_id": "10150500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 304,
+    "fields": {
+        "name": "Provo R at Woodland",
+        "location": "SRID=4326;POINT (-111.1687838 40.5577278)",
+        "boundary": null,
+        "awdb_id": "10154200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 305,
+    "fields": {
+        "name": "Provo R at Hailstone",
+        "location": "SRID=4326;POINT (-111.331572 40.60078555)",
+        "boundary": null,
+        "awdb_id": "10155000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 306,
+    "fields": {
+        "name": "Provo R bl Deek Ck Dam",
+        "location": "SRID=4326;POINT (-111.5296355 40.40328927)",
+        "boundary": null,
+        "awdb_id": "10159500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 307,
+    "fields": {
+        "name": "American Fk ab Upper Powerplant",
+        "location": "SRID=4326;POINT (-111.6821472 40.44772970000002)",
+        "boundary": null,
+        "awdb_id": "10164500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 308,
+    "fields": {
+        "name": "W Canyon Ck nr Cedar Fort",
+        "location": "SRID=4326;POINT (-112.1004959 40.40522565000001)",
+        "boundary": null,
+        "awdb_id": "10166430"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 309,
+    "fields": {
+        "name": "Utah Lake Inflow",
+        "location": "SRID=4326;POINT (-111.9052123 40.3871724)",
+        "boundary": null,
+        "awdb_id": "10166605"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 310,
+    "fields": {
+        "name": "Little Cottonwood Ck nr SLC",
+        "location": "SRID=4326;POINT (-111.7979877 40.5777263)",
+        "boundary": null,
+        "awdb_id": "10167500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 311,
+    "fields": {
+        "name": "Big Cottonwood Ck nr SLC",
+        "location": "SRID=4326;POINT (-111.7818763 40.61855920000001)",
+        "boundary": null,
+        "awdb_id": "10168500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 312,
+    "fields": {
+        "name": "Mill Ck nr SLC",
+        "location": "SRID=4326;POINT (-111.78271 40.68883617000002)",
+        "boundary": null,
+        "awdb_id": "10170000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 313,
+    "fields": {
+        "name": "Dell Fk nr SLC",
+        "location": "SRID=4326;POINT (-111.9232703 40.73355737)",
+        "boundary": null,
+        "awdb_id": "10171000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 314,
+    "fields": {
+        "name": "Parley's Ck nr SLC",
+        "location": "SRID=4326;POINT (-111.7840992 40.71661360000002)",
+        "boundary": null,
+        "awdb_id": "10171500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 315,
+    "fields": {
+        "name": "Emigration Ck nr SLC",
+        "location": "SRID=4326;POINT (-111.813267 40.74994645000002)",
+        "boundary": null,
+        "awdb_id": "10172000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 316,
+    "fields": {
+        "name": "City Ck nr SLC",
+        "location": "SRID=4326;POINT (-111.8771585 40.79244589)",
+        "boundary": null,
+        "awdb_id": "10172500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 317,
+    "fields": {
+        "name": "Vernon Ck nr Vernon",
+        "location": "SRID=4326;POINT (-112.3802297 39.97939105000001)",
+        "boundary": null,
+        "awdb_id": "10172700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 318,
+    "fields": {
+        "name": "Settlement Ck nr Tooele",
+        "location": "SRID=4326;POINT (-112.2905017 40.50549997000002)",
+        "boundary": null,
+        "awdb_id": "10172791"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 319,
+    "fields": {
+        "name": "S Willow Ck nr Grantsville",
+        "location": "SRID=4326;POINT (-112.5744028 40.49633109000001)",
+        "boundary": null,
+        "awdb_id": "10172800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 320,
+    "fields": {
+        "name": "Dunn Ck nr Park Valley",
+        "location": "SRID=4326;POINT (-113.3272192 41.85853036)",
+        "boundary": null,
+        "awdb_id": "10172952"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 321,
+    "fields": {
+        "name": "Mammoth Ck nr Hatch",
+        "location": "SRID=4326;POINT (-112.5168773 37.62275719999999)",
+        "boundary": null,
+        "awdb_id": "10173450"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 322,
+    "fields": {
+        "name": "Sevier R at Hatch",
+        "location": "SRID=4326;POINT (-112.4302069 37.65109086000001)",
+        "boundary": null,
+        "awdb_id": "10174500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 323,
+    "fields": {
+        "name": "Sevier R nr Kingston",
+        "location": "SRID=4326;POINT (-112.2077024 38.20609037999999)",
+        "boundary": null,
+        "awdb_id": "10183500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 324,
+    "fields": {
+        "name": "EF Sevier R nr Kingston",
+        "location": "SRID=4326;POINT (-112.1477005 38.19636955)",
+        "boundary": null,
+        "awdb_id": "10189000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 325,
+    "fields": {
+        "name": "Sevier R bl Piute Dam",
+        "location": "SRID=4326;POINT (-112.1877015 38.32803395000001)",
+        "boundary": null,
+        "awdb_id": "10191500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 326,
+    "fields": {
+        "name": "Clear Ck ab Diversions nr Sevier",
+        "location": "SRID=4326;POINT (-112.2885399 38.57941690000001)",
+        "boundary": null,
+        "awdb_id": "10194200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 327,
+    "fields": {
+        "name": "Salina Ck nr Emery",
+        "location": "SRID=4326;POINT (-111.5304654 38.9119141)",
+        "boundary": null,
+        "awdb_id": "10205030"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 328,
+    "fields": {
+        "name": "Salina Ck at Salina",
+        "location": "SRID=4326;POINT (-111.8668697 38.95662956)",
+        "boundary": null,
+        "awdb_id": "10206000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 329,
+    "fields": {
+        "name": "Manti Ck bl Dugway Ck nr Manti",
+        "location": "SRID=4326;POINT (-111.579916 39.25912877000001)",
+        "boundary": null,
+        "awdb_id": "10215900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 330,
+    "fields": {
+        "name": "Sevier R nr Gunnison",
+        "location": "SRID=4326;POINT (-111.877705 39.1552387)",
+        "boundary": null,
+        "awdb_id": "10217000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 331,
+    "fields": {
+        "name": "Chicken Ck nr Levan",
+        "location": "SRID=4326;POINT (-111.8299276 39.55218020000003)",
+        "boundary": null,
+        "awdb_id": "10219200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 332,
+    "fields": {
+        "name": "Oak Ck nr Oak City",
+        "location": "SRID=4326;POINT (-112.2327174 39.35634600000002)",
+        "boundary": null,
+        "awdb_id": "10224100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 333,
+    "fields": {
+        "name": "Beaver R nr Beaver",
+        "location": "SRID=4326;POINT (-112.5682713 38.28052640000002)",
+        "boundary": null,
+        "awdb_id": "10234500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 334,
+    "fields": {
+        "name": "Minersville Reservoir Inflow",
+        "location": "SRID=4326;POINT (-112.8355031 38.21746998)",
+        "boundary": null,
+        "awdb_id": "10238500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 335,
+    "fields": {
+        "name": "Coal Ck nr Cedar City",
+        "location": "SRID=4326;POINT (-113.0346702 37.67219924000001)",
+        "boundary": null,
+        "awdb_id": "10242000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 336,
+    "fields": {
+        "name": "Franklin Ck nr Arthur",
+        "location": "SRID=4326;POINT (-115.135461 40.82139444000001)",
+        "boundary": null,
+        "awdb_id": "10244720"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 337,
+    "fields": {
+        "name": "Steptoe Ck nr Ely",
+        "location": "SRID=4326;POINT (-114.689161 39.20153889)",
+        "boundary": null,
+        "awdb_id": "10244950"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 338,
+    "fields": {
+        "name": "Kingston Ck nr Austin",
+        "location": "SRID=4326;POINT (-117.1134216 39.2124291)",
+        "boundary": null,
+        "awdb_id": "10249280"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 339,
+    "fields": {
+        "name": "Walker Lake Elevation Change",
+        "location": "SRID=4326;POINT (-118.7720849 38.67658636000004)",
+        "boundary": null,
+        "awdb_id": "10288500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 340,
+    "fields": {
+        "name": "E Walker R nr Bridgeport",
+        "location": "SRID=4326;POINT (-119.2148759 38.32769580000001)",
+        "boundary": null,
+        "awdb_id": "10293000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 341,
+    "fields": {
+        "name": "W Walker R bl L Walker nr Coalville",
+        "location": "SRID=4326;POINT (-119.4501649 38.37963660000001)",
+        "boundary": null,
+        "awdb_id": "10296000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 342,
+    "fields": {
+        "name": "W Walker R nr Coalville",
+        "location": "SRID=4326;POINT (-119.4498872 38.51324495000001)",
+        "boundary": null,
+        "awdb_id": "10296500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 343,
+    "fields": {
+        "name": "EF Calrson R nr Gardnerville",
+        "location": "SRID=4326;POINT (-119.7046189 38.84490639)",
+        "boundary": null,
+        "awdb_id": "10309000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 344,
+    "fields": {
+        "name": "WF Casrson R nr Woodfords",
+        "location": "SRID=4326;POINT (-119.833789 38.76962765000001)",
+        "boundary": null,
+        "awdb_id": "10310000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 345,
+    "fields": {
+        "name": "Carson R nr Carson City",
+        "location": "SRID=4326;POINT (-119.7132334 39.10768747)",
+        "boundary": null,
+        "awdb_id": "10311000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 346,
+    "fields": {
+        "name": "King Canyon Ck nr Carson City",
+        "location": "SRID=4326;POINT (-119.8079599 39.15379796000001)",
+        "boundary": null,
+        "awdb_id": "10311100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 347,
+    "fields": {
+        "name": "Ash Canyon Ck nr Carson City",
+        "location": "SRID=4326;POINT (-119.805738 39.17629816000001)",
+        "boundary": null,
+        "awdb_id": "10311200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 348,
+    "fields": {
+        "name": "Carson R at Ft Churchill",
+        "location": "SRID=4326;POINT (-119.311111 39.29166667000001)",
+        "boundary": null,
+        "awdb_id": "10312000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 349,
+    "fields": {
+        "name": "Mary's R nr Deeth",
+        "location": "SRID=4326;POINT (-115.2564468 41.2526961)",
+        "boundary": null,
+        "awdb_id": "10315500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 350,
+    "fields": {
+        "name": "Lamoille Ck nr Lamoille",
+        "location": "SRID=4326;POINT (-115.477003 40.69076057000001)",
+        "boundary": null,
+        "awdb_id": "10316500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 351,
+    "fields": {
+        "name": "NF Humboldt R at Devils Gate",
+        "location": "SRID=4326;POINT (-115.492575 41.17875278000001)",
+        "boundary": null,
+        "awdb_id": "10317500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 352,
+    "fields": {
+        "name": "Humboldt R nr Elko",
+        "location": "SRID=4326;POINT (-115.6245104 40.93603160000001)",
+        "boundary": null,
+        "awdb_id": "10318500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 353,
+    "fields": {
+        "name": "SF Humboldt R at Dixie",
+        "location": "SRID=4326;POINT (-115.8134002 40.68492360000001)",
+        "boundary": null,
+        "awdb_id": "10320000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 354,
+    "fields": {
+        "name": "Humboldt R nr Carlin",
+        "location": "SRID=4326;POINT (-116.009242 40.72769715)",
+        "boundary": null,
+        "awdb_id": "10321000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 355,
+    "fields": {
+        "name": "Humboldt R at Palisades",
+        "location": "SRID=4326;POINT (-116.2017444 40.60741746999999)",
+        "boundary": null,
+        "awdb_id": "10322500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 356,
+    "fields": {
+        "name": "Rock Ck nr Battle Mtn",
+        "location": "SRID=4326;POINT (-116.5883417 40.83040556000002)",
+        "boundary": null,
+        "awdb_id": "10324500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 357,
+    "fields": {
+        "name": "Reese R nr Ione",
+        "location": "SRID=4326;POINT (-117.475986 38.85721667000003)",
+        "boundary": null,
+        "awdb_id": "10325500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 358,
+    "fields": {
+        "name": "Humboldt R at Comus",
+        "location": "SRID=4326;POINT (-117.3176168 40.99212548999999)",
+        "boundary": null,
+        "awdb_id": "10327500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 359,
+    "fields": {
+        "name": "L Humboldt R nr Paradise",
+        "location": "SRID=4326;POINT (-117.373511 41.41582219999998)",
+        "boundary": null,
+        "awdb_id": "10329000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 360,
+    "fields": {
+        "name": "Martin Ck nr Paradise",
+        "location": "SRID=4326;POINT (-117.4179047 41.53461750000002)",
+        "boundary": null,
+        "awdb_id": "10329500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 361,
+    "fields": {
+        "name": "Humboldt R nr Imlay",
+        "location": "SRID=4326;POINT (-118.204312 40.69240480000002)",
+        "boundary": null,
+        "awdb_id": "10333000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 362,
+    "fields": {
+        "name": "Pyramid Lake Elevation Change",
+        "location": "SRID=4326;POINT (-119.501016 39.98462939)",
+        "boundary": null,
+        "awdb_id": "10336500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 363,
+    "fields": {
+        "name": "Marlette Lake Inflow",
+        "location": "SRID=4326;POINT (-119.907963 39.17213045)",
+        "boundary": null,
+        "awdb_id": "10336715"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 364,
+    "fields": {
+        "name": "Lake Tahoe Rise",
+        "location": "SRID=4326;POINT (-120.1193583 39.18074020000001)",
+        "boundary": null,
+        "awdb_id": "10337000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 365,
+    "fields": {
+        "name": "Sagehen Ck nr Truckee",
+        "location": "SRID=4326;POINT (-120.2379793 39.43157246000001)",
+        "boundary": null,
+        "awdb_id": "10343500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 366,
+    "fields": {
+        "name": "L Truckee R ab Boca Reservoir",
+        "location": "SRID=4326;POINT (-120.084366 39.43574106)",
+        "boundary": null,
+        "awdb_id": "10344400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 367,
+    "fields": {
+        "name": "Truckee R at Farad",
+        "location": "SRID=4326;POINT (-120.0340873 39.42796385000003)",
+        "boundary": null,
+        "awdb_id": "10346000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 368,
+    "fields": {
+        "name": "Galena Ck nr Steamboat",
+        "location": "SRID=4326;POINT (-119.8267444 39.36185000000002)",
+        "boundary": null,
+        "awdb_id": "10348900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 369,
+    "fields": {
+        "name": "Steamboat Ck at Steamboat",
+        "location": "SRID=4326;POINT (-119.7436583 39.3771333)",
+        "boundary": null,
+        "awdb_id": "10349300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 370,
+    "fields": {
+        "name": "McDermitt Ck nr McDermitt",
+        "location": "SRID=4326;POINT (-117.831812 41.9665572)",
+        "boundary": null,
+        "awdb_id": "10352500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 371,
+    "fields": {
+        "name": "Quinn R nr McDermitt",
+        "location": "SRID=4326;POINT (-117.8051426 41.77489345000002)",
+        "boundary": null,
+        "awdb_id": "10353500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 372,
+    "fields": {
+        "name": "Eagle Ck nr Eagleville",
+        "location": "SRID=4326;POINT (-120.1252193 41.31239570000002)",
+        "boundary": null,
+        "awdb_id": "10360230"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 373,
+    "fields": {
+        "name": "Bidwell Ck nr Fort Bidwell",
+        "location": "SRID=4326;POINT (-120.1749508 41.88239020000003)",
+        "boundary": null,
+        "awdb_id": "10360900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 374,
+    "fields": {
+        "name": "Clear Lake Inflow",
+        "location": "SRID=4326;POINT (-121.07754 41.92831000000003)",
+        "boundary": null,
+        "awdb_id": "11470099"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 375,
+    "fields": {
+        "name": "Gerber Resvervoir Inflow",
+        "location": "SRID=4326;POINT (-121.12737 42.20292000000001)",
+        "boundary": null,
+        "awdb_id": "11483400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 376,
+    "fields": {
+        "name": "Sprague R nr Chiloquin",
+        "location": "SRID=4326;POINT (-121.8497366 42.58458090000001)",
+        "boundary": null,
+        "awdb_id": "11501000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 377,
+    "fields": {
+        "name": "Williamson R bl Sprague R nr Chiloquin",
+        "location": "SRID=4326;POINT (-121.8794593 42.56485858)",
+        "boundary": null,
+        "awdb_id": "11502500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 378,
+    "fields": {
+        "name": "Upper Klamath Lake Inflow",
+        "location": "SRID=4326;POINT (-121.8163945 42.24986606)",
+        "boundary": null,
+        "awdb_id": "11507001"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 379,
+    "fields": {
+        "name": "Tobacco R nr Eureka",
+        "location": "SRID=4326;POINT (-115.0879459 48.89357557000003)",
+        "boundary": null,
+        "awdb_id": "12301300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 380,
+    "fields": {
+        "name": "Libby Reservoir Inflow",
+        "location": "SRID=4326;POINT (-115.320719 48.40078989)",
+        "boundary": null,
+        "awdb_id": "12301933"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 381,
+    "fields": {
+        "name": "Fisher R nr Libby",
+        "location": "SRID=4326;POINT (-115.3148849 48.35551229000001)",
+        "boundary": null,
+        "awdb_id": "12302055"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 382,
+    "fields": {
+        "name": "Yaak R nr Troy",
+        "location": "SRID=4326;POINT (-115.9701799 48.56188667000001)",
+        "boundary": null,
+        "awdb_id": "12304500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 383,
+    "fields": {
+        "name": "Kootenai R at Leonia",
+        "location": "SRID=4326;POINT (-116.0474073 48.617719)",
+        "boundary": null,
+        "awdb_id": "12305000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 384,
+    "fields": {
+        "name": "Moyie R at Eastport",
+        "location": "SRID=4326;POINT (-116.1797222 48.99916667000001)",
+        "boundary": null,
+        "awdb_id": "12306500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 385,
+    "fields": {
+        "name": "Smith Ck nr Porthill",
+        "location": "SRID=4326;POINT (-116.5566028 48.96105900000001)",
+        "boundary": null,
+        "awdb_id": "12321000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 386,
+    "fields": {
+        "name": "Boundary Ck nr Porthill",
+        "location": "SRID=4326;POINT (-116.5691039 48.99717200000003)",
+        "boundary": null,
+        "awdb_id": "12321500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 387,
+    "fields": {
+        "name": "Columbia R at Birchbank",
+        "location": "SRID=4326;POINT (-117.7174834 49.17771470000004)",
+        "boundary": null,
+        "awdb_id": "12323000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 388,
+    "fields": {
+        "name": "Little Blackfoot nr Garrison",
+        "location": "SRID=4326;POINT (-112.7933758 46.51965109999999)",
+        "boundary": null,
+        "awdb_id": "12324590"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 389,
+    "fields": {
+        "name": "Flint Ck nr Southern Cross",
+        "location": "SRID=4326;POINT (-113.2997833 46.23298047)",
+        "boundary": null,
+        "awdb_id": "12325500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 390,
+    "fields": {
+        "name": "Flint Ck bl Boulder Ck",
+        "location": "SRID=4326;POINT (-113.2361117 46.48916667000001)",
+        "boundary": null,
+        "awdb_id": "12330100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 391,
+    "fields": {
+        "name": "Flint Ck nr Maxville",
+        "location": "SRID=4326;POINT (-113.2325853 46.52540240000001)",
+        "boundary": null,
+        "awdb_id": "12330500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 392,
+    "fields": {
+        "name": "Lower Willow Ck Reservoir Inflow",
+        "location": "SRID=4326;POINT (-113.233333 46.48333)",
+        "boundary": null,
+        "awdb_id": "12330900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 393,
+    "fields": {
+        "name": "MF Rock Ck nr Philipsburg",
+        "location": "SRID=4326;POINT (-113.5025709 46.18464550000003)",
+        "boundary": null,
+        "awdb_id": "12332000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 394,
+    "fields": {
+        "name": "Rock Ck nr Clinton",
+        "location": "SRID=4326;POINT (-113.6831499 46.72242689000004)",
+        "boundary": null,
+        "awdb_id": "12334510"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 395,
+    "fields": {
+        "name": "Nevada Ck nr Helmville",
+        "location": "SRID=4326;POINT (-112.7675439 46.77826940000003)",
+        "boundary": null,
+        "awdb_id": "12335500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 396,
+    "fields": {
+        "name": "Blackfoot R nr Bonner",
+        "location": "SRID=4326;POINT (-113.7564872 46.8996499)",
+        "boundary": null,
+        "awdb_id": "12340000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 397,
+    "fields": {
+        "name": "Clark Fork R ab Milltown",
+        "location": "SRID=4326;POINT (-113.8764444 46.86486100000001)",
+        "boundary": null,
+        "awdb_id": "12340400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 398,
+    "fields": {
+        "name": "Clark Fork R ab Missoula",
+        "location": "SRID=4326;POINT (-113.9323287 46.87714698000002)",
+        "boundary": null,
+        "awdb_id": "12340500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 399,
+    "fields": {
+        "name": "WF Bitterroot R nr Conner",
+        "location": "SRID=4326;POINT (-114.2814749 45.72491797000001)",
+        "boundary": null,
+        "awdb_id": "12342500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 400,
+    "fields": {
+        "name": "Bitterroot R nr Darby",
+        "location": "SRID=4326;POINT (-114.1414742 45.97214249)",
+        "boundary": null,
+        "awdb_id": "12344000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 401,
+    "fields": {
+        "name": "Como Reservoir Inflow",
+        "location": "SRID=4326;POINT (-114.2237954 46.06750389000001)",
+        "boundary": null,
+        "awdb_id": "12345000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 402,
+    "fields": {
+        "name": "Bitterroot R nr Missoula",
+        "location": "SRID=4326;POINT (-114.0539996 46.83186786)",
+        "boundary": null,
+        "awdb_id": "12352800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 403,
+    "fields": {
+        "name": "Clark Fork R bl Missoula",
+        "location": "SRID=4326;POINT (-114.1267794 46.86908977000004)",
+        "boundary": null,
+        "awdb_id": "12353000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 404,
+    "fields": {
+        "name": "Clark Fork R at St. Regis",
+        "location": "SRID=4326;POINT (-115.0873605 47.30187456000001)",
+        "boundary": null,
+        "awdb_id": "12354500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 405,
+    "fields": {
+        "name": "NF Flathead R nr Columbia Falls",
+        "location": "SRID=4326;POINT (-114.1276245 48.49552186)",
+        "boundary": null,
+        "awdb_id": "12355500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 406,
+    "fields": {
+        "name": "MF Flathead R nr West Glacier",
+        "location": "SRID=4326;POINT (-114.0101188 48.49524416999999)",
+        "boundary": null,
+        "awdb_id": "12358500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 407,
+    "fields": {
+        "name": "Hungry Horse Reservoir Inflow",
+        "location": "SRID=4326;POINT (-114.037618 48.35663080000002)",
+        "boundary": null,
+        "awdb_id": "12362500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 408,
+    "fields": {
+        "name": "Flathead R at Columbia Falls",
+        "location": "SRID=4326;POINT (-114.1848483 48.36190848000001)",
+        "boundary": null,
+        "awdb_id": "12363000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 409,
+    "fields": {
+        "name": "Ashley Ck nr Kila",
+        "location": "SRID=4326;POINT (-114.6009704 48.16662409)",
+        "boundary": null,
+        "awdb_id": "12367000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 410,
+    "fields": {
+        "name": "Ashley Ck nr Marion",
+        "location": "SRID=4326;POINT (-114.6009704 48.16662409)",
+        "boundary": null,
+        "awdb_id": "12367100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 411,
+    "fields": {
+        "name": "Swan R nr Bigfork",
+        "location": "SRID=4326;POINT (-113.9798288 48.02439617000002)",
+        "boundary": null,
+        "awdb_id": "12370000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 412,
+    "fields": {
+        "name": "Flathead Lake Inflow",
+        "location": "SRID=4326;POINT (-114.2467882 47.68021570000001)",
+        "boundary": null,
+        "awdb_id": "12372000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 413,
+    "fields": {
+        "name": "Mill Ck ab Bassoo ck nr Niarada",
+        "location": "SRID=4326;POINT (-114.6976302 47.82966416999999)",
+        "boundary": null,
+        "awdb_id": "12374250"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 414,
+    "fields": {
+        "name": "South Crow Ck nr Ronan",
+        "location": "SRID=4326;POINT (-114.026774 47.4916001)",
+        "boundary": null,
+        "awdb_id": "12375900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 415,
+    "fields": {
+        "name": "Mission Ck nr St. Ignatius",
+        "location": "SRID=4326;POINT (-113.9795476 47.322987)",
+        "boundary": null,
+        "awdb_id": "12377150"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 416,
+    "fields": {
+        "name": "SF Jocko R nr Arlee",
+        "location": "SRID=4326;POINT (-113.8506533 47.19548640000003)",
+        "boundary": null,
+        "awdb_id": "12381400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 417,
+    "fields": {
+        "name": "NF Jocko R bl Tabor Feeder Canal",
+        "location": "SRID=4326;POINT (-113.847222 47.19722)",
+        "boundary": null,
+        "awdb_id": "12381410"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 418,
+    "fields": {
+        "name": "Clark Fork R nr Plains",
+        "location": "SRID=4326;POINT (-114.8559665 47.4296568)",
+        "boundary": null,
+        "awdb_id": "12389000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 419,
+    "fields": {
+        "name": "Thompson nr Tompson Falls",
+        "location": "SRID=4326;POINT (-115.2295931 47.59188060000002)",
+        "boundary": null,
+        "awdb_id": "12389500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 420,
+    "fields": {
+        "name": "Prospect Ck at Thompson Falls",
+        "location": "SRID=4326;POINT (-115.3551531 47.58604597)",
+        "boundary": null,
+        "awdb_id": "12390700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 421,
+    "fields": {
+        "name": "Clark Fork R at Whitehorse Rapids",
+        "location": "SRID=4326;POINT (-116.1166667 48.09166667000003)",
+        "boundary": null,
+        "awdb_id": "12392000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 422,
+    "fields": {
+        "name": "Priest R nr Priest River",
+        "location": "SRID=4326;POINT (-116.9146429 48.20852000000003)",
+        "boundary": null,
+        "awdb_id": "12395000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 423,
+    "fields": {
+        "name": "Pend Oreille Lake Inflow",
+        "location": "SRID=4326;POINT (-117.0343689 48.18212790000001)",
+        "boundary": null,
+        "awdb_id": "12395500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 424,
+    "fields": {
+        "name": "Pend Oreille R bl Box Canyon",
+        "location": "SRID=4326;POINT (-117.4163559 48.78102736000002)",
+        "boundary": null,
+        "awdb_id": "12396500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 425,
+    "fields": {
+        "name": "Kettle R nr Laurier",
+        "location": "SRID=4326;POINT (-118.2163989 48.98434870000001)",
+        "boundary": null,
+        "awdb_id": "12404500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 426,
+    "fields": {
+        "name": "Colville R at Kettle Falls",
+        "location": "SRID=4326;POINT (-118.0624887 48.59434610000002)",
+        "boundary": null,
+        "awdb_id": "12409000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 427,
+    "fields": {
+        "name": "NF Coeur D'alene R at Enaville",
+        "location": "SRID=4326;POINT (-116.2533333 47.56888888999999)",
+        "boundary": null,
+        "awdb_id": "12413000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 428,
+    "fields": {
+        "name": "St. Joe R at Calder",
+        "location": "SRID=4326;POINT (-116.1890491 47.27464)",
+        "boundary": null,
+        "awdb_id": "12414500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 429,
+    "fields": {
+        "name": "Spokane R nr Post Falls",
+        "location": "SRID=4326;POINT (-116.9777778 47.70305556000002)",
+        "boundary": null,
+        "awdb_id": "12419000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 430,
+    "fields": {
+        "name": "Spokane R at Long Lake",
+        "location": "SRID=4326;POINT (-117.8413478 47.83655340000003)",
+        "boundary": null,
+        "awdb_id": "12433000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 431,
+    "fields": {
+        "name": "Chamokane Ck nr Long Lake",
+        "location": "SRID=4326;POINT (-117.858294 47.86322010000004)",
+        "boundary": null,
+        "awdb_id": "12433200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 432,
+    "fields": {
+        "name": "Columbia R at Grand Coulee",
+        "location": "SRID=4326;POINT (-118.9827992 47.96543020000003)",
+        "boundary": null,
+        "awdb_id": "12436500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 433,
+    "fields": {
+        "name": "Similkameen R nr Nighthawk",
+        "location": "SRID=4326;POINT (-119.6184098 48.98460109000001)",
+        "boundary": null,
+        "awdb_id": "12442500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 434,
+    "fields": {
+        "name": "Okanogan R nr Tonasket",
+        "location": "SRID=4326;POINT (-119.4617229 48.63237499999998)",
+        "boundary": null,
+        "awdb_id": "12445000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 435,
+    "fields": {
+        "name": "Okanogan R at Malott",
+        "location": "SRID=4326;POINT (-119.7045047 48.28126060000002)",
+        "boundary": null,
+        "awdb_id": "12447200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 436,
+    "fields": {
+        "name": "Methow R nr Pateros",
+        "location": "SRID=4326;POINT (-119.9850723 48.0773639)",
+        "boundary": null,
+        "awdb_id": "12449950"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 437,
+    "fields": {
+        "name": "Stehekin R at Stehekin",
+        "location": "SRID=4326;POINT (-120.6917668 48.32958017000001)",
+        "boundary": null,
+        "awdb_id": "12451000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 438,
+    "fields": {
+        "name": "Chelan R at Chelan",
+        "location": "SRID=4326;POINT (-120.0131254 47.83458080000002)",
+        "boundary": null,
+        "awdb_id": "12452500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 439,
+    "fields": {
+        "name": "Entiat R nr Ardenvoir",
+        "location": "SRID=4326;POINT (-120.4231438 47.81846178000001)",
+        "boundary": null,
+        "awdb_id": "12452800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 440,
+    "fields": {
+        "name": "Wenatchee R at Plain",
+        "location": "SRID=4326;POINT (-120.6662039 47.7628995)",
+        "boundary": null,
+        "awdb_id": "12457000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 441,
+    "fields": {
+        "name": "Icicle Ck nr Leavenworth",
+        "location": "SRID=4326;POINT (-120.7200872 47.54095390000002)",
+        "boundary": null,
+        "awdb_id": "12458000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 442,
+    "fields": {
+        "name": "Wenatchee R at Peshastin",
+        "location": "SRID=4326;POINT (-120.6195306 47.58317770000003)",
+        "boundary": null,
+        "awdb_id": "12459000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 443,
+    "fields": {
+        "name": "Columbia R bl Rock Island Dam",
+        "location": "SRID=4326;POINT (-120.081171 47.33235176000002)",
+        "boundary": null,
+        "awdb_id": "12462600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 444,
+    "fields": {
+        "name": "Keechelus Reservoir Inflow",
+        "location": "SRID=4326;POINT (-121.3362047 47.32122417000001)",
+        "boundary": null,
+        "awdb_id": "12474500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 445,
+    "fields": {
+        "name": "Kachess Reservoir Inflow",
+        "location": "SRID=4326;POINT (-121.2034242 47.26122620000001)",
+        "boundary": null,
+        "awdb_id": "12476000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 446,
+    "fields": {
+        "name": "Cle Elum Lake Inflow",
+        "location": "SRID=4326;POINT (-121.0678642 47.24456209000002)",
+        "boundary": null,
+        "awdb_id": "12479000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 447,
+    "fields": {
+        "name": "Yakima R at Cle Elum",
+        "location": "SRID=4326;POINT (-120.9470269 47.19123078000001)",
+        "boundary": null,
+        "awdb_id": "12479500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 448,
+    "fields": {
+        "name": "Teanaway R bl Forks nr Cle Elum",
+        "location": "SRID=4326;POINT (-120.8611926 47.24650920000004)",
+        "boundary": null,
+        "awdb_id": "12480000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 449,
+    "fields": {
+        "name": "Bumping Lake Inflow",
+        "location": "SRID=4326;POINT (-121.292586 46.87261385)",
+        "boundary": null,
+        "awdb_id": "12488000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 450,
+    "fields": {
+        "name": "American R nr Nile",
+        "location": "SRID=4326;POINT (-121.168696 46.97761606000002)",
+        "boundary": null,
+        "awdb_id": "12488500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 451,
+    "fields": {
+        "name": "Rimrock Lake Inflow",
+        "location": "SRID=4326;POINT (-121.1248017 46.66261758000002)",
+        "boundary": null,
+        "awdb_id": "12491500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 452,
+    "fields": {
+        "name": "Naches R nr Naches",
+        "location": "SRID=4326;POINT (-120.76924 46.7454015)",
+        "boundary": null,
+        "awdb_id": "12494000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 453,
+    "fields": {
+        "name": "Ahtanum Ck at Union Gap",
+        "location": "SRID=4326;POINT (-120.4733968 46.53596038000001)",
+        "boundary": null,
+        "awdb_id": "12502500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 454,
+    "fields": {
+        "name": "Yakima R nr Parker",
+        "location": "SRID=4326;POINT (-120.4428397 46.49707180000002)",
+        "boundary": null,
+        "awdb_id": "12505001"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 455,
+    "fields": {
+        "name": "Snake R at Flagg Ranch",
+        "location": "SRID=4326;POINT (-110.6675 44.09888889000001)",
+        "boundary": null,
+        "awdb_id": "13010065"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 456,
+    "fields": {
+        "name": "Snake R nr Moran",
+        "location": "SRID=4326;POINT (-110.5858333 43.85833330000002)",
+        "boundary": null,
+        "awdb_id": "13011000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 457,
+    "fields": {
+        "name": "Pacific Ck at Moran",
+        "location": "SRID=4326;POINT (-110.5177778 43.85027778000001)",
+        "boundary": null,
+        "awdb_id": "13011500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 458,
+    "fields": {
+        "name": "Buffalo Fk ab Lava Ck nr Moran",
+        "location": "SRID=4326;POINT (-110.4408333 43.83805556000001)",
+        "boundary": null,
+        "awdb_id": "13011900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 459,
+    "fields": {
+        "name": "Buffalo Fk nr Moran",
+        "location": "SRID=4326;POINT (-110.508539 43.83660860000001)",
+        "boundary": null,
+        "awdb_id": "13012000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 460,
+    "fields": {
+        "name": "Gros Ventre R at Kelly",
+        "location": "SRID=4326;POINT (-110.6230556 43.62088889000001)",
+        "boundary": null,
+        "awdb_id": "13014500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 461,
+    "fields": {
+        "name": "Snake R ab Reservoir nr Alpine",
+        "location": "SRID=4326;POINT (-110.8894444 43.19611109999999)",
+        "boundary": null,
+        "awdb_id": "13022500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 462,
+    "fields": {
+        "name": "Greys R ab Reservoir nr Alpine",
+        "location": "SRID=4326;POINT (-110.9769444 43.14305556000003)",
+        "boundary": null,
+        "awdb_id": "13023000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 463,
+    "fields": {
+        "name": "Salt R ab Reservoir nr Etna",
+        "location": "SRID=4326;POINT (-111.0372222 43.07972220000002)",
+        "boundary": null,
+        "awdb_id": "13027500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 464,
+    "fields": {
+        "name": "Snake R nr Irwin",
+        "location": "SRID=4326;POINT (-111.2188889 43.35083329999999)",
+        "boundary": null,
+        "awdb_id": "13032500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 465,
+    "fields": {
+        "name": "Snake R nr Heise",
+        "location": "SRID=4326;POINT (-111.66 43.6125)",
+        "boundary": null,
+        "awdb_id": "13037500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 466,
+    "fields": {
+        "name": "Henrys Fk nr Ashton",
+        "location": "SRID=4326;POINT (-111.5105556 44.06972219999999)",
+        "boundary": null,
+        "awdb_id": "13046000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 467,
+    "fields": {
+        "name": "Falls R nr Ashton",
+        "location": "SRID=4326;POINT (-111.358611 44.0561111)",
+        "boundary": null,
+        "awdb_id": "13047600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 468,
+    "fields": {
+        "name": "Teton R nr Driggs",
+        "location": "SRID=4326;POINT (-111.2091667 43.78194444)",
+        "boundary": null,
+        "awdb_id": "13052200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 469,
+    "fields": {
+        "name": "Teton R nr St Anthony",
+        "location": "SRID=4326;POINT (-111.6138889 43.92722220000001)",
+        "boundary": null,
+        "awdb_id": "13055000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 470,
+    "fields": {
+        "name": "Henrys Fk nr Rexburg",
+        "location": "SRID=4326;POINT (-111.905 43.82583330000001)",
+        "boundary": null,
+        "awdb_id": "13056500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 471,
+    "fields": {
+        "name": "Willow Ck nr Ririe",
+        "location": "SRID=4326;POINT (-111.746111 43.58333330000001)",
+        "boundary": null,
+        "awdb_id": "13058000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 472,
+    "fields": {
+        "name": "Blackfoot R ab Reservoir nr Henry",
+        "location": "SRID=4326;POINT (-111.5066667 42.81527778000002)",
+        "boundary": null,
+        "awdb_id": "13063000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 473,
+    "fields": {
+        "name": "Snake R nr Blackfoot",
+        "location": "SRID=4326;POINT (-112.5188889 43.12527778000002)",
+        "boundary": null,
+        "awdb_id": "13069500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 474,
+    "fields": {
+        "name": "Portneuf R at Topaz",
+        "location": "SRID=4326;POINT (-112.0880556 42.62472220000002)",
+        "boundary": null,
+        "awdb_id": "13073000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 475,
+    "fields": {
+        "name": "Snake R at Neeley",
+        "location": "SRID=4326;POINT (-112.8794444 42.76749999999999)",
+        "boundary": null,
+        "awdb_id": "13077000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 476,
+    "fields": {
+        "name": "Goose Ck abv Trapper Ck nr Oakley",
+        "location": "SRID=4326;POINT (-113.9355556 42.12611110000002)",
+        "boundary": null,
+        "awdb_id": "13082500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 477,
+    "fields": {
+        "name": "Trapper Ck nr Oakley",
+        "location": "SRID=4326;POINT (-113.983611 42.16583330000002)",
+        "boundary": null,
+        "awdb_id": "13083000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 478,
+    "fields": {
+        "name": "Oakley Reservoir Inflow",
+        "location": "SRID=4326;POINT (-113.915 42.19527778000001)",
+        "boundary": null,
+        "awdb_id": "13083500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 479,
+    "fields": {
+        "name": "Salmon Falls Ck nr San Jacinto",
+        "location": "SRID=4326;POINT (-114.688611 41.94472220000001)",
+        "boundary": null,
+        "awdb_id": "13105000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 480,
+    "fields": {
+        "name": "Little Lost R nr Howe",
+        "location": "SRID=4326;POINT (-113.2452778 44.1386111)",
+        "boundary": null,
+        "awdb_id": "13118700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 481,
+    "fields": {
+        "name": "Big Lost R at Howell Ranch",
+        "location": "SRID=4326;POINT (-114.021111 43.9983333)",
+        "boundary": null,
+        "awdb_id": "13120500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 482,
+    "fields": {
+        "name": "Big Lost R bl Mackay Reservoir",
+        "location": "SRID=4326;POINT (-113.6483333 43.93916667000001)",
+        "boundary": null,
+        "awdb_id": "13127000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 483,
+    "fields": {
+        "name": "Big Wood R at Hailey",
+        "location": "SRID=4326;POINT (-114.3216667 43.51722220000001)",
+        "boundary": null,
+        "awdb_id": "13139500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 484,
+    "fields": {
+        "name": "Big Wood R ab Magic Reservoir",
+        "location": "SRID=4326;POINT (-114.3416667 43.32805556000002)",
+        "boundary": null,
+        "awdb_id": "13141000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 485,
+    "fields": {
+        "name": "Camas Ck nr Blaine",
+        "location": "SRID=4326;POINT (-114.5419444 43.33277778)",
+        "boundary": null,
+        "awdb_id": "13141500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 486,
+    "fields": {
+        "name": "Big Wood R bl Magic Dam",
+        "location": "SRID=4326;POINT (-114.3566667 43.24805556000001)",
+        "boundary": null,
+        "awdb_id": "13142500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 487,
+    "fields": {
+        "name": "Little Wood R ab High Five Ck",
+        "location": "SRID=4326;POINT (-114.0572222 43.49305556)",
+        "boundary": null,
+        "awdb_id": "13147900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 488,
+    "fields": {
+        "name": "Little Wood R nr Carey",
+        "location": "SRID=4326;POINT (-113.9997222 43.39000000000002)",
+        "boundary": null,
+        "awdb_id": "13148500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 489,
+    "fields": {
+        "name": "Snake R at King Hill",
+        "location": "SRID=4326;POINT (-115.2025 43.0022222)",
+        "boundary": null,
+        "awdb_id": "13154500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 490,
+    "fields": {
+        "name": "Bruneau R nr Hot Spring",
+        "location": "SRID=4326;POINT (-115.7202778 42.77111110000001)",
+        "boundary": null,
+        "awdb_id": "13168500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 491,
+    "fields": {
+        "name": "Snake R nr Murphy",
+        "location": "SRID=4326;POINT (-116.4209492 43.2918313)",
+        "boundary": null,
+        "awdb_id": "13172500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 492,
+    "fields": {
+        "name": "Reynolds Ck at Tollgate",
+        "location": "SRID=4326;POINT (-116.761528 43.14288900000001)",
+        "boundary": null,
+        "awdb_id": "13172583"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 493,
+    "fields": {
+        "name": "Succor Ck nr Jordan Valley",
+        "location": "SRID=4326;POINT (-117.055839 43.23250199999999)",
+        "boundary": null,
+        "awdb_id": "13172900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 494,
+    "fields": {
+        "name": "Owyhee R nr Gold Ck",
+        "location": "SRID=4326;POINT (-115.8448067 41.68879428000002)",
+        "boundary": null,
+        "awdb_id": "13174500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 495,
+    "fields": {
+        "name": "Owyhee R nr Owyhee",
+        "location": "SRID=4326;POINT (-116.0695583 41.9211083)",
+        "boundary": null,
+        "awdb_id": "13176000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 496,
+    "fields": {
+        "name": "SF Owyhee R nr Whiterock",
+        "location": "SRID=4326;POINT (-116.4842728 41.79989765000001)",
+        "boundary": null,
+        "awdb_id": "13177800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 497,
+    "fields": {
+        "name": "Owyhee R nr Rome",
+        "location": "SRID=4326;POINT (-117.6491667 42.86638889000002)",
+        "boundary": null,
+        "awdb_id": "13181000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 498,
+    "fields": {
+        "name": "Owyhee R bl Owyhee Dam",
+        "location": "SRID=4326;POINT (-117.2558333 43.65444444000001)",
+        "boundary": null,
+        "awdb_id": "13183000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 499,
+    "fields": {
+        "name": "Boise R nr Twin Springs",
+        "location": "SRID=4326;POINT (-115.7252778 43.66805556000002)",
+        "boundary": null,
+        "awdb_id": "13185000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 500,
+    "fields": {
+        "name": "SF Boise R at Anderson Ranch Dam",
+        "location": "SRID=4326;POINT (-115.4775 43.34361109999999)",
+        "boundary": null,
+        "awdb_id": "13190500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 501,
+    "fields": {
+        "name": "Mores Ck nr Arrowrock Dam",
+        "location": "SRID=4326;POINT (-115.9897222 43.64805556)",
+        "boundary": null,
+        "awdb_id": "13200000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 502,
+    "fields": {
+        "name": "Boise R nr Boise",
+        "location": "SRID=4326;POINT (-116.0595539 43.52766907)",
+        "boundary": null,
+        "awdb_id": "13202000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 503,
+    "fields": {
+        "name": "Malheur R nr Drewsey",
+        "location": "SRID=4326;POINT (-118.3315873 43.78460249999999)",
+        "boundary": null,
+        "awdb_id": "13214000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 504,
+    "fields": {
+        "name": "NF Malheur R at Beulah",
+        "location": "SRID=4326;POINT (-118.1533333 43.90750000000002)",
+        "boundary": null,
+        "awdb_id": "13217500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 505,
+    "fields": {
+        "name": "Bully Ck at Warmsprings",
+        "location": "SRID=4326;POINT (-117.460742 44.0193264)",
+        "boundary": null,
+        "awdb_id": "13226500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 506,
+    "fields": {
+        "name": "SF Payette R at Lowman",
+        "location": "SRID=4326;POINT (-115.6222222 44.08527778000001)",
+        "boundary": null,
+        "awdb_id": "13235000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 507,
+    "fields": {
+        "name": "Deadwood Reservoir Inflow",
+        "location": "SRID=4326;POINT (-115.6419444 44.29194444)",
+        "boundary": null,
+        "awdb_id": "13236500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 508,
+    "fields": {
+        "name": "Lake Fk Payette R nr McCall",
+        "location": "SRID=4326;POINT (-115.9972222 44.9136111)",
+        "boundary": null,
+        "awdb_id": "13240000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 509,
+    "fields": {
+        "name": "NF Payette R at Cascade",
+        "location": "SRID=4326;POINT (-116.0467983 44.52489316999999)",
+        "boundary": null,
+        "awdb_id": "13245000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 510,
+    "fields": {
+        "name": "NF Payette R nr Banks",
+        "location": "SRID=4326;POINT (-116.1072222 44.11416667000002)",
+        "boundary": null,
+        "awdb_id": "13246000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 511,
+    "fields": {
+        "name": "Payette R nr Horseshoe Bend",
+        "location": "SRID=4326;POINT (-116.1966667 43.9433333)",
+        "boundary": null,
+        "awdb_id": "13247500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 512,
+    "fields": {
+        "name": "Weiser R nr Weiser",
+        "location": "SRID=4326;POINT (-116.7722222 44.27000000000002)",
+        "boundary": null,
+        "awdb_id": "13266000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 513,
+    "fields": {
+        "name": "Snake R at Weiser",
+        "location": "SRID=4326;POINT (-116.9808333 44.24555556000001)",
+        "boundary": null,
+        "awdb_id": "13269000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 514,
+    "fields": {
+        "name": "Burnt R nr Hereford",
+        "location": "SRID=4326;POINT (-118.177436 44.50377217000002)",
+        "boundary": null,
+        "awdb_id": "13273000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 515,
+    "fields": {
+        "name": "Deer Ck nr Sumpter",
+        "location": "SRID=4326;POINT (-118.064156 44.69192800000001)",
+        "boundary": null,
+        "awdb_id": "13275200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 516,
+    "fields": {
+        "name": "Powder R nr Sumpter",
+        "location": "SRID=4326;POINT (-117.995495 44.67210015)",
+        "boundary": null,
+        "awdb_id": "13275300"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 517,
+    "fields": {
+        "name": "Anthony Ck bl North Fk",
+        "location": "SRID=4326;POINT (-118.123611 45.044445)",
+        "boundary": null,
+        "awdb_id": "13282400"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 518,
+    "fields": {
+        "name": "Wolf Ck Reservoir Inflow",
+        "location": "SRID=4326;POINT (-118.031944 45.06666600000001)",
+        "boundary": null,
+        "awdb_id": "13283600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 519,
+    "fields": {
+        "name": "Big Ck nr Medical Springs",
+        "location": "SRID=4326;POINT (-117.570831 45.00999800000002)",
+        "boundary": null,
+        "awdb_id": "13285900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 520,
+    "fields": {
+        "name": "Eagle Ck ab Skull Ck",
+        "location": "SRID=4326;POINT (-117.252778 44.88055600000002)",
+        "boundary": null,
+        "awdb_id": "13288200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 521,
+    "fields": {
+        "name": "Pine Ck nr Oxbow",
+        "location": "SRID=4326;POINT (-116.8741667 44.95250000000001)",
+        "boundary": null,
+        "awdb_id": "13290190"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 522,
+    "fields": {
+        "name": "Snake R at Hells Canyon Dam",
+        "location": "SRID=4326;POINT (-116.6982 45.25126937000002)",
+        "boundary": null,
+        "awdb_id": "13290450"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 523,
+    "fields": {
+        "name": "Imnaha R at Imnaha",
+        "location": "SRID=4326;POINT (-116.8343178 45.56237840000001)",
+        "boundary": null,
+        "awdb_id": "13292000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 524,
+    "fields": {
+        "name": "Salmon R at Salmon",
+        "location": "SRID=4326;POINT (-113.8952778 45.18361110000001)",
+        "boundary": null,
+        "awdb_id": "13302500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 525,
+    "fields": {
+        "name": "Lemhi R nr Lemhi",
+        "location": "SRID=4326;POINT (-113.6391667 44.94000000000001)",
+        "boundary": null,
+        "awdb_id": "13305000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 526,
+    "fields": {
+        "name": "MF Salmon R at MF Lodge",
+        "location": "SRID=4326;POINT (-115.0163889 44.72166667000003)",
+        "boundary": null,
+        "awdb_id": "13309220"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 527,
+    "fields": {
+        "name": "Salmon R at White Bird",
+        "location": "SRID=4326;POINT (-116.3238889 45.75027778)",
+        "boundary": null,
+        "awdb_id": "13317000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 528,
+    "fields": {
+        "name": "Grande Ronde R at La Grande",
+        "location": "SRID=4326;POINT (-118.1249426 45.34624317000003)",
+        "boundary": null,
+        "awdb_id": "13319000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 529,
+    "fields": {
+        "name": "Catherine Ck nr Union",
+        "location": "SRID=4326;POINT (-117.774934 45.15541695000002)",
+        "boundary": null,
+        "awdb_id": "13320000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 530,
+    "fields": {
+        "name": "EF Wallowa R nr Joseph",
+        "location": "SRID=4326;POINT (-117.2107242 45.27209756000002)",
+        "boundary": null,
+        "awdb_id": "13325000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 531,
+    "fields": {
+        "name": "Wallowa R at Joseph",
+        "location": "SRID=4326;POINT (-117.2273906 45.33737450000002)",
+        "boundary": null,
+        "awdb_id": "13327500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 532,
+    "fields": {
+        "name": "Hurricane Ck nr Joseph",
+        "location": "SRID=4326;POINT (-117.2926744 45.33737295000002)",
+        "boundary": null,
+        "awdb_id": "13329500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 533,
+    "fields": {
+        "name": "Lostine R nr Lostine",
+        "location": "SRID=4326;POINT (-117.4274062 45.43875828000002)",
+        "boundary": null,
+        "awdb_id": "13330000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 534,
+    "fields": {
+        "name": "Bear Ck nr Wallowa",
+        "location": "SRID=4326;POINT (-117.552411 45.52681145000002)",
+        "boundary": null,
+        "awdb_id": "13330500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 535,
+    "fields": {
+        "name": "Grande Ronde R at Troy",
+        "location": "SRID=4326;POINT (-117.4510089 45.94570190000002)",
+        "boundary": null,
+        "awdb_id": "13333000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 536,
+    "fields": {
+        "name": "Selway R nr Lowell",
+        "location": "SRID=4326;POINT (-115.5138889 46.08666667000001)",
+        "boundary": null,
+        "awdb_id": "13336500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 537,
+    "fields": {
+        "name": "Lochsa R nr Lowell",
+        "location": "SRID=4326;POINT (-115.5872222 46.15083330000002)",
+        "boundary": null,
+        "awdb_id": "13337000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 538,
+    "fields": {
+        "name": "Clearwater R at Orofino",
+        "location": "SRID=4326;POINT (-116.2575 46.47833330000002)",
+        "boundary": null,
+        "awdb_id": "13340000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 539,
+    "fields": {
+        "name": "Dworshak Reservoir Inflow",
+        "location": "SRID=4326;POINT (-116.296111 46.51527777999999)",
+        "boundary": null,
+        "awdb_id": "13340950"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 540,
+    "fields": {
+        "name": "Clearwater R at Spalding",
+        "location": "SRID=4326;POINT (-116.8273749 46.44849828000002)",
+        "boundary": null,
+        "awdb_id": "13342500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 541,
+    "fields": {
+        "name": "Snake R bl Lower Granite Dam",
+        "location": "SRID=4326;POINT (-117.4449058 46.66765899999999)",
+        "boundary": null,
+        "awdb_id": "13343600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 542,
+    "fields": {
+        "name": "SF Walla Wall R nr Milton-Freewater",
+        "location": "SRID=4326;POINT (-118.1699502 45.82985710000003)",
+        "boundary": null,
+        "awdb_id": "14010000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 543,
+    "fields": {
+        "name": "Mill Ck nr Walla Walla",
+        "location": "SRID=4326;POINT (-118.1185595 46.00791557000002)",
+        "boundary": null,
+        "awdb_id": "14013000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 544,
+    "fields": {
+        "name": "Umatilla R ab Meacham Ck nr Gibbon",
+        "location": "SRID=4326;POINT (-118.3232913 45.71957668000001)",
+        "boundary": null,
+        "awdb_id": "14020000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 545,
+    "fields": {
+        "name": "Umatilla R at Pendleton",
+        "location": "SRID=4326;POINT (-118.7927637 45.67207497999999)",
+        "boundary": null,
+        "awdb_id": "14021000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 546,
+    "fields": {
+        "name": "McKay Ck nr Pilot Rock",
+        "location": "SRID=4326;POINT (-118.7744269 45.54901858)",
+        "boundary": null,
+        "awdb_id": "14022500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 547,
+    "fields": {
+        "name": "Butter Ck nr Pine City",
+        "location": "SRID=4326;POINT (-119.3122394 45.54429020000003)",
+        "boundary": null,
+        "awdb_id": "14032000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 548,
+    "fields": {
+        "name": "Rhea Ck nr Heppner",
+        "location": "SRID=4326;POINT (-119.6239109 45.26124276000001)",
+        "boundary": null,
+        "awdb_id": "14034800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 549,
+    "fields": {
+        "name": "Strawberry Ck nr Prairie City",
+        "location": "SRID=4326;POINT (-118.65661 44.34154790000002)",
+        "boundary": null,
+        "awdb_id": "14037500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 550,
+    "fields": {
+        "name": "Mountain Ck nr Mitchell",
+        "location": "SRID=4326;POINT (-120.0302781 44.53485990000001)",
+        "boundary": null,
+        "awdb_id": "14040600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 551,
+    "fields": {
+        "name": "Camas Ck nr Ukiah",
+        "location": "SRID=4326;POINT (-118.820531 45.15680498)",
+        "boundary": null,
+        "awdb_id": "14042500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 552,
+    "fields": {
+        "name": "MF John Day R at Ritter",
+        "location": "SRID=4326;POINT (-119.1413686 44.88876388000001)",
+        "boundary": null,
+        "awdb_id": "14044000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 553,
+    "fields": {
+        "name": "NF John Day R at Monument",
+        "location": "SRID=4326;POINT (-119.4316565 44.8137582)",
+        "boundary": null,
+        "awdb_id": "14046000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 554,
+    "fields": {
+        "name": "Deschutes R bl Snow Ck",
+        "location": "SRID=4326;POINT (-121.7769742 43.81400647)",
+        "boundary": null,
+        "awdb_id": "14050000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 555,
+    "fields": {
+        "name": "Charlton Ck ab Crane Prairie nr La Pine",
+        "location": "SRID=4326;POINT (-121.836141 43.7806741)",
+        "boundary": null,
+        "awdb_id": "14053000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 556,
+    "fields": {
+        "name": "Crane Prairie Reservoir Inflow",
+        "location": "SRID=4326;POINT (-121.7825 43.75361000000002)",
+        "boundary": null,
+        "awdb_id": "14053500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 557,
+    "fields": {
+        "name": "Crescent Lake Inflow",
+        "location": "SRID=4326;POINT (-121.9733632 43.50290270000002)",
+        "boundary": null,
+        "awdb_id": "14060000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 558,
+    "fields": {
+        "name": "Little Deschutes R nr La Pine",
+        "location": "SRID=4326;POINT (-121.5028029 43.68901020000001)",
+        "boundary": null,
+        "awdb_id": "14063000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 559,
+    "fields": {
+        "name": "Deschutes R at Benham Falls",
+        "location": "SRID=4326;POINT (-121.4119746 43.93011714999999)",
+        "boundary": null,
+        "awdb_id": "14064500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 560,
+    "fields": {
+        "name": "Wychus Ck nr Sisters",
+        "location": "SRID=4326;POINT (-121.5669877 44.23372680000003)",
+        "boundary": null,
+        "awdb_id": "14075000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 561,
+    "fields": {
+        "name": "Prineville Reservoir Inflow",
+        "location": "SRID=4326;POINT (-120.7955699 44.11318150000001)",
+        "boundary": null,
+        "awdb_id": "14080500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 562,
+    "fields": {
+        "name": "Ochoco Reservoir Inflow",
+        "location": "SRID=4326;POINT (-120.6455719 44.30818530000001)",
+        "boundary": null,
+        "awdb_id": "14083000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 563,
+    "fields": {
+        "name": "Columbia R at The Dalles",
+        "location": "SRID=4326;POINT (-121.1734044 45.60734258000001)",
+        "boundary": null,
+        "awdb_id": "14105700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 564,
+    "fields": {
+        "name": "Klickitat R nr Glenwood",
+        "location": "SRID=4326;POINT (-121.245075 46.2648437)",
+        "boundary": null,
+        "awdb_id": "14107000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 565,
+    "fields": {
+        "name": "Klickitat R nr Pitt",
+        "location": "SRID=4326;POINT (-121.2100714 45.75651098000002)",
+        "boundary": null,
+        "awdb_id": "14113000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 566,
+    "fields": {
+        "name": "WF Hood River nr Dee",
+        "location": "SRID=4326;POINT (-121.6359082 45.59845079999999)",
+        "boundary": null,
+        "awdb_id": "14118500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 567,
+    "fields": {
+        "name": "Hood R at Tucker Bridge",
+        "location": "SRID=4326;POINT (-121.5484072 45.65539586)",
+        "boundary": null,
+        "awdb_id": "14120000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 568,
+    "fields": {
+        "name": "Sandy R nr Marmot",
+        "location": "SRID=4326;POINT (-122.1373068 45.39956420000002)",
+        "boundary": null,
+        "awdb_id": "14137000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 569,
+    "fields": {
+        "name": "Hills Creek Reservoir Inflow",
+        "location": "SRID=4326;POINT (-122.4378256 43.72095654999998)",
+        "boundary": null,
+        "awdb_id": "14145500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 570,
+    "fields": {
+        "name": "MF Willamette R bl NF nr Oakridge",
+        "location": "SRID=4326;POINT (-122.5608879 43.80123517000001)",
+        "boundary": null,
+        "awdb_id": "14148000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 571,
+    "fields": {
+        "name": "Lookout Point Reservoir Inflow",
+        "location": "SRID=4326;POINT (-122.8372967 43.94568150000002)",
+        "boundary": null,
+        "awdb_id": "14150000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 572,
+    "fields": {
+        "name": "Fall Creek Reservoir Inflow",
+        "location": "SRID=4326;POINT (-122.774794 43.94429299)",
+        "boundary": null,
+        "awdb_id": "14151000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 573,
+    "fields": {
+        "name": "Cottage Grove Lake Inflow",
+        "location": "SRID=4326;POINT (-123.0497994 43.72067784999999)",
+        "boundary": null,
+        "awdb_id": "14153500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 574,
+    "fields": {
+        "name": "Dorena Lake Inflow",
+        "location": "SRID=4326;POINT (-122.9914655 43.79290120000002)",
+        "boundary": null,
+        "awdb_id": "14155500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 575,
+    "fields": {
+        "name": "McKenzie R bl Trail Bridge",
+        "location": "SRID=4326;POINT (-122.0497826 44.26790010000001)",
+        "boundary": null,
+        "awdb_id": "14158850"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 576,
+    "fields": {
+        "name": "Cougar Lake Inflow",
+        "location": "SRID=4326;POINT (-122.248391 44.13595817)",
+        "boundary": null,
+        "awdb_id": "14159500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 577,
+    "fields": {
+        "name": "Blue Lake Inflow",
+        "location": "SRID=4326;POINT (-122.3331192 44.16234819000003)",
+        "boundary": null,
+        "awdb_id": "14162200"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 578,
+    "fields": {
+        "name": "McKenzie R nr Vida",
+        "location": "SRID=4326;POINT (-122.47062 44.12484870000002)",
+        "boundary": null,
+        "awdb_id": "14162500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 579,
+    "fields": {
+        "name": "Mohawk R nr Springfield",
+        "location": "SRID=4326;POINT (-122.9573052 44.09290317000001)",
+        "boundary": null,
+        "awdb_id": "14165000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 580,
+    "fields": {
+        "name": "Long Tom R nr Noti",
+        "location": "SRID=4326;POINT (-123.4262097 44.04984478000002)",
+        "boundary": null,
+        "awdb_id": "14166500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 581,
+    "fields": {
+        "name": "Fern Ridge Lake Inflow",
+        "location": "SRID=4326;POINT (-123.2998173 44.12345657000001)",
+        "boundary": null,
+        "awdb_id": "14169000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 582,
+    "fields": {
+        "name": "Detroit Lake Inlfow",
+        "location": "SRID=4326;POINT (-122.298412 44.75262189999999)",
+        "boundary": null,
+        "awdb_id": "14181500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 583,
+    "fields": {
+        "name": "Little North Santiam R nr Mehama",
+        "location": "SRID=4326;POINT (-122.5789738 44.7915108)",
+        "boundary": null,
+        "awdb_id": "14182500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 584,
+    "fields": {
+        "name": "North Santiam R at Mehama",
+        "location": "SRID=4326;POINT (-122.6186967 44.78901090000002)",
+        "boundary": null,
+        "awdb_id": "14183000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 585,
+    "fields": {
+        "name": "Middle Santiam R nr Foster",
+        "location": "SRID=4326;POINT (-122.5248056 44.45956880000002)",
+        "boundary": null,
+        "awdb_id": "14186000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 586,
+    "fields": {
+        "name": "Foster Lake Inflow",
+        "location": "SRID=4326;POINT (-122.673611 44.41666670000003)",
+        "boundary": null,
+        "awdb_id": "14186600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 587,
+    "fields": {
+        "name": "South Santiam R at Foster",
+        "location": "SRID=4326;POINT (-122.6748066 44.41373570000002)",
+        "boundary": null,
+        "awdb_id": "14186700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 588,
+    "fields": {
+        "name": "South Santiam R at Waterloo",
+        "location": "SRID=4326;POINT (-122.8234214 44.49845640000005)",
+        "boundary": null,
+        "awdb_id": "14187500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 589,
+    "fields": {
+        "name": "Thomas Ck nr Scio",
+        "location": "SRID=4326;POINT (-122.7700878 44.71206687)",
+        "boundary": null,
+        "awdb_id": "14188800"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 590,
+    "fields": {
+        "name": "Willamette R at Salem",
+        "location": "SRID=4326;POINT (-123.0428742 44.94428630000003)",
+        "boundary": null,
+        "awdb_id": "14191000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 591,
+    "fields": {
+        "name": "Scoggins Reservoir Inflow",
+        "location": "SRID=4326;POINT (-123.200109 45.46927967999999)",
+        "boundary": null,
+        "awdb_id": "14202980"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 592,
+    "fields": {
+        "name": "Oak Grove Fk ab Powerplant",
+        "location": "SRID=4326;POINT (-121.9406345 45.07123189999999)",
+        "boundary": null,
+        "awdb_id": "14209000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 593,
+    "fields": {
+        "name": "Clackamas R above Three Lynx",
+        "location": "SRID=4326;POINT (-122.0734137 45.1248432)",
+        "boundary": null,
+        "awdb_id": "14209500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 594,
+    "fields": {
+        "name": "Clackamas R at Estacada",
+        "location": "SRID=4326;POINT (-122.3539746 45.29984346000001)",
+        "boundary": null,
+        "awdb_id": "14210000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 595,
+    "fields": {
+        "name": "Lewis R at Ariel",
+        "location": "SRID=4326;POINT (-122.5639899 45.95177890000001)",
+        "boundary": null,
+        "awdb_id": "14220500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 596,
+    "fields": {
+        "name": "Cowlitz R bl Mayfiled",
+        "location": "SRID=4326;POINT (-122.616224 46.51038526000001)",
+        "boundary": null,
+        "awdb_id": "14238000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 597,
+    "fields": {
+        "name": "Cowlitz R at Castle Rock",
+        "location": "SRID=4326;POINT (-122.9145587 46.27483320000003)",
+        "boundary": null,
+        "awdb_id": "14243000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 598,
+    "fields": {
+        "name": "South Umpqua R at Tiller",
+        "location": "SRID=4326;POINT (-122.9483872 42.9303985)",
+        "boundary": null,
+        "awdb_id": "14308000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 599,
+    "fields": {
+        "name": "Cow Ck nr Azalea",
+        "location": "SRID=4326;POINT (-123.1789492 42.82484285999999)",
+        "boundary": null,
+        "awdb_id": "14309000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 600,
+    "fields": {
+        "name": "South Umpqua R nr Brockway",
+        "location": "SRID=4326;POINT (-123.3984053 43.13317168999999)",
+        "boundary": null,
+        "awdb_id": "14312000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 601,
+    "fields": {
+        "name": "North Umpqua R at Winchester",
+        "location": "SRID=4326;POINT (-123.4122993 43.27205997000002)",
+        "boundary": null,
+        "awdb_id": "14319500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 602,
+    "fields": {
+        "name": "Rogue R nr Prospect",
+        "location": "SRID=4326;POINT (-122.5955934 42.69984908999999)",
+        "boundary": null,
+        "awdb_id": "14335000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 603,
+    "fields": {
+        "name": "SF Big Butte Ck nr Butte Falls",
+        "location": "SRID=4326;POINT (-122.5553105 42.5401289)",
+        "boundary": null,
+        "awdb_id": "14335500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 604,
+    "fields": {
+        "name": "NF Little Butte Ck nr Lakecreek",
+        "location": "SRID=4326;POINT (-122.3566913 42.3762453)",
+        "boundary": null,
+        "awdb_id": "14342500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 605,
+    "fields": {
+        "name": "Rogue R at Raygold",
+        "location": "SRID=4326;POINT (-122.9872678 42.43734597)",
+        "boundary": null,
+        "awdb_id": "14359000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 606,
+    "fields": {
+        "name": "Rogue R at Grants Pass",
+        "location": "SRID=4326;POINT (-123.3178365 42.43039607)",
+        "boundary": null,
+        "awdb_id": "14361500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 607,
+    "fields": {
+        "name": "Applegate Lake Inflow",
+        "location": "SRID=4326;POINT (-123.1114358 42.06373610000001)",
+        "boundary": null,
+        "awdb_id": "14362000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 608,
+    "fields": {
+        "name": "Sucker Ck bl Little Grayback Ck nr Holland",
+        "location": "SRID=4326;POINT (-123.4789509 42.15956105000002)",
+        "boundary": null,
+        "awdb_id": "14375100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 609,
+    "fields": {
+        "name": "Illinois R nr Kerby",
+        "location": "SRID=4326;POINT (-123.66368 42.23177935999998)",
+        "boundary": null,
+        "awdb_id": "14377100"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 610,
+    "fields": {
+        "name": "Gold Ck nr Juneau",
+        "location": "SRID=4326;POINT (-134.388436 58.30689520000002)",
+        "boundary": null,
+        "awdb_id": "15049900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 611,
+    "fields": {
+        "name": "Gulkana R at Sourdough",
+        "location": "SRID=4326;POINT (-145.5330154 62.52039179999998)",
+        "boundary": null,
+        "awdb_id": "15200280"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 612,
+    "fields": {
+        "name": "Kenai R at Cooper Landing",
+        "location": "SRID=4326;POINT (-149.8099203 60.49219269000003)",
+        "boundary": null,
+        "awdb_id": "15258000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 613,
+    "fields": {
+        "name": "Ship Ck nr Anchorage",
+        "location": "SRID=4326;POINT (-149.6372008 61.22500619000003)",
+        "boundary": null,
+        "awdb_id": "15276000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 614,
+    "fields": {
+        "name": "Little Susitna R nr Palmer",
+        "location": "SRID=4326;POINT (-149.231938 61.70974330000005)",
+        "boundary": null,
+        "awdb_id": "15290000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 615,
+    "fields": {
+        "name": "Talkeetna R nr Talkeetna",
+        "location": "SRID=4326;POINT (-150.019201 62.34643880000002)",
+        "boundary": null,
+        "awdb_id": "15292700"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 616,
+    "fields": {
+        "name": "Kuskokwim R at Crooked Creek",
+        "location": "SRID=4326;POINT (-158.1137848 61.86874449999999)",
+        "boundary": null,
+        "awdb_id": "15304000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 617,
+    "fields": {
+        "name": "Yukon R at Eagle",
+        "location": "SRID=4326;POINT (-141.2000892 64.789168)",
+        "boundary": null,
+        "awdb_id": "15356000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 618,
+    "fields": {
+        "name": "Porcupine R nr Int'l Boundary",
+        "location": "SRID=4326;POINT (-140.8938048 67.4239232)",
+        "boundary": null,
+        "awdb_id": "15388960"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 619,
+    "fields": {
+        "name": "Yukon R nr Stevens Village",
+        "location": "SRID=4326;POINT (-149.7203487 65.87510130000003)",
+        "boundary": null,
+        "awdb_id": "15453500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 620,
+    "fields": {
+        "name": "Salcha R nr Salchaket",
+        "location": "SRID=4326;POINT (-146.926265 64.47235909999998)",
+        "boundary": null,
+        "awdb_id": "15484000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 621,
+    "fields": {
+        "name": "Tanana R at Fairbanks",
+        "location": "SRID=4326;POINT (-147.8413097 64.79234400000001)",
+        "boundary": null,
+        "awdb_id": "15485500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 622,
+    "fields": {
+        "name": "Chena R nr Two Rivers",
+        "location": "SRID=4326;POINT (-146.359366 64.90237389999997)",
+        "boundary": null,
+        "awdb_id": "15493000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 623,
+    "fields": {
+        "name": "Little Chena R nr Fairbanks",
+        "location": "SRID=4326;POINT (-147.2496477 64.88568988000003)",
+        "boundary": null,
+        "awdb_id": "15511000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 624,
+    "fields": {
+        "name": "Tanana R at Nenana",
+        "location": "SRID=4326;POINT (-149.0940628 64.56481499000002)",
+        "boundary": null,
+        "awdb_id": "15515500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 625,
+    "fields": {
+        "name": "Kuparuk R nr Deadhorse",
+        "location": "SRID=4326;POINT (-148.962786 70.28138539000003)",
+        "boundary": null,
+        "awdb_id": "15896000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 626,
+    "fields": {
+        "name": "Sagavanirktok R nr Pump Station 3",
+        "location": "SRID=4326;POINT (-148.8200342 69.01464820000003)",
+        "boundary": null,
+        "awdb_id": "15908000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 627,
+    "fields": {
+        "name": "Columbia R at Mica",
+        "location": "SRID=4326;POINT (-118.55 52.06667)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 628,
+    "fields": {
+        "name": "Columbia R at Arrow Lakes",
+        "location": "SRID=4326;POINT (-117.75 49.33333000000003)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 629,
+    "fields": {
+        "name": "Kootenai R at Wardner",
+        "location": "SRID=4326;POINT (-115.41666 49.41666000000002)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 630,
+    "fields": {
+        "name": "Duncan R bl Duncan Dam",
+        "location": "SRID=4326;POINT (-116.93333 50.25000000000001)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 631,
+    "fields": {
+        "name": "Bowl Canyon Ck ab Asaayi Lake",
+        "location": "SRID=4326;POINT (-108.9256 35.98400000000003)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 632,
+    "fields": {
+        "name": "Captain Tom Wash nr Two Gray Hills",
+        "location": "SRID=4326;POINT (-108.8045 36.2373)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 633,
+    "fields": {
+        "name": "Davis Ck",
+        "location": "SRID=4326;POINT (-120.36413 41.73574)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 634,
+    "fields": {
+        "name": "Kinlichee Ck",
+        "location": "SRID=4326;POINT (-109.4439 35.74350000000001)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 635,
+    "fields": {
+        "name": "Deep Ck nr Cedarville",
+        "location": "SRID=4326;POINT (-120.18169 41.50805)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 636,
+    "fields": {
+        "name": "Mill Ck nr Cedarville",
+        "location": "SRID=4326;POINT (-120.21906 41.64225000000001)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 637,
+    "fields": {
+        "name": "Wheatfields Ck nr Wheatfields",
+        "location": "SRID=4326;POINT (-109.0667 36.22320000000001)",
+        "boundary": null,
+        "awdb_id": "0"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 638,
+    "fields": {
+        "name": "Elwha R at McDonald Bridge nr Port Angeles",
+        "location": "SRID=4326;POINT (-123.5832462 48.05481139999999)",
+        "boundary": null,
+        "awdb_id": "12045500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 639,
+    "fields": {
+        "name": "Dungeness R nr Sequim",
+        "location": "SRID=4326;POINT (-123.1326773 48.01425780000001)",
+        "boundary": null,
+        "awdb_id": "12048000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 640,
+    "fields": {
+        "name": "White R nr Buckley",
+        "location": "SRID=4326;POINT (-121.9498317 47.15121369999999)",
+        "boundary": null,
+        "awdb_id": "12098500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 641,
+    "fields": {
+        "name": "Swan Ck at Pioneer Way Tacoma",
+        "location": "SRID=4326;POINT (-122.3917891 47.22843290000001)",
+        "boundary": null,
+        "awdb_id": "12102212"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 642,
+    "fields": {
+        "name": "Wapato Ck nr Tacoma",
+        "location": "SRID=4326;POINT (-122.3373435 47.22482230000001)",
+        "boundary": null,
+        "awdb_id": "12102500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 643,
+    "fields": {
+        "name": "Green R blw Haward A Hanson Dam",
+        "location": "SRID=4326;POINT (-121.783333 47.28333)",
+        "boundary": null,
+        "awdb_id": "12105900"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 644,
+    "fields": {
+        "name": "Cedar R nr Cedar Falls",
+        "location": "SRID=4326;POINT (-121.616667 47.36667000000001)",
+        "boundary": null,
+        "awdb_id": "12115000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 645,
+    "fields": {
+        "name": "Rex R nr Cedar Falls",
+        "location": "SRID=4326;POINT (-121.65 47.35000000000001)",
+        "boundary": null,
+        "awdb_id": "12115500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 646,
+    "fields": {
+        "name": "Cedar R at Cedar Falls",
+        "location": "SRID=4326;POINT (-121.783333 47.41667)",
+        "boundary": null,
+        "awdb_id": "12116500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 647,
+    "fields": {
+        "name": "Taylor Ck nr Selleck",
+        "location": "SRID=4326;POINT (-121.845 47.38667000000002)",
+        "boundary": null,
+        "awdb_id": "12117000"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 648,
+    "fields": {
+        "name": "SF Tolt R nr Index",
+        "location": "SRID=4326;POINT (-121.6 47.70000000000003)",
+        "boundary": null,
+        "awdb_id": "12147600"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 649,
+    "fields": {
+        "name": "Thunder Ck nr Newhalem",
+        "location": "SRID=4326;POINT (-121.066667 48.66667)",
+        "boundary": null,
+        "awdb_id": "12175500"
+    }
+},
+{
+    "model": "ebagis.pourpoint",
+    "pk": 650,
+    "fields": {
+        "name": "Skagit R at Newhalem",
+        "location": "SRID=4326;POINT (-121.233333 48.66667)",
+        "boundary": null,
+        "awdb_id": "12178000"
+    }
+}
+]

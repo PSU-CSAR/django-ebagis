@@ -29,7 +29,9 @@ from .pourpoint import PourPoint
 class AOI(CreatedByMixin, DirectoryMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(geography=True, srid=GEO_WKID)
-    pourpoint = models.ForeignKey(PourPoint, related_name="aois")
+    pourpoint = models.ForeignKey(PourPoint,
+                                  related_name="aois",
+                                  on_delete=models.PROTECT)
 
     # allow recursive parent-child relations
     # db_constraint as false means an AOI with the given ID
@@ -138,7 +140,7 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
             raise AOIError(errormsg)
 
         # get multipolygon WKT from AOI Boundary Layer
-        wkt = gis.get_multipart_wkt_geometry_and_reproject(
+        boundary = gis.get_multipart_wkt_geometry_and_reproject(
             os.path.join(temp_aoi_path, constants.AOI_GDB),
             GEO_WKID,
             layername=constants.AOI_BOUNDARY_LAYER
@@ -152,12 +154,14 @@ class AOI(CreatedByMixin, DirectoryMixin, ABC):
         )
 
         # find or create pourpoint
-        closest_pourpoint = PourPoint.match(pourpoint, aoi_name)
+        closest_pourpoint = PourPoint.match(pourpoint,
+                                            boundary,
+                                            aoi_name=aoi_name)
 
         aoi = cls(
             name=aoi_name,
             shortname=aoi_shortname,
-            boundary=wkt,
+            boundary=boundary,
             created_by=user,
             comment=comment,
             id=id,

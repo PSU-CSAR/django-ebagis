@@ -13,6 +13,8 @@ from .user import UserSerializer, GroupSerializer, PermissionSerializer
 from .base import BaseSerializer
 from .mixins import URLMixin
 
+from .pourpoint import PourPointSerializer
+
 from .data import (
     FileDataSerializer, FileSerializer, GeodatabaseSerializer,
     PrismDirSerializer, HRUZonesDataSerializer, HRUZonesSerializer,

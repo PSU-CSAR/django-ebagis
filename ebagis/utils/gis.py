@@ -1,5 +1,48 @@
 from __future__ import absolute_import
 
+from django.contrib.gis.measure import Distance as DjangoDistance
+
+
+class Distance(DjangoDistance):
+    """Override the Django GIS Distance object to allow passing in
+    the linear distance as a string, like '100 Feet' or '35M',
+    in addition to the default keyword arg behavior like Distance(ft=30)."""
+    # we want to grab the lowercase unit aliases from the base class
+    # so we can add some pluralized units for ease of use
+    LALIAS = DjangoDistance.LALIAS.copy()
+    LALIAS.update({
+        k+"s": v for k, v in DjangoDistance.ALIAS.iteritems()
+        if " " not in k and k.lower() != 'foot'.lower()
+    })
+    LALIAS['feet'] = LALIAS['foot']
+
+    def __init__(self, distance=None, **kwargs):
+        import re
+        # if a single arg is passed it is either a unitless distance,
+        # or it is a string of the distance and needs to be parsed
+        if distance is not None:
+            match = re.match(
+                r'^(?P<measure>[0-9.]+)\s*(?P<unit>[a-zA-Z]*)$',
+                distance,
+            )
+            if match and match.group('unit'):
+                # then we parsed a distance and a unit
+                kwargs[match.group('unit')] = match.group('measure')
+            elif match:
+                # then we did not get a unit, just a measure
+                # so we'll just use the standard unit (meter)
+                kwargs[self.STANDARD_UNIT] = match.group('measure')
+            else:
+                # whatever was passed did not fit the expected format
+                raise AttributeError(
+                    'Unable to parse distance: {}'.format(distance)
+                )
+        return super(Distance, self).__init__(**kwargs)
+
+    def __getattr__(self, name):
+        unit = self.unit_attname(name)
+        return self.standard / self.UNITS[unit]
+
 
 def get_multipart_wkt_geometry_and_reproject(sourcefile,
                                              destEPSG,
