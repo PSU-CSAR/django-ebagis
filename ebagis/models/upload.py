@@ -39,8 +39,9 @@ class Upload(ChunkedUpload):
         return self.status == self.ABORTED
 
     def delete_files(self):
-        storage, path = self.file.storage, self.file.path
-        storage.delete(path)
+        if self.file:
+            storage, path = self.file.storage, self.file.path
+            storage.delete(path)
 
     def cancel(self, total_annihilation=False):
         from ..tasks import process_upload
