@@ -38,6 +38,16 @@ class UploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Upload
+        exclude = ('file', )
+        read_only_fields = (
+            'id', 'status', 'completed_at', 'task', 'offset', 'md5'
+        )
+
+
+class UploadCreateSerializer(UploadSerializer):
+    class Meta:
+        model = Upload
+        fields = '__all__'
         read_only_fields = (
             'id', 'status', 'completed_at', 'task', 'offset', 'md5'
         )

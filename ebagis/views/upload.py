@@ -14,7 +14,7 @@ from djcelery.models import TaskMeta
 from ..models.upload import Upload
 
 # serializers
-from ..serializers.upload import UploadSerializer
+from ..serializers.upload import UploadSerializer, UploadCreateSerializer
 
 # other
 from ..tasks import process_upload
@@ -71,11 +71,17 @@ def cancel_upload(request, pk):
 
 class UploadView(ChunkedUploadView):
     model = Upload
-    serializer_class = UploadSerializer
+    serializer_class = UploadCreateSerializer
     search_fields = ("filename",)
     filter_class = make_model_filter(model,
                                      base=UploadFilterSet,
                                      exclude_fields=['file'])
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method not in ['PUT', 'POST']:
+            serializer_class = UploadSerializer
+        return serializer_class
 
     def get_queryset(self):
         """
