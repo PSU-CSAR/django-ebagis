@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import serializers
 
@@ -22,9 +23,12 @@ class TaskSerializer(serializers.ModelSerializer):
                 upload_class = ContentType.model_class(
                     ContentType.objects.get(model=content_type)
                 )
-                return upload_class.objects.get(pk=pk).get_url(
-                    self.context['request']
-                )
+                try:
+                    return upload_class.objects.get(pk=pk).get_url(
+                        self.context['request']
+                    )
+                except ObjectDoesNotExist:
+                    return "object has been deleted"
 
         return obj.result
 
