@@ -29,4 +29,5 @@ class TaskSerializer(serializers.ModelSerializer):
         return obj.result
 
     class Meta:
+        fields = '__all__'
         model = TaskMeta
