@@ -45,7 +45,7 @@ def process_upload(self, upload_id):
     # however, self is a Task, not TaskMeta, and does not have relations
     upload = Upload.objects.get(pk=upload_id)
     upload_class = ContentType.model_class(upload.content_type)
-    zip_path = upload.file
+    zip_path = upload.file.path
 
     temp_prefix = upload_class.__name__ + "_"
 
