@@ -15,9 +15,7 @@ class TaskSerializer(serializers.ModelSerializer):
         if obj.status == 'SUCCESS':
             try:
                 pk, content_type = obj.result.split(",")
-            except AttributeError:
-                pass
-            except ValueError:
+            except (AttributeError, ValueError):
                 pass
             else:
                 upload_class = ContentType.model_class(
