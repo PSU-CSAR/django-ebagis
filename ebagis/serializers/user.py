@@ -1,13 +1,14 @@
 from __future__ import absolute_import
 
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('url', 'username')
 
 
@@ -26,7 +27,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         return roles
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('username', 'email', 'first_name', 'last_name', 'roles')
         read_only_fields = ('email', 'roles')
 

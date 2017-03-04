@@ -3,7 +3,7 @@ import os
 import shutil
 import uuid
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -15,6 +15,8 @@ from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 
 from .mixins import DateMixin, NameMixin
 
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+
 
 # The name field is not strictly required--it seems that I should
 # be able to query based on the generic foreign key. However, in some
@@ -23,7 +25,7 @@ from .mixins import DateMixin, NameMixin
 # download model via the NameMixin.
 class Download(DateMixin, NameMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User,
+    user = models.ForeignKey(AUTH_USER_MODEL,
                              related_name="%(class)s",
                              editable=False)
     content_type = models.ForeignKey(ContentType)

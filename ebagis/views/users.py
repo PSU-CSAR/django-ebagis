@@ -3,7 +3,8 @@ from __future__ import absolute_import
 from rest_framework import viewsets
 
 # model objects
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 
 # serializers
 from ..serializers.user import (
@@ -15,7 +16,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     search_fields = ("username", "email")
 

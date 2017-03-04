@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import logging
 import os
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models
 
@@ -11,6 +11,8 @@ from ..utils.misc import get_subclasses
 
 from .metaclass import InheritanceMetaclass
 
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +68,7 @@ class DateMixin(models.Model):
 class CreatedByMixin(models.Model):
     """Generic mixin to provide user tracking to a model."""
     created_by = models.ForeignKey(
-        User,
+        AUTH_USER_MODEL,
         related_name="%(app_label)s_%(class)s_created_by"
     )
 
