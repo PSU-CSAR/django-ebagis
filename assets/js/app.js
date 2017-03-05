@@ -13,6 +13,25 @@ $(document).on("click", ".feature-row", function(e) {
   console.log(this);
 });
 
+$("#sort-btn").click(function(event) {
+  console.log('clicked sort-btn')
+  //featureList.sort("feature-name");
+  /*for(i in featureList["items"]) {
+    if (featureList["items"].hasOwnProperty(i)) {
+        console.log (i, featureList["items"][i]["_values"]);
+    }
+  }*/
+});
+
+$("#clear-btn").click(function() {
+  console.log('clear');
+  clearFilter();
+});
+
+function clearFilter() {
+  document.getElementById("filter").value = "";
+}
+
 if ( !("ontouchstart" in window) ) {
   $(document).on("mouseover", ".feature-row", function(e) {
     highlight.clearLayers().addLayer(L.circleMarker([$(this).attr("lat"), $(this).attr("lng")], highlightStyle));
@@ -114,6 +133,7 @@ function sidebarClick(id) {
 function syncSidebar() {
   /* Empty sidebar features */
   $("#feature-list").empty();
+  clearFilter();
   /* Loop through theaters layer and add only features which are in the map bounds */
   theaters.eachLayer(function (layer) {
     if (map.hasLayer(theaterLayer)) {
@@ -146,12 +166,13 @@ function syncSidebar() {
   featureList.sort("feature-name", {
     order: "asc"
   });
-  console.log('list: ' + featureList);
-  for(i in featureList) {
-    if (featureList.hasOwnProperty(i)) {
-        console.log (i, featureList[i])
+  /*console.log('syncSidebar');
+  for(i in featureList["items"]) {
+    if (featureList["items"].hasOwnProperty(i)) {
+        console.log (i, featureList["items"][i]["_values"]);
     }
-}
+  }*/
+
 }
 
 /* Basemap Layers */
@@ -287,7 +308,7 @@ var theaters = L.geoJson(null, {
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
-      $("#feature-list").append(setMuseumRow(layer));
+      //$("#feature-list").append(setMuseumRow(layer));
       /*$("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/theater.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');*/
       theaterSearch.push({
         name: layer.feature.properties.NAME,
@@ -331,7 +352,7 @@ var museums = L.geoJson(null, {
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
-      $("#feature-list").append(setMuseumRow(layer));
+      //$("#feature-list").append(setMuseumRow(layer));
       /*$("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/museum.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');*/
       museumSearch.push({
         name: layer.feature.properties.NAME,
@@ -495,6 +516,7 @@ $(document).one("ajaxStop", function () {
   sizeLayerControl();
   /* Fit map to boroughs bounds */
   map.fitBounds(boroughs.getBounds());
+  /* irrelevant without search in upper right */
   featureList = new List("features", {valueNames: ["feature-name"]});
   featureList.sort("feature-name", {order:"asc"});
 

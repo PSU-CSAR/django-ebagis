@@ -65,16 +65,27 @@ input[type="radio"], input[type="checkbox"] {
 .card-heading{
    width: 250px;
 }
+.card-title {
+  margin: 0rem;
+}
+.card {
+  border: 0px;
+}
+.card-block {
+  padding: .75rem;
+  border-bottom: 1px solid rgba(0,0,0,.125);
+
+}
+.clear-btn {
+  padding: 1rem;
+}
+
 .panel-body{
   width: 250px;
 }
 .feature-row {
   cursor: pointer;
   width: 250px;
-}
-td.hiddenRow {
-    /*padding: 0 !important;*/
-    /*display: none;*/
 }
 .sidebar-wrapper {
   width: 100%;
@@ -84,7 +95,7 @@ td.hiddenRow {
 .sidebar-table {
   position: absolute;
   width: 100%;
-  top: 103px;
+  top: 96px;
   bottom: 0px;
   overflow: auto;
 }
