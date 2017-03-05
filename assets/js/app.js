@@ -30,6 +30,7 @@ $("#clear-btn").click(function() {
 
 function clearFilter() {
   document.getElementById("filter").value = "";
+  featureList.search();
 }
 
 if ( !("ontouchstart" in window) ) {
@@ -133,7 +134,7 @@ function sidebarClick(id) {
 function syncSidebar() {
   /* Empty sidebar features */
   $("#feature-list").empty();
-  clearFilter();
+  
   /* Loop through theaters layer and add only features which are in the map bounds */
   theaters.eachLayer(function (layer) {
     if (map.hasLayer(theaterLayer)) {
@@ -166,6 +167,7 @@ function syncSidebar() {
   featureList.sort("feature-name", {
     order: "asc"
   });
+  clearFilter();
   /*console.log('syncSidebar');
   for(i in featureList["items"]) {
     if (featureList["items"].hasOwnProperty(i)) {
