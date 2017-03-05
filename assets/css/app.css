@@ -27,7 +27,7 @@ input[type="radio"], input[type="checkbox"] {
 #map {
   width: auto;
   height: 100%;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  /*box-shadow: 0 0 10px rgba(0,0,0,0.5);*/
 }
 #loading {
   position: absolute;
@@ -62,14 +62,14 @@ input[type="radio"], input[type="checkbox"] {
 .white {
   color: #FFFFFF;
 }
-.card-heading{
-   width: 250px;
-}
 .card-title {
   margin: 0rem;
 }
 .card {
-  border: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-top: 0px;
+  border-radius: 0rem;
 }
 .card-block {
   padding: .75rem;
@@ -95,7 +95,7 @@ input[type="radio"], input[type="checkbox"] {
 .sidebar-table {
   position: absolute;
   width: 100%;
-  top: 96px;
+  top: 100px;
   bottom: 0px;
   overflow: auto;
 }
@@ -137,7 +137,7 @@ input[type="radio"], input[type="checkbox"] {
   background-color: #FFFFFF;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px 4px 4px 4px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);*/
   margin-top: 4px;
   padding: 4px 0;
   width: 100%;
