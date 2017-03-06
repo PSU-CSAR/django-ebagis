@@ -97,7 +97,6 @@ $("#sidebar-toggle-btn").click(function() {
 });
 
 $("#sidebar-hide-btn").click(function() {
-  sideBarState = 'hide';
   animateSidebar();
   return false;
 });
@@ -108,22 +107,27 @@ $(".card-header").click(function(event) {
 
 
 $(document).on('click', '#sidebar-show-btn', function(event) {
-  sideBarState = 'show';
-  $('#sidebar-show-btn').remove();
   animateSidebar();
   return false;
 });
 
 function animateSidebar() {
-  $("#sidebar").animate({
-    width: "toggle"
-  }, 350, function() {
-    map.invalidateSize();
-    if (sideBarState === 'hide') {
-      $('<button type="button" class="btn btn-xs btn-default pull-left" id="sidebar-show-btn"><i class="fa fa-chevron-right"></i></button>').insertAfter('#sidebar');
+  var sidebar_show_btn = $('#sidebar-show-btn')
+  var hidden = false;
+  if (!sidebar_show_btn.hasClass('hidden')) {
+    sidebar_show_btn.addClass('hidden');
+    hidden = true;
+  }
+  $("#sidebar").animate(
+    {width: "toggle"},
+    350,
+    function() {
+      if (!hidden) {
+        sidebar_show_btn.removeClass('hidden');
+      }
+      map.invalidateSize();
     }
-    //map.invalidateSize();
-  });
+  );
 }
 
 function setMuseumRow(layer) {

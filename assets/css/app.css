@@ -16,6 +16,10 @@ input[type="radio"], input[type="checkbox"] {
   background-color: #000;
 }
 
+.hidden {
+  display: none;
+}
+
 #sidebar {
   display: block;
   width: 250px;
@@ -53,8 +57,8 @@ input[type="radio"], input[type="checkbox"] {
 #sidebar-show-btn.btn {
   height: 100%;
   border-radius: 0px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 0px;
+  padding-right: 1px;
 }
 
 #aboutTabsContent {
