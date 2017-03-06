@@ -6,28 +6,19 @@ $(window).resize(function() {
   sizeLayerControl();
 });
 
-$(document).on("click", ".feature-row", function(e) {
+$('#feature-list').on("click", ".feature-row", function(e) {
   var featureRow = this;
-  $(document).off("mouseout", ".feature-row", clearHighlight);
-  console.log('clicked on feature-row');
+  $('#feature-list').off("mouseout", ".feature-row", clearHighlight);
   sidebarClick(parseInt($(featureRow).attr("id"), 10));
-  changeExpandIcon(featureRow);
-  console.log(featureRow);
-
 });
 
+$('#feature-list').on('show.bs.collapse', '.feature-row', function(e) {
+  $(this).find(".expand-icon").removeClass('fa-plus-square').addClass('fa-minus-square');
+});
 
-function changeExpandIcon(featureRow) {
-  var id = $(featureRow).attr("id");
-  console.log(id, $(featureRow).children('a').attr("aria-expanded"));
-  if ($(featureRow).children('a').attr("aria-expanded") === "true") {
-    console.log("true");
-    $('#card-expand-icon' + id).removeClass('fa-plus-square').addClass('fa-minus-square');
-  }
-  else {
-    $('#card-expand-icon' + id).removeClass('fa-minus-square').addClass('fa-plus-square');
-  }
-}
+$('#feature-list').on('hide.bs.collapse', '.feature-row', function(e) {
+  $(this).find(".expand-icon").removeClass('fa-minus-square').addClass('fa-plus-square');
+});
 
 $("#sort-btn").click(function(event) {
   console.log('clicked sort-btn')
@@ -134,7 +125,7 @@ function setMuseumRow(layer) {
   /*return '<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="assets/img/theater.png"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td><tr><div>thisisi</div></tr></tr>'*/
 
 
-  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + '<div class="card-header" role="tab" id="heading' + L.stamp(layer) + '">' + '<h6 class="mb-0 feature-name">' + layer.feature.properties.NAME + '<i id="card-expand-icon' + L.stamp(layer) + '" class="fa fa-plus-square pull-right" aria-hidden="true"></i></h6></div></a>' + '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '"><div class="card-block">' + layer.feature.properties.NAME + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i></div></div></div>'
+  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + '<div class="card-header" role="tab" id="heading' + L.stamp(layer) + '">' + '<h6 class="mb-0 feature-name">' + layer.feature.properties.NAME + '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i></h6></div></a>' + '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '"><div class="card-block">' + layer.feature.properties.NAME + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i></div></div></div>'
 }
 
 function sizeLayerControl() {
