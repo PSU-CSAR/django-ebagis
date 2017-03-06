@@ -46,11 +46,15 @@ input[type="radio"], input[type="checkbox"] {
     box-shadow: none;
 }
 #sidebar-hide-btn {
-  margin-top: -2px;
+  margin-top: -1px;
+  padding: 3px 6px 3px 6px;
 }
 
 #sidebar-show-btn.btn {
   height: 100%;
+  border-radius: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 #aboutTabsContent {
@@ -95,7 +99,7 @@ input[type="radio"], input[type="checkbox"] {
 .sidebar-table {
   position: absolute;
   width: 100%;
-  top: 100px;
+  top: 101px;
   bottom: 0px;
   overflow: auto;
 }
