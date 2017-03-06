@@ -7,7 +7,8 @@ $(window).resize(function() {
 $('#feature-list').on("click", ".feature-row", function(e) {
   var featureRow = this;
   $('#feature-list').off("mouseout", ".feature-row", clearHighlight);
-  sidebarClick(parseInt($(featureRow).attr("id"), 10));
+  console.log(parseInt($(featureRow).attr("id"), 10));
+  //sidebarClick(parseInt($(featureRow).attr("id"), 10));
 });
 
 $('#feature-list').on('show.bs.collapse', '.feature-row', function(e) {
@@ -90,6 +91,15 @@ $(document).on('click', '#sidebar-show-btn', function(event) {
   return false;
 });
 
+$(document).on('click', '.aoi-row', function(event){
+  var featureRow = this;
+  console.log(this);
+  console.log('aoi-list');
+  sidebarClick(parseInt($(featureRow).attr("id").substring(4),10));
+  console.log(parseInt($(featureRow).attr("id").substring(4),10));
+
+});
+
 function animateSidebar() {
   var sidebar_show_btn = $('#sidebar-show-btn')
   var hidden = false;
@@ -110,7 +120,35 @@ function animateSidebar() {
 }
 
 function setMuseumRow(layer) {
-  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + '<div class="card-header" role="tab" id="heading' + L.stamp(layer) + '">' + '<h6 class="mb-0 feature-name">' + layer.feature.properties.NAME + '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i></h6></div></a>' + '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '"><div class="card-block">' + layer.feature.properties.NAME + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i></div></div></div>'
+  var list = 
+  '<div class="list-group" id="aoi-list">' +  
+    '</button>' + 
+    '<button type="button" id=aoi1' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>Cras justo odio Cras justo'  +
+    '</button>' +
+    '<button type="button" id=aoi2' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">'+ '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>' + 'Dapibus ac facilisis in Dapibus ac facilisis in Dapibus ac facilisis in Dapibus ac facilisis in'  +
+    '</button>' +
+    '<button type="button" id=aoi3' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>' +'Morbi leo risus' +
+    '</button>' +
+    '<button type="button" id=aoi4' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>' + 'Porta ac consectetur ac'  +
+    '</button>' + 
+    '<button type="button" id=aoi5' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action"><i class="fa fa-info-circle pull-right" aria-hidden="true"></i>Vestibulum at eros' +
+    '</button>' + 
+    '<button type="button" id=aoi6' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>Vestibulum at eros Vestibulum at Vestibulum at' +
+    '</button>' + 
+  '</div>' 
+  /*
+    '<div class="list-group">' + 
+      '<a href="#" class="list-group-item active">Cras justo odio' + 
+      '</a>' + 
+      '<a href="#" class="list-group-item list-group-item-action"><i class="fa fa-info-circle" aria-hidden="true"></i>Dapibus ac facilisis in Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis in</a>' + 
+      '<a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inMorbi leo risus<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
+      '<a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inPorta ac consectetur ac<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
+      '<a href="#" class="list-group-item list-group-item-action disabled">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inVestibulum at eros<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
+    '</div>'*/
+
+  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + '<div class="card-header" role="tab" id="heading' + L.stamp(layer) + '">' + '<h6 class="mb-0 feature-name">' + layer.feature.properties.NAME + '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i></h6></div></a>' + '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '"><div class="card-block">' + list + '</div></div></div>'
+
+    
 }
 
 function sizeLayerControl() {
@@ -229,8 +267,7 @@ var subwayLines = L.geoJson(null, {
         click: function (e) {
           $("#feature-title").html(feature.properties.Line);
           $("#feature-info").html(content);
-          //$("#featureModal").modal("show");
-
+          $("#featureModal").modal("show");
         }
       });
     }
@@ -286,7 +323,7 @@ var theaters = L.geoJson(null, {
         click: function (e) {
           $("#feature-title").html(feature.properties.NAME);
           $("#feature-info").html(content);
-          //$("#featureModal").modal("show");
+          $("#featureModal").modal("show");
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
@@ -328,7 +365,7 @@ var museums = L.geoJson(null, {
         click: function (e) {
           $("#feature-title").html(feature.properties.NAME);
           $("#feature-info").html(content);
-          //$("#featureModal").modal("show");
+          $("#featureModal").modal("show");
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });

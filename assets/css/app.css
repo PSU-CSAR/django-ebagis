@@ -105,6 +105,13 @@ input[type="radio"], input[type="checkbox"] {
   bottom: 0px;
   overflow: auto;
 }
+.fa-info-circle {
+  padding: 0em 0em 0em 0em;
+}
+.list-group-item {
+  display: inline;
+}
+
 .leaflet-control-layers {
   overflow: auto;
 }
