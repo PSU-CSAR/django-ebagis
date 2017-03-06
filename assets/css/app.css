@@ -11,15 +11,12 @@ body {
 input[type="radio"], input[type="checkbox"] {
   margin: 0;
 }
-
 #hello.button {
   background-color: #000;
 }
-
 .hidden {
   display: none;
 }
-
 #sidebar {
   display: block;
   width: 250px;
@@ -27,7 +24,6 @@ input[type="radio"], input[type="checkbox"] {
   max-width: 100%;
   float: left;
 }
-
 #map {
   width: auto;
   height: 100%;
@@ -53,14 +49,12 @@ input[type="radio"], input[type="checkbox"] {
   margin-top: -1px;
   padding: 3px 6px 3px 6px;
 }
-
 #sidebar-show-btn.btn {
   height: 100%;
   border-radius: 0px;
   padding-left: 0px;
   padding-right: 1px;
 }
-
 #aboutTabsContent {
   padding-top: 10px;
 }
@@ -82,14 +76,9 @@ input[type="radio"], input[type="checkbox"] {
 .card-block {
   padding: .75rem;
   border-bottom: 1px solid rgba(0,0,0,.125);
-
 }
 .clear-btn {
   padding: 1rem;
-}
-
-.panel-body{
-  width: 250px;
 }
 .feature-row {
   cursor: pointer;
