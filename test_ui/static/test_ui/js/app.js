@@ -173,7 +173,7 @@ function sidebarClick(id) {
 function syncSidebar() {
   /* Empty sidebar features */
   $("#feature-list").empty();
-  
+
   /* Loop through theaters layer and add only features which are in the map bounds */
   theaters.eachLayer(function (layer) {
     if (map.hasLayer(theaterLayer)) {
@@ -239,7 +239,7 @@ var boroughs = L.geoJson(null, {
     });
   }
 });
-$.getJSON("data/boroughs.geojson", function (data) {
+$.getJSON("static/test_ui/data/boroughs.geojson", function (data) {
   boroughs.addData(data);
 });
 
@@ -289,7 +289,7 @@ var subwayLines = L.geoJson(null, {
     });
   }
 });
-$.getJSON("data/subways.geojson", function (data) {
+$.getJSON("static/test_ui/data/subways.geojson", function (data) {
   subwayLines.addData(data);
 });
 
@@ -347,7 +347,7 @@ var theaters = L.geoJson(null, {
     }
   }
 });
-$.getJSON("data/DOITT_THEATER_01_13SEPT2010.geojson", function (data) {
+$.getJSON("static/test_ui/data/DOITT_THEATER_01_13SEPT2010.geojson", function (data) {
   theaters.addData(data);
   map.addLayer(theaterLayer);
 });
@@ -394,7 +394,7 @@ var museums = L.geoJson(null, {
     }
   }
 });
-$.getJSON("data/DOITT_MUSEUM_01_13SEPT2010.geojson", function (data) {
+$.getJSON("static/test_ui/data/DOITT_MUSEUM_01_13SEPT2010.geojson", function (data) {
   museums.addData(data);
 });
 
