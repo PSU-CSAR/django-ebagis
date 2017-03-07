@@ -112,6 +112,17 @@ input[type="radio"], input[type="checkbox"] {
   display: inline;
 }
 
+a:focus, a:hover {
+  color: #000;
+}
+.btn-hover {
+  background-color: orange;
+}
+
+.feature-row > a:first-of-type {
+  text-decoration: none !important;
+}
+
 .leaflet-control-layers {
   overflow: auto;
 }
@@ -216,5 +227,6 @@ input[type="radio"], input[type="checkbox"] {
     display: none !important;
   }
 }
+
 
 

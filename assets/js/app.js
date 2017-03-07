@@ -146,8 +146,35 @@ function setMuseumRow(layer) {
       '<a href="#" class="list-group-item list-group-item-action disabled">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inVestibulum at eros<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
     '</div>'*/
 
-  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + '<div class="card-header" role="tab" id="heading' + L.stamp(layer) + '">' + '<h6 class="mb-0 feature-name">' + layer.feature.properties.NAME + '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i></h6></div></a>' + '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '"><div class="card-block">' + list + '</div></div></div>'
-
+  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
+    '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
+      '<div class="card-header" role="tab" id="heading ' + L.stamp(layer) + '">' + 
+        '<div class="row">' +
+          '<div class="col-10">' + 
+            '<h6 class="mb-0" >' + layer.feature.properties.NAME +'</h6>' + 
+          '</div>' + 
+          '<div class="col-2">' + 
+            '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
+          '</div>' + 
+        '</div>' + 
+      '</div>' + 
+    '</a>' + 
+    '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
+      '<div class="card-block">' + list + '</div>' + 
+    '</div>' + 
+  '</div>'
+  /*'<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
+    '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
+      '<div class="card-header" role="tab" id="heading ' + L.stamp(layer) + '">' + 
+        '<h6 class="feature-name justify-content-between">' + layer.feature.properties.NAME + 
+          '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
+        '</h6>' + 
+      '</div>' + 
+    '</a>' + 
+    '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
+      '<div class="card-block">' + list + '</div>' + 
+    '</div>' + 
+  '</div>'*/
     
 }
 
