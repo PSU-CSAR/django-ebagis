@@ -9,7 +9,6 @@ from .user import UserSerializer
 from .data import (
     GeodatabaseSerializer, FileSerializer, HRUZonesSerializer,
 )
-from .pourpoint import PourPointSerializer
 
 
 class AOIListSerializer(serializers.HyperlinkedModelSerializer):
@@ -40,7 +39,10 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
     zones = HRUZonesSerializer(read_only=True, many=True)
     parent_aoi = AOIListSerializer(read_only=True)
     child_aois = AOIListSerializer(read_only=True, many=True)
-    pourpoint = PourPointSerializer(read_only=True)
+    pourpoint = serializers.HyperlinkedRelatedField(
+        view_name='pourpoint-base:detail',
+        read_only=True,
+    )
 
     class Meta:
         model = AOI
@@ -58,7 +60,6 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 class AOIGeoSerializer(GeoFeatureModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
                                                read_only=True)
-    pourpoint = PourPointSerializer(read_only=True)
     created_by = UserSerializer(read_only=True)
     surfaces = GeodatabaseSerializer(read_only=True)
     layers = GeodatabaseSerializer(read_only=True)
@@ -69,6 +70,10 @@ class AOIGeoSerializer(GeoFeatureModelSerializer):
     zones = HRUZonesSerializer(read_only=True, many=True)
     parent_aoi = AOIListSerializer(read_only=True)
     child_aois = AOIListSerializer(read_only=True, many=True)
+    pourpoint = serializers.HyperlinkedRelatedField(
+        view_name='pourpoint-base:detail',
+        read_only=True,
+    )
 
     class Meta:
         model = AOI

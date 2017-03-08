@@ -5,11 +5,13 @@ from rest_framework_gis.serializers import (
     GeometrySerializerMethodField,
 )
 
+from .aoi import AOIListSerializer
 from ..models.pourpoint import PourPoint
 
 
 class PourPointSerializer(GeoFeatureModelSerializer):
     geometry = GeometrySerializerMethodField()
+    aois = AOIListSerializer(read_only=True, many=True)
 
     def get_geometry(self, obj):
         use_boundary = self.context['request'].GET.get('boundary', False)
@@ -18,4 +20,4 @@ class PourPointSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = PourPoint
         geo_field = 'geometry'
-        fields = ('name', 'awdb_id')
+        fields = ('name', 'awdb_id', 'aois')
