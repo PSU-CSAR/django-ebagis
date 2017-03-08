@@ -18,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = get_user_model().objects.all()
+    queryset = get_user_model().objects.filter(is_active=True)
     serializer_class = UserSerializer
     search_fields = ("username", "email")
 
