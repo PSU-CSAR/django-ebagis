@@ -20,7 +20,6 @@ SETUP_STR = "EBAGIS_IS_SETUP"
 # these will be added via the setup function
 EBAGIS_INSTALLED_APPS = [
     'rest_framework',
-    'rest_framework.authtoken',
     'rest_framework_gis',
     'rest_framework_swagger',
     'drf_chunked_upload',

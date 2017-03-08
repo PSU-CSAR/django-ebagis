@@ -41,12 +41,6 @@ class ExpiringToken(models.Model):
     created = models.DateTimeField(_("Created"), auto_now_add=True)
 
     class Meta:
-        # Work around for a bug in Django:
-        # https://code.djangoproject.com/ticket/19422
-        #
-        # Also see corresponding ticket:
-        # https://github.com/tomchristie/django-rest-framework/issues/705
-        abstract = 'rest_framework.authtoken' not in settings.INSTALLED_APPS
         verbose_name = _("Token")
         verbose_name_plural = _("Tokens")
 
