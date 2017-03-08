@@ -11,6 +11,8 @@ from ..serializers.user import (
     UserSerializer, GroupSerializer, PermissionSerializer
 )
 
+from ..utils import user
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -19,6 +21,9 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     search_fields = ("username", "email")
+
+    def perform_destroy(self, instance):
+        user.deactivate(instance)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
