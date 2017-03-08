@@ -8,7 +8,7 @@ $('#feature-list').on("click", ".feature-row", function(e) {
   var featureRow = this;
   $('#feature-list').off("mouseout", ".feature-row", clearHighlight);
   console.log(parseInt($(featureRow).attr("id"), 10));
-  //sidebarClick(parseInt($(featureRow).attr("id"), 10));
+  sidebarClick(parseInt($(featureRow).attr("id"), 10));
 });
 
 $('#feature-list').on('show.bs.collapse', '.feature-row', function(e) {
@@ -93,12 +93,21 @@ $(document).on('click', '#sidebar-show-btn', function(event) {
 
 $(document).on('click', '.aoi-row', function(event){
   var featureRow = this;
-  console.log(this);
-  console.log('aoi-list');
-  sidebarClick(parseInt($(featureRow).attr("id").substring(4),10));
-  console.log(parseInt($(featureRow).attr("id").substring(4),10));
-
+  //console.log(this);
+  //console.log('aoi-list');
+  aoiListClick(parseInt($(featureRow).attr("id").substring(4),10));
+  //console.log(parseInt($(featureRow).attr("id").substring(4),10));
 });
+
+function aoiListClick(id) {
+  var layer = markerClusters.getLayer(id);
+  layer.fire("click");
+  /* Hide sidebar and go to the map on small screens */
+  if (document.body.clientWidth <= 767) {
+    $("#sidebar").hide();
+    map.invalidateSize();
+  }
+}
 
 function animateSidebar() {
   var sidebar_show_btn = $('#sidebar-show-btn');
@@ -121,44 +130,6 @@ function animateSidebar() {
 
 function setMuseumRow(layer) {
   var list = 
-    /*'<div class="list-group" id="aoi-list">' + 
-      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi1' + L.stamp(layer) + '">' +
-        '<div class="row">' +
-          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio' + 
-          '</div>' + 
-          '<div class="col-2 aoi-icon">' + 
-            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
-          '</div>' + 
-        '</div>'  + 
-      '</a>' + 
-      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi2' + L.stamp(layer) + '">' +
-        '<div class="row">' +
-          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras justo odio' + 
-          '</div>' + 
-          '<div class="col-2 aoi-icon">' + 
-            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
-          '</div>' + 
-        '</div>'  + 
-      '</a>' + 
-      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi3' + L.stamp(layer) + '">' +
-        '<div class="row">' +
-          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras justo odio Cras' + 
-          '</div>' + 
-          '<div class="col-2 aoi-icon">' + 
-            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
-          '</div>' + 
-        '</div>'  + 
-      '</a>' + 
-      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi4' + L.stamp(layer) + '">' +
-        '<div class="row">' +
-          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras' + 
-          '</div>' + 
-          '<div class="col-2 aoi-icon">' + 
-            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
-          '</div>' + 
-        '</div>'  + 
-      '</a>' +  
-    '</div>';*/
     '<table class="table table-hover" id="aoi-list">' + 
       '<thead>' + 
         '<tr>' + 
@@ -216,7 +187,7 @@ function setMuseumRow(layer) {
 
   return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
     '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
-      '<div class="card-header" role="tab" id="heading ' + L.stamp(layer) + '">' + 
+      '<div class="px-2 card-header pourpoint-header" role="tab" id="heading' + L.stamp(layer) + '">' + 
         '<div class="row">' +
           '<div class="col-10">' + 
             '<h6 class="mb-0 feature-name" >' + layer.feature.properties.NAME +'</h6>' + 
@@ -257,7 +228,7 @@ function clearHighlight() {
 function sidebarClick(id) {
   var layer = markerClusters.getLayer(id);
   map.setView([layer.getLatLng().lat, layer.getLatLng().lng], 17);
-  layer.fire("click");
+  //layer.fire("click");
   /* Hide sidebar and go to the map on small screens */
   if (document.body.clientWidth <= 767) {
     $("#sidebar").hide();
