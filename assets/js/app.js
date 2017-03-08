@@ -101,7 +101,7 @@ $(document).on('click', '.aoi-row', function(event){
 });
 
 function animateSidebar() {
-  var sidebar_show_btn = $('#sidebar-show-btn')
+  var sidebar_show_btn = $('#sidebar-show-btn');
   var hidden = false;
   if (!sidebar_show_btn.hasClass('hidden')) {
     sidebar_show_btn.addClass('hidden');
@@ -121,37 +121,105 @@ function animateSidebar() {
 
 function setMuseumRow(layer) {
   var list = 
-  '<div class="list-group" id="aoi-list">' +  
-    '</button>' + 
-    '<button type="button" id=aoi1' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>Cras justo odio Cras justo'  +
-    '</button>' +
-    '<button type="button" id=aoi2' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">'+ '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>' + 'Dapibus ac facilisis in Dapibus ac facilisis in Dapibus ac facilisis in Dapibus ac facilisis in'  +
-    '</button>' +
-    '<button type="button" id=aoi3' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>' +'Morbi leo risus' +
-    '</button>' +
-    '<button type="button" id=aoi4' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>' + 'Porta ac consectetur ac'  +
-    '</button>' + 
-    '<button type="button" id=aoi5' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action"><i class="fa fa-info-circle pull-right" aria-hidden="true"></i>Vestibulum at eros' +
-    '</button>' + 
-    '<button type="button" id=aoi6' + L.stamp(layer) + '" class="aoi-row list-group-item list-group-item-action">' + '<i class="fa fa-info-circle pull-right" aria-hidden="true"></i>Vestibulum at eros Vestibulum at Vestibulum at' +
-    '</button>' + 
-  '</div>' 
-  /*
-    '<div class="list-group">' + 
-      '<a href="#" class="list-group-item active">Cras justo odio' + 
+    /*'<div class="list-group" id="aoi-list">' + 
+      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi1' + L.stamp(layer) + '">' +
+        '<div class="row">' +
+          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio' + 
+          '</div>' + 
+          '<div class="col-2 aoi-icon">' + 
+            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
+          '</div>' + 
+        '</div>'  + 
       '</a>' + 
-      '<a href="#" class="list-group-item list-group-item-action"><i class="fa fa-info-circle" aria-hidden="true"></i>Dapibus ac facilisis in Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis in</a>' + 
-      '<a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inMorbi leo risus<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
-      '<a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inPorta ac consectetur ac<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
-      '<a href="#" class="list-group-item list-group-item-action disabled">Dapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inDapibus ac facilisis inVestibulum at eros<i class="fa fa-info-circle" aria-hidden="true"></i></a>' + 
-    '</div>'*/
+      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi2' + L.stamp(layer) + '">' +
+        '<div class="row">' +
+          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras justo odio' + 
+          '</div>' + 
+          '<div class="col-2 aoi-icon">' + 
+            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
+          '</div>' + 
+        '</div>'  + 
+      '</a>' + 
+      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi3' + L.stamp(layer) + '">' +
+        '<div class="row">' +
+          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras justo odio Cras' + 
+          '</div>' + 
+          '<div class="col-2 aoi-icon">' + 
+            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
+          '</div>' + 
+        '</div>'  + 
+      '</a>' + 
+      '<a href="#" class="list-group-item list-group-item-action aoi-row" id="aoi4' + L.stamp(layer) + '">' +
+        '<div class="row">' +
+          '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras' + 
+          '</div>' + 
+          '<div class="col-2 aoi-icon">' + 
+            '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' + 
+          '</div>' + 
+        '</div>'  + 
+      '</a>' +  
+    '</div>';*/
+    '<table class="table table-hover" id="aoi-list">' + 
+      '<thead>' + 
+        '<tr>' + 
+          '<th>AOI List</th>' + 
+        '</tr>' + 
+      '</thead>' + 
+      '<tbody>' + 
+        '<tr>' + 
+          '<td class="aoi-row" id="aoi1' + L.stamp(layer) + '">' +
+            '<div class="row">' +
+              '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio' + 
+              '</div>' + 
+              '<div class="col-2 aoi-icon">' + 
+                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
+              '</div>' + 
+            '</div>'  + 
+          '</td>' + 
+        '</tr>' +
+        '<tr>' + 
+          '<td class="aoi-row" id="aoi2' + L.stamp(layer) + '">' +
+            '<div class="row">' +
+              '<div class="col-10">' + layer.feature.properties.NAME + 
+              '</div>' + 
+              '<div class="col-2 aoi-icon">' + 
+                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
+              '</div>' + 
+            '</div>'  + 
+          '</td>' + 
+        '</tr>' +
+        '<tr>' + 
+          '<td class="aoi-row" id="aoi3' + L.stamp(layer) + '">' +
+            '<div class="row">' +
+              '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras' + 
+              '</div>' + 
+              '<div class="col-2 aoi-icon">' + 
+                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
+              '</div>' + 
+            '</div>'  + 
+          '</td>' + 
+        '</tr>' +
+        '<tr>' + 
+          '<td class="aoi-row" id="aoi4' + L.stamp(layer) + '">' +
+            '<div class="row">' +
+              '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras justo odio Cras' + 
+              '</div>' + 
+              '<div class="col-2 aoi-icon">' + 
+                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
+              '</div>' + 
+            '</div>'  + 
+          '</td>' + 
+        '</tr>' + 
+      '</tbody>' + 
+    '</table>';
+
 
   return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
     '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
       '<div class="card-header" role="tab" id="heading ' + L.stamp(layer) + '">' + 
         '<div class="row">' +
           '<div class="col-10">' + 
-            '<h6 class="mb-0" >' + layer.feature.properties.NAME +'</h6>' + 
+            '<h6 class="mb-0 feature-name" >' + layer.feature.properties.NAME +'</h6>' + 
           '</div>' + 
           '<div class="col-2">' + 
             '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
@@ -162,7 +230,7 @@ function setMuseumRow(layer) {
     '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
       '<div class="card-block">' + list + '</div>' + 
     '</div>' + 
-  '</div>'
+  '</div>';
   /*'<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
     '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
       '<div class="card-header" role="tab" id="heading ' + L.stamp(layer) + '">' + 
