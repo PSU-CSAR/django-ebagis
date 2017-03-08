@@ -13,4 +13,5 @@ class DownloadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Download
+        fields = '__all__'
         read_only_fields = ('status', 'completed_at', 'task', 'name')
