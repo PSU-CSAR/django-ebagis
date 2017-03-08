@@ -24,6 +24,8 @@ EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS',  168)
 # See: https://github.com/tomchristie/django-rest-framework/issues/1297
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
+MAX_RETRIES = 2**16
+
 
 @python_2_unicode_compatible
 class ExpiringToken(models.Model):
@@ -51,12 +53,15 @@ class ExpiringToken(models.Model):
 
     def update(self):
         self.created = timezone.now()
-        while True:
+        # we use i to prevent an endless loop for
+        # some DB problem or bugs or something
+        i = 0
+        while i < MAX_RETRIES:
             self.key = self.generate_key()
             try:
                 self.save()
             except:
-                pass
+                i += 1
             else:
                 break
 
@@ -67,7 +72,15 @@ class ExpiringToken(models.Model):
         return self.key
 
     @property
+    def expires(self):
+        return self.created + timedelta(hours=EXPIRE_HOURS) \
+            if self.is_valid else "Expired"
+
+    @property
     def is_valid(self):
-        if self.created >= timezone.now() - timedelta(hours=EXPIRE_HOURS):
-            return True
+        try:
+            return self.user.is_active and \
+                self.created >= timezone.now() - timedelta(hours=EXPIRE_HOURS)
+        except TypeError:
+            pass
         return False
