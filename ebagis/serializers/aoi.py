@@ -8,7 +8,6 @@ from ..models.aoi import AOI
 from .user import UserSerializer
 from .data import (
     GeodatabaseSerializer, FileSerializer, HRUZonesSerializer,
-    PrismDirSerializer,
 )
 from .pourpoint import PourPointSerializer
 
@@ -45,13 +44,13 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AOI
-        fields = ("url", "name", "created_by", "created_at", "comment",
-                  "surfaces", "layers", "aoidb", "analysis", "prism",
-                  "maps",
-                  "zones",
-                  "parent_aoi", "child_aois",
-                  "modified_at",
-                  "pourpoint",
+        fields = ('url', 'name', 'created_by', 'created_at', 'comment',
+                  'surfaces', 'layers', 'aoidb', 'analysis', 'prism',
+                  'maps',
+                  'zones',
+                  'parent_aoi', 'child_aois',
+                  'modified_at',
+                  'pourpoint',
                   )
         extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
