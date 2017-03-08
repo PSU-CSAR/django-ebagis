@@ -31,9 +31,8 @@ EBAGIS_INSTALLED_APPS = [
 
 # settings for the above apps
 # these apply to django_ebagis only, not the whole site
-# these will be set via the setup function
+# these will be set via the setup function in ebagis.__init__
 EBAGIS_APP_SETTINGS = {
-
     "ACCOUNT_AUTHENTICATION_METHOD": "username",
     "ACCOUNT_EMAIL_REQUIRED": True,
     "ACCOUNT_EMAIL_VERIFICATION": "mandatory",
