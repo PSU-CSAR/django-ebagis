@@ -128,8 +128,30 @@ function animateSidebar() {
   );
 }
 
-function setMuseumRow(layer) {
-  var list = 
+function setFeatureRow(layer) {
+  var theTemplateScript = $('#featurerow-template').html();
+  var theTemplate = Handlebars.compile(theTemplateScript);
+  
+  var aoi1 = {name: 'aoi1', num: '1', id: L.stamp(layer)};
+  var aoi2 = {name: 'aoi2', num: '2', id: L.stamp(layer)};
+  var aoi3 = {name: 'aoi3', num: '3', id: L.stamp(layer)};
+  var aoi4 = {name: 'aoi4', num: '4', id: L.stamp(layer)};
+
+  var context = {
+    id: L.stamp(layer),
+    featureName: layer.feature.properties.NAME,
+    lat: layer.getLatLng().lat,
+    long: layer.getLatLng().lng,
+    aois: [
+      aoi1,
+      aoi2,
+      aoi3,
+      aoi4
+    ]
+  };
+  return theTemplate(context);
+
+  /*var list = 
     '<table class="table table-hover" id="aoi-list">' + 
       '<thead>' + 
         '<tr>' + 
@@ -189,8 +211,11 @@ function setMuseumRow(layer) {
     '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '" class="featurea">' + 
       '<div class="card-header pourpoint-header" role="tab" id="heading' + L.stamp(layer) + '">' + 
         '<div class="row">' +
-          '<div class="col-10">' + 
-            '<h6 class="mb-0 feature-name" ><i class="fa fa-map-marker" aria-hidden="true"></i> ' + layer.feature.properties.NAME +'</h6>' + 
+          '<div class="col-2">' + 
+            '<i class="fa fa-map-marker" aria-hidden="true"></i> ' + 
+          '</div>' +
+          '<div class="col-8 px-0 ">' + 
+            '<h6 class="mb-0 feature-name" >' + layer.feature.properties.NAME +'</h6>' + 
           '</div>' + 
           '<div class="col-2">' + 
             '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
@@ -201,7 +226,7 @@ function setMuseumRow(layer) {
     '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
       '<div class="card-block">' + list + '</div>' + 
     '</div>' + 
-  '</div>';   
+  '</div>';   */
 }
 
 function sizeLayerControl() {
@@ -230,13 +255,13 @@ function syncSidebar() {
   /* Loop through theaters layer and add only features which are in the map bounds */
   theaters.eachLayer(function (layer) {
     if (map.hasLayer(theaterLayer)) {
-      $("#feature-list").append(setMuseumRow(layer));
+      $("#feature-list").append(setFeatureRow(layer));
     }
   });
   /* Loop through museums layer and add only features which are in the map bounds */
   museums.eachLayer(function (layer) {
     if (map.hasLayer(museumLayer)) {
-      $("#feature-list").append(setMuseumRow(layer));
+      $("#feature-list").append(setFeatureRow(layer));
     }
   });
   /* Update list.js featureList */
