@@ -186,11 +186,11 @@ function setMuseumRow(layer) {
 
 
   return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
-    '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
-      '<div class="px-2 card-header pourpoint-header" role="tab" id="heading' + L.stamp(layer) + '">' + 
+    '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '" class="featurea">' + 
+      '<div class="card-header pourpoint-header" role="tab" id="heading' + L.stamp(layer) + '">' + 
         '<div class="row">' +
           '<div class="col-10">' + 
-            '<h6 class="mb-0 feature-name" >' + layer.feature.properties.NAME +'</h6>' + 
+            '<h6 class="mb-0 feature-name" ><i class="fa fa-map-marker" aria-hidden="true"></i> ' + layer.feature.properties.NAME +'</h6>' + 
           '</div>' + 
           '<div class="col-2">' + 
             '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
@@ -201,20 +201,7 @@ function setMuseumRow(layer) {
     '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
       '<div class="card-block">' + list + '</div>' + 
     '</div>' + 
-  '</div>';
-  /*'<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
-    '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '">' + 
-      '<div class="card-header" role="tab" id="heading ' + L.stamp(layer) + '">' + 
-        '<h6 class="feature-name justify-content-between">' + layer.feature.properties.NAME + 
-          '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
-        '</h6>' + 
-      '</div>' + 
-    '</a>' + 
-    '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
-      '<div class="card-block">' + list + '</div>' + 
-    '</div>' + 
-  '</div>'*/
-    
+  '</div>';   
 }
 
 function sizeLayerControl() {
@@ -507,7 +494,7 @@ var attributionControl = L.control({
 });
 attributionControl.onAdd = function (map) {
   var div = L.DomUtil.create("div", "leaflet-control-attribution");
-  div.innerHTML = "<span class='hidden-xs'>Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
+  div.innerHTML = "<span class='hidden-xs'>Developed by <a href='https://www.pdx.edu/geography/center-for-spatial-analysis-research-csar'>PSU CSAR</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
   return div;
 };
 map.addControl(attributionControl);
