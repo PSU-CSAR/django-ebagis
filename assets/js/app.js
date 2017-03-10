@@ -128,10 +128,9 @@ function animateSidebar() {
   );
 }
 
+var featureRowTemplate = Handlebars.compile($('#featurerow-template').html());
+
 function setFeatureRow(layer) {
-  var theTemplateScript = $('#featurerow-template').html();
-  var theTemplate = Handlebars.compile(theTemplateScript);
-  
   var aoi1 = {name: 'aoi1', num: '1', id: L.stamp(layer)};
   var aoi2 = {name: 'aoi2', num: '2', id: L.stamp(layer)};
   var aoi3 = {name: 'aoi3', num: '3', id: L.stamp(layer)};
@@ -149,84 +148,7 @@ function setFeatureRow(layer) {
       aoi4
     ]
   };
-  return theTemplate(context);
-
-  /*var list = 
-    '<table class="table table-hover" id="aoi-list">' + 
-      '<thead>' + 
-        '<tr>' + 
-          '<th>AOI List</th>' + 
-        '</tr>' + 
-      '</thead>' + 
-      '<tbody>' + 
-        '<tr>' + 
-          '<td class="aoi-row" id="aoi1' + L.stamp(layer) + '">' +
-            '<div class="row">' +
-              '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio' + 
-              '</div>' + 
-              '<div class="col-2 aoi-icon">' + 
-                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
-              '</div>' + 
-            '</div>'  + 
-          '</td>' + 
-        '</tr>' +
-        '<tr>' + 
-          '<td class="aoi-row" id="aoi2' + L.stamp(layer) + '">' +
-            '<div class="row">' +
-              '<div class="col-10">' + layer.feature.properties.NAME + 
-              '</div>' + 
-              '<div class="col-2 aoi-icon">' + 
-                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
-              '</div>' + 
-            '</div>'  + 
-          '</td>' + 
-        '</tr>' +
-        '<tr>' + 
-          '<td class="aoi-row" id="aoi3' + L.stamp(layer) + '">' +
-            '<div class="row">' +
-              '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras' + 
-              '</div>' + 
-              '<div class="col-2 aoi-icon">' + 
-                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
-              '</div>' + 
-            '</div>'  + 
-          '</td>' + 
-        '</tr>' +
-        '<tr>' + 
-          '<td class="aoi-row" id="aoi4' + L.stamp(layer) + '">' +
-            '<div class="row">' +
-              '<div class="col-10">' + layer.feature.properties.NAME +' Cras justo odio Cras justoCras justo odio Cras' + 
-              '</div>' + 
-              '<div class="col-2 aoi-icon">' + 
-                '<i class="fa fa fa-info-circle pull-right" aria-hidden="true"></i>' +
-              '</div>' + 
-            '</div>'  + 
-          '</td>' + 
-        '</tr>' + 
-      '</tbody>' + 
-    '</table>';
-
-
-  return '<div class="feature-row card" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '">' + 
-    '<a data-toggle="collapse" data-parent="#feature-list" href="#collapse' + L.stamp(layer) + '" aria-expanded="false" aria-controls="collaspse' + L.stamp(layer) + '" class="featurea">' + 
-      '<div class="card-header pourpoint-header" role="tab" id="heading' + L.stamp(layer) + '">' + 
-        '<div class="row">' +
-          '<div class="col-2">' + 
-            '<i class="fa fa-map-marker" aria-hidden="true"></i> ' + 
-          '</div>' +
-          '<div class="col-8 px-0 ">' + 
-            '<h6 class="mb-0 feature-name" >' + layer.feature.properties.NAME +'</h6>' + 
-          '</div>' + 
-          '<div class="col-2">' + 
-            '<i class="fa fa-plus-square pull-right expand-icon" aria-hidden="true"></i>' + 
-          '</div>' + 
-        '</div>' + 
-      '</div>' + 
-    '</a>' + 
-    '<div id="collapse' + L.stamp(layer) + '" class="collapse" role="tabpanel" aria-labelledby="heading' + L.stamp(layer) + '">' + 
-      '<div class="card-block">' + list + '</div>' + 
-    '</div>' + 
-  '</div>';   */
+  return featureRowTemplate(context);
 }
 
 function sizeLayerControl() {
@@ -379,6 +301,9 @@ var markerClusters = new L.MarkerClusterGroup({
   disableClusteringAtZoom: 16
 });
 
+
+var featureModalTemplate = Handlebars.compile($('#featuremodal-template').html());
+
 /* Empty layer placeholder to add to layer control for listening when to add/remove theaters to markerClusters layer */
 var theaterLayer = L.geoJson(null);
 var theaters = L.geoJson(null, {
@@ -396,11 +321,17 @@ var theaters = L.geoJson(null, {
   },
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
-      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + feature.properties.NAME + "</td></tr>" + "<tr><th>Phone</th><td>" + feature.properties.TEL + "</td></tr>" + "<tr><th>Address</th><td>" + feature.properties.ADDRESS1 + "</td></tr>" + "<tr><th>Website</th><td><a class='url-break' href='" + feature.properties.URL + "' target='_blank'>" + feature.properties.URL + "</a></td></tr>" + "<table>";
+      var context = {
+        featureName: feature.properties.NAME,
+        featureTel: feature.properties.TEL,
+        featureAddress: feature.properties.ADDRESS1,
+        featureURL: feature.properties.URL
+      };
+
       layer.on({
         click: function (e) {
           $("#feature-title").html(feature.properties.NAME);
-          $("#feature-info").html(content);
+          $("#feature-info").html(featureModalTemplate(context));
           $("#featureModal").modal("show");
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
@@ -438,11 +369,16 @@ var museums = L.geoJson(null, {
   },
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
-      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Name</th><td>" + feature.properties.NAME + "</td></tr>" + "<tr><th>Phone</th><td>" + feature.properties.TEL + "</td></tr>" + "<tr><th>Address</th><td>" + feature.properties.ADRESS1 + "</td></tr>" + "<tr><th>Website</th><td><a class='url-break' href='" + feature.properties.URL + "' target='_blank'>" + feature.properties.URL + "</a></td></tr>" + "<table>";
+      var context = {
+        featureName: feature.properties.NAME,
+        featureTel: feature.properties.TEL,
+        featureAddress: feature.properties.ADDRESS1,
+        featureURL: feature.properties.URL
+      };
       layer.on({
         click: function (e) {
           $("#feature-title").html(feature.properties.NAME);
-          $("#feature-info").html(content);
+          $("#feature-info").html(featureModalTemplate(context));
           $("#featureModal").modal("show");
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
