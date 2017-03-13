@@ -1,0 +1,31 @@
+{% verbatim %}
+<script id="aoimodal-template" type="text/x-handlebars-template">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title text-primary" id="feature-title">{{name}}</h4>
+      </div>
+      <div class="modal-body" id="feature-info">
+        <table class="table table-striped table-bordered table-condensed">
+          <tr>
+            <th>Date Created</th>
+            <td>{{created_at}}</td>
+          </tr>
+          <tr>
+            <th>Created By</th>
+            <td>{{created_by.username}}</td>
+          </tr>
+          <tr>
+            <th>Note</th>
+            <td>{{comment}}</td>
+          </tr>
+        <table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</script>
+{% endverbatim %}

@@ -71,6 +71,10 @@ input[type="radio"], input[type="checkbox"] {
   padding-left: 0px;
   padding-right: 1px;
 }
+.zoom-to-pp {
+  margin-top: -.1rem;
+  padding: .2rem;
+}
 #aboutTabsContent {
   padding-top: 10px;
 }
