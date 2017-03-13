@@ -95,8 +95,11 @@ input[type="radio"], input[type="checkbox"] {
   padding-left: .75rem;
   padding-right: .75rem;
 }
-.feature-list{
+#feature-list{
   width: 100%;
+}
+#feature-list .row{
+  padding-right: 1rem;
 }
 .clear-btn {
   padding: 1rem;
@@ -157,7 +160,7 @@ a {
 }
 .navbar .navbar-brand {
   font-weight: bold;
-  font-size: 25px;
+  font-size: 1.78em;
   color: #FFFFFF;
 }
 .navbar-collapse.in {
@@ -220,13 +223,13 @@ a {
 }
 @media (max-width: 992px) {
   .navbar .navbar-brand {
-    font-size: 18px;
+    font-size: 1.78em;
   }
 }
 @media (max-width: 767px){
-  #sidebar {
+  /*#sidebar {
     display: none;
-  }
+  }*/
   .url-break {
     word-break: break-all;
     word-break: break-word;
