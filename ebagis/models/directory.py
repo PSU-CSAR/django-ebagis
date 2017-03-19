@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import glob
+import errno
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
@@ -11,7 +12,7 @@ from .. import constants
 
 from .base import ABC
 from .mixins import DirectoryMixin, AOIRelationMixin, CreatedByMixin
-from .file import MapDocument
+from .file import MapDocument, XML, TXT
 
 
 class DirectoryManager(models.Manager):
@@ -50,16 +51,45 @@ class Directory(DirectoryMixin, CreatedByMixin, AOIRelationMixin, ABC):
 class Maps(Directory):
     _prefetch = ["maps"]
     maps = GenericRelation(MapDocument, for_concrete_model=False)
+    analysis_xml = models.OneToOneField(
+        XML, related_name="maps_xml", null=True
+    )
+    map_parameters_txt = models.OneToOneField(
+        XML, related_name="maps_txt", null=True
+    )
 
     @property
     def subdirectory_of(self):
         return self.aoi.path
 
     @classmethod
-    def create(cls, path, user, aoi):
-        mapdir = super(Maps, cls).create(aoi, user, constants.MAPS_DIR_NAME)
+    def create(cls, path, user, aoi, comment=""):
+        mapdir = super(Maps, cls).create(
+            aoi,
+            user,
+            constants.MAPS_DIR_NAME,
+            comment=comment
+        )
+
         for mapdoc in glob.glob(os.path.join(path, "*" + constants.MAP_EXT)):
             MapDocument.create(mapdoc, mapdir, user)
+
+        other_files = [
+            ('analysis_xml',
+             XML.create,
+             os.path.join(path, constants.MAP_ANALYSISXML_FILE)),
+            ('map_parameters_txt',
+             TXT.create,
+             os.path.join(path, constants.MAP_PARAMTXT_FILE)),
+        ]
+
+        for attr, createfn, path in other_files:
+            try:
+                setattr(mapdir, attr, createfn(path, mapdir, user))
+            except (IOError, OSError) as e:
+                if e.errno != errno.EEXIST:
+                    raise e
+
         return mapdir
 
     def export(self, output_dir, querydate=timezone.now()):
@@ -68,6 +98,15 @@ class Maps(Directory):
         os.mkdir(outpath)
         for mapdoc in self.maps.all():
             mapdoc.export(outpath, querydate=querydate)
+
+        other_files = [xml, txt]
+
+
+        try:
+            self.paramgdb.export(output_dir, querydate)
+        except AttributeError:
+            pass
+
         return outpath
 
 

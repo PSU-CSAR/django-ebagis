@@ -110,6 +110,14 @@ FileData._meta.get_field('content_type').limit_choices_to =\
     {"app_label": "ebagis", 'name': 'file'}
 
 
+class TXTData(FileData):
+    class Meta:
+        proxy = True
+
+TXTData._meta.get_field('content_type').limit_choices_to =\
+    {"app_label": "ebagis", 'name': 'txt'}
+
+
 class XMLData(FileData):
     class Meta:
         proxy = True

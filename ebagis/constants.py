@@ -67,6 +67,8 @@ ANALYSIS_GDB = "analysis.gdb"
 REQUIRED_LAYERS[ANALYSIS_GDB] = []
 
 MAPS_DIR = "maps"
+MAP_PARAMTXT_FILE = "map_parameters.txt"
+MAP_ANALYSISXML_FILE = "analysis.xml"
 
 PRISM_GDB = "prism.gdb"
 REQUIRED_LAYERS[PRISM_GDB] = [("Jan", RASTER_TYPECODE),

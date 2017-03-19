@@ -3,7 +3,7 @@ import os
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey, GenericRelation,
-    )
+)
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.contrib.gis.db import models
@@ -15,7 +15,9 @@ from .base import ABC
 from .mixins import (
     ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, CreatedByMixin
 )
-from .file_data import FileData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
+from .file_data import (
+    FileData, TXTData, XMLData, MapDocumentData, LAYER_DATA_CLASSES
+)
 
 
 class File(ProxyMixin, CreatedByMixin, DateMixin,
@@ -80,16 +82,33 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
         return True
 
 
+class TXT(File):
+    class Meta:
+        proxy = True
+
+    @property
+    def _singular(self):
+        return self.content_object._classname in ["maps"]
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, input_file, containing_object, user,
+               id=None, comment=""):
+        return super(TXT, cls).create(input_file,
+                                      containing_object,
+                                      user,
+                                      data_class=TXTData,
+                                      id=id,
+                                      comment=comment)
+
+
 class XML(File):
     class Meta:
         proxy = True
 
     @property
     def _singular(self):
-        is_single = False
-        if self.content_object._classname == "hru":
-            is_single = True
-        return is_single
+        return self.content_object._classname in ["hru", "maps"]
 
     @classmethod
     @transaction.atomic
