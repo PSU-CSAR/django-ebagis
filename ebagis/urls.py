@@ -154,6 +154,20 @@ pourpoint_aois = views.PourPointViewSet.as_view({
     "get": "aois",
 })
 
+pourpoint_boundary_list = views.PourPointBoundaryViewSet.as_view({
+    "get": "list",
+    "put": "create",
+    "post": "create",
+})
+pourpoint_boundary_detail = views.PourPointBoundaryViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
+})
+pourpoint_boundary_aois = views.PourPointBoundaryViewSet.as_view({
+    "get": "aois",
+})
 
 file_patterns = [
     url(r"^$", file_list, name="list"),
@@ -278,6 +292,12 @@ pourpoint_patterns = [
     url(r"^{}/aois/$".format(r"(?P<pk>[0-9]+)"), pourpoint_aois, name="aois"),
 ]
 
+pourpoint_boundary_patterns = [
+    url(r"^$", pourpoint_boundary_list, name="list"),
+    url(r"^{}/$".format(r"(?P<pk>[0-9]+)"), pourpoint_boundary_detail, name="detail"),
+    url(r"^{}/aois/$".format(r"(?P<pk>[0-9]+)"), pourpoint_boundary_aois, name="aois"),
+]
+
 
 urlpatterns = [
     # API Root
@@ -398,4 +418,7 @@ urlpatterns = [
     url(r"^pourpoints/", include((pourpoint_patterns,
                                  "pourpoint",
                                  "pourpoint-base"))),
+    url(r"^pourpoint-boundaries/", include((pourpoint_boundary_patterns,
+                                            "pourpoint-boundary",
+                                            "pourpoint-boundary-base"))),
 ]

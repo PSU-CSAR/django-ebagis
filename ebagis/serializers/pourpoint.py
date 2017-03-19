@@ -21,3 +21,12 @@ class PourPointSerializer(GeoFeatureModelSerializer):
         model = PourPoint
         geo_field = 'geometry'
         fields = ('name', 'awdb_id', 'aois')
+
+
+class PourPointBoundarySerializer(GeoFeatureModelSerializer):
+    aois = AOIListSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = PourPoint
+        geo_field = 'boundary'
+        fields = ('id', 'name', 'awdb_id', 'aois')

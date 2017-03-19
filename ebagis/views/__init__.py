@@ -32,7 +32,7 @@ from .mixins import (
     DownloadMixin,
 )
 
-from .pourpoint import PourPointViewSet
+from .pourpoint import PourPointViewSet, PourPointBoundaryViewSet
 
 from .root import APIRoot
 

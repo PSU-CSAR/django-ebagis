@@ -13,7 +13,7 @@ from .user import UserSerializer, GroupSerializer, PermissionSerializer
 from .base import BaseSerializer
 from .mixins import URLMixin
 
-from .pourpoint import PourPointSerializer
+from .pourpoint import PourPointSerializer, PourPointBoundarySerializer
 
 from .data import (
     FileDataSerializer, FileSerializer, GeodatabaseSerializer,
