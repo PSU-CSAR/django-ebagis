@@ -1,8 +1,14 @@
 from __future__ import absolute_import
 from django.conf.urls import include, url
 
+from rest_framework.documentation import include_docs_urls
+
 from . import views
 from . import models
+
+
+API_TITLE = 'eBAGIS REST API'
+API_DESCRIPTION = '...'
 
 
 UUID = r"[a-fA-F0-9]{{8}}-" + \
@@ -300,6 +306,12 @@ pourpoint_boundary_patterns = [
 
 
 urlpatterns = [
+    # rest framework docs
+    url(
+        r'^docs/',
+        include_docs_urls(title=API_TITLE, description=API_DESCRIPTION),
+    ),
+
     # API Root
     url(r"^$", views.APIRoot.as_view()),
 
