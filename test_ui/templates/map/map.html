@@ -1,4 +1,14 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
+<link rel="stylesheet" href="{% static 'test_ui/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}"/>
+<link rel="stylesheet" href="{% static 'test_ui/css/map.css' %}">
+{% endblock %}
 
 {% block content %}
 <div id="container">
@@ -210,4 +220,14 @@
 {% include "./handlebars/feature_row.html" %}
 {% include "./handlebars/aoi_modal.html" %}
 <!-- End Handbar templates -->
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.0.3/dist/leaflet.markercluster.js"></script>
+<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+<script src="{% static 'test_ui/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}"></script>
+<script src="{% static 'test_ui/js/map.js' %}"></script>
 {% endblock %}

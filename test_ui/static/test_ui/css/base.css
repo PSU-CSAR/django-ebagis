@@ -1,0 +1,36 @@
+html, body, #container {
+  height: 100%;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.1;
+  padding: 2em 3em;
+}
+body {
+  padding-top: 48px;
+}
+/*.page-content{
+  overflow: auto;
+}*/
+input[type="radio"], input[type="checkbox"] {
+  margin: 0;
+}
+#hello.button {
+  background-color: #000;
+}
+.hidden {
+  display: none;
+}
+@media (max-width: 992px) {
+  .navbar .navbar-brand {
+    font-size: 1.78em;
+  }
+}
+/* Print Handling */
+@media print {
+  .navbar {
+    display: none !important;
+  }
+}
+
+
+

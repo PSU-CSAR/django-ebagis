@@ -85,12 +85,12 @@ function clearFilter() {
 }
 
 $('#feature-list').on('click', '.zoom-to-pp', function(e) {
-    console.log(parseInt($(this).parents()));
     var layer = markerClusters.getLayer(parseInt($(this).parents().eq(4).attr('id')));
     map.fitBounds(layer.getBounds(), {
         "maxZoom": 9,
         "animate": true,
     });
+    return false;
 });
 
 
@@ -147,12 +147,7 @@ $("#sidebar-hide-btn").click(function() {
   return false;
 });
 
-$(".card-header").click(function(event) {
-  console.log("header");
-});
-
-
-$('#sidebar').on('click', '#sidebar-show-btn', function(event) {
+$('#container').on('click', '#sidebar-show-btn', function(event) {
   animateSidebar();
   return false;
 });

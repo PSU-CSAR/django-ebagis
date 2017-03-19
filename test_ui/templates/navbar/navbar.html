@@ -2,21 +2,22 @@
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="#"><i class="fa fa-globe" aria-hidden="true"></i> NWCC eBagis</a>
+  {% url 'ebagis_home' as url_home %}
+  <a class="navbar-brand" href={{ url_home }}><i class="fa fa-globe" aria-hidden="true"></i> NWCC eBagis</a>
   <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="http://example.com" id="about-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-question-circle" aria-hidden="true"></i>
-          About
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
+
+      <li class="nav-item {% if request.get_full_path == url_home %}active{% endif %}">
+        <a class="nav-link" href={{ url_home }}><i class="fa fa-map" aria-hidden="true"></i> AOI Browser</a>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item">
+        <a class="nav-link" href="#"><i class="fa fa-bar-chart" aria-hidden="true"></i> PRISM Statistics</a> {# url 'ebagis_prism' #}
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"><i class="fa fa-question-circle" aria-hidden="true"></i> About</a> {# url 'ebagis_about' #}
+      </li>
+
+      <!--<li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="http://example.com" id="toolsDrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fa fa-wrench" aria-hidden="true"></i>
           Tools
@@ -27,33 +28,39 @@
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#" id="login-btn">Login</a>
         </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="downloadDrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-cloud-download" aria-hidden="true"></i>
-          Download
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="data/boroughs.geojson" download="bouroughs.geojson" targe="_blank" >Boroughs</a>
-          <a class="dropdown-item" href="data/subways.geojson" download="subways.geojson" target="_blank">Subway Lines</a>
-          <a class="dropdown-item" href="data/DOITT_THEATER_01_13SEPT2010.geojson" download="theaters.geojson" target="_blank">Theaters</a>
-          <a class="dropdown-item" href="data/DOITT_MUSEUM_01_13SEPT2010.geojson" download="theaters.geojson" target="_blank">Museums</a>
-        </div>
-      </li>
+      </li>-->
+
     </ul>
     <ul class="nav navbar-nav pull-xs-right">
-      <li class="nav-item dropdown pull-sm-right">
-        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-user-circle" aria-hidden="true"></i>
-          Hello NAME
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Your Account</a>
-          <a class="dropdown-item" href="#">Sign Out</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Sign In</a>
-        </div>
-      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item dropdown pull-sm-right">
+          <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-user-circle" aria-hidden="true"></i>
+            Hello {{ user.username }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="#">Your Profile</a>
+            <a class="dropdown-item" href="#">Your Requests</a>
+            {% if user.is_staff %}
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href={% url 'admin:index' %}>eBAGIS Admin</a>
+            {% endif %}
+            <div class="dropdown-divider"></div>
+            <form class="dropdown-item" action={% url 'account_logout' %} method="post">
+              {% csrf_token %}
+              <a href="javascript:;" onclick="parentNode.submit();">Sign Out</a>
+              <input type="hidden" name="mess" value="Sign Out">
+            </form>
+          </div>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href={% url 'account_signup' %}><i class="fa fa-user-plus" aria-hidden="true"></i> Sign Up</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href={% url 'account_login' %}><i class="fa fa-user-circle" aria-hidden="true"></i> Sign In</a>
+        </li>
+      {% endif %}
     </ul>
   </div>
 </nav>
