@@ -1,16 +1,15 @@
-html, body, .container {
+html, body {
   height: 100%;
   width: 100%;
   font-size: 14px;
   line-height: 1.1;
-  padding: 2em 3em;
+}
+.page-content {
+  padding-top: 2rem;
 }
 body {
   padding-top: 48px;
 }
-/*.page-content{
-  overflow: auto;
-}*/
 input[type="radio"], input[type="checkbox"] {
   margin: 0;
 }

@@ -1,9 +1,6 @@
-{% extends 'base.html' %}
-{% load staticfiles %}
+{% extends '_contentbase.html' %}
 
-{% block content %}
-<div class="container">
-    <h1>AOI Details</h1>
-    {{ aoi.name }}
-</div>
+{% block _content %}
+<h1>AOI Details</h1>
+{{ aoi.name }}
 {% endblock %}
