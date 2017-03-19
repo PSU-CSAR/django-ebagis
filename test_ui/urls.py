@@ -21,13 +21,20 @@ urlpatterns = [
     url(r'^$',
         TemplateView.as_view(template_name='map/map.html'),
         name='ebagis_home'),
+
     url(r'^aois/$'.format(PK_QUERY),
         TemplateView.as_view(template_name='map/map.html'),
         name='aoi_root_url'),
     url(r'^aois/{}/$'.format(PK_QUERY),
         views.AOIDetailsView.as_view(),
         name='aoi_details'),
+
+    url(r'^about/$',
+        TemplateView.as_view(template_name='about.html'),
+        name='ebagis_about'),
+
     url(r'^accounts/login/$', allauth_views.login, name="account_login",
         kwargs={'redirect_authenticated_user': True}),
     url(r'^accounts/', include('allauth.urls')),
+
 ]
