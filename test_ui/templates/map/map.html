@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="{% static 'test_ui/css/map.css' %}">
 {% endblock %}
 
-{% block content %}
+{% block base_content %}
 <div class="container">
   <div id="sidebar">
     <div class="sidebar-wrapper" id="features">
@@ -220,7 +220,7 @@
 {% include "./handlebars/feature_row.html" %}
 {% include "./handlebars/aoi_modal.html" %}
 <!-- End Handbar templates -->
-{% endblock %}
+{% endblock base_content %}
 
 {% block js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>

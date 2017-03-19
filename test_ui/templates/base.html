@@ -32,8 +32,8 @@
   <body>
     {% include "./navbar/navbar.html" %}
 
-    {% block content %}
-    {% endblock %}
+    {% block base_content %}
+    {% endblock base_content %}
 
     <script src="{% static 'rest_framework/js/coreapi-0.1.0.js' %}"></script>
     <script src="{% url 'api-docs:schema-js' %}"></script>
