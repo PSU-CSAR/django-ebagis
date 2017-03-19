@@ -1,7 +1,3 @@
-.navbar {
-  padding-left: .25rem;
-  padding-right: .25rem;
-}
 .navbar .navbar-brand {
   font-weight: bold;
   font-size: 1.78em;
@@ -10,13 +6,7 @@
 .navbar-collapse.in {
   overflow-y: hidden;
 }
-.navbar-header .navbar-icon-container {
-  margin-right: 15px;
-}
-.navbar-header .navbar-icon {
-  line-height: 50px;
-  height: 50px;
-}
-.navbar-header a.navbar-icon {
-  margin-left: 25px;
+.nav-icon {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
