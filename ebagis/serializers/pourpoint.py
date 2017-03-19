@@ -20,7 +20,7 @@ class PourPointSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = PourPoint
         geo_field = 'geometry'
-        fields = ('name', 'awdb_id', 'aois')
+        fields = ('id', 'name', 'awdb_id', 'aois')
 
 
 class PourPointBoundarySerializer(GeoFeatureModelSerializer):

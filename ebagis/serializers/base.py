@@ -6,6 +6,7 @@ from .user import UserSerializer
 
 
 class BaseSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
     created_at = serializers.DateTimeField()
     removed_at = serializers.DateTimeField()
     name = serializers.CharField(max_length=100)

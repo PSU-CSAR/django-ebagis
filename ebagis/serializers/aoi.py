@@ -16,7 +16,7 @@ class AOIListSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AOI
-        fields = ('url', 'name', 'created_at', 'created_by', "comment")
+        fields = ('id', 'url', 'name', 'created_at', 'created_by', "comment")
         extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
@@ -24,7 +24,7 @@ class AOIGeoListSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = AOI
         geo_field = 'boundary'
-        fields = ('url', 'name')
+        fields = ('id', 'url', 'name')
         extra_kwargs = {'url': {'view_name': 'aoi-base:detail'}}
 
 
@@ -46,7 +46,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AOI
-        fields = ('url', 'name', 'created_by', 'created_at', 'comment',
+        fields = ('id', 'url', 'name', 'created_by', 'created_at', 'comment',
                   'surfaces', 'layers', 'aoidb', 'analysis', 'prism',
                   'maps',
                   'zones',
@@ -58,6 +58,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AOIGeoSerializer(GeoFeatureModelSerializer):
+    id = serializers.UUIDField()
     url = serializers.HyperlinkedIdentityField(view_name='aoi:detail',
                                                read_only=True)
     created_by = UserSerializer(read_only=True)
