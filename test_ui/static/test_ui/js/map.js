@@ -103,7 +103,7 @@ $("#sidebar-hide-btn").click(function() {
   return false;
 });
 
-$('#container').on('click', '#sidebar-show-btn', function(event) {
+$('#sidebar-show-btn').click(function() {
   animateSidebar();
   return false;
 });
