@@ -381,6 +381,61 @@ var zoomControl = L.control.zoom({
   position: "bottomright"
 }).addTo(map);
 
+L.Control.ZoomToExtent = L.Control.extend({
+    options: {
+      position: 'topleft',
+      text: '<i class="fa fa-arrows-alt" aria-hidden="true"></i>',
+      title: 'Zoom to Data Extent',
+      className: 'leaflet-control-zoomtoextent',
+      layer: ''
+    },
+    onAdd: function (map) {
+      this._map = map;
+      return this._initLayout();
+    },
+    _initLayout: function () {
+      var container = L.DomUtil.create('div', 'leaflet-bar ' +
+        this.options.className);
+      this._container = container;
+      this._fullExtentButton = this._createExtentButton(container);
+
+      L.DomEvent.disableClickPropagation(container);
+
+      return this._container;
+    },
+    _createExtentButton: function () {
+      var link = L.DomUtil.create('a', this.options.className + '-toggle',
+        this._container);
+      link.href = '#';
+      link.innerHTML = this.options.text;
+      link.title = this.options.title;
+
+      L.DomEvent
+        .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+        .on(link, 'click', L.DomEvent.stop)
+        .on(link, 'click', this._zoomToDefault, this);
+      return link;
+    },
+    _zoomToDefault: function () {
+      this._map.fitBounds(this.options.layer.getBounds());
+    }
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.zoomToExtentControl) {
+      this.addControl(new L.Control.ZoomToExtent());
+    }
+});
+
+L.control.zoomToExtent = function (options) {
+    return new L.Control.ZoomToExtent(options);
+};
+
+var zoomToExtentControl = L.control.zoomToExtent({
+  position: "bottomright",
+  layer: pourpoints,
+}).addTo(map);
+
 /* Larger screens get expanded layer control and visible sidebar */
 if (document.body.clientWidth <= 767) {
   var isCollapsed = true;
