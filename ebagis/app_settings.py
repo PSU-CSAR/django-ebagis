@@ -25,6 +25,7 @@ EBAGIS_INSTALLED_APPS = [
     'drf_chunked_upload',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
     'rest_auth.registration',
 ]
 
