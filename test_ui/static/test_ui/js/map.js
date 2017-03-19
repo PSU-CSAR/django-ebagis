@@ -436,13 +436,6 @@ var zoomToExtentControl = L.control.zoomToExtent({
   layer: pourpoints,
 }).addTo(map);
 
-/* Larger screens get expanded layer control and visible sidebar */
-if (document.body.clientWidth <= 767) {
-  var isCollapsed = true;
-} else {
-  var isCollapsed = false;
-}
-
 var baseLayers = {
   "Street Map": cartoLight,
   "Aerial Imagery": usgsImagery
@@ -455,7 +448,6 @@ var groupedOverlays = {
 };
 
 var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-  collapsed: isCollapsed
 }).addTo(map);
 
 /* Highlight search box text on click */
