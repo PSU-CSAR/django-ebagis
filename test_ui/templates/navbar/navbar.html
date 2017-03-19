@@ -3,12 +3,13 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   {% url 'ebagis_home' as url_home %}
+  {% url 'aoi_root_url' as url_aois %}
   <a class="navbar-brand" href={{ url_home }}><i class="fa fa-globe" aria-hidden="true"></i> NWCC eBagis</a>
   <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
 
-      <li class="nav-item {% if request.get_full_path == url_home %}active{% endif %}">
-        <a class="nav-link" href={{ url_home }}><i class="fa fa-map" aria-hidden="true"></i> AOI Browser</a>
+      <li class="nav-item {% if request.get_full_path == url_home or request.get_full_path == url_aois %}active{% endif %}">
+        <a class="nav-link" href={{ url_aois }}><i class="fa fa-map" aria-hidden="true"></i> AOI Browser</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#"><i class="fa fa-bar-chart" aria-hidden="true"></i> PRISM Statistics</a> {# url 'ebagis_prism' #}
