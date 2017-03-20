@@ -244,9 +244,9 @@ zones_data_patterns = [
     url(r"^{}/$".format(PK_QUERY),
         hruzonesdata_detail,
         name="detail"),
-    url(r"^{}/xml/".format(VERSION_QUERY),
-        include((file_patterns_no_id, "file", "hru-xml")),
-        {"file_type": models.XML}),
+    #url(r"^{}/xml/".format(VERSION_QUERY),
+    #    include((file_patterns_no_id, "file", "hru-xml")),
+    #    {"file_type": models.XML}),
     url(r"^{}/param/".format(VERSION_QUERY),
         include((geodatabase_patterns_no_id, "geodatabase", "hru-param")),
         {"geodatabase_type": models.ParamGDB}),
@@ -287,9 +287,9 @@ aoi_patterns = [
     url(r"^{}/zones/".format(AOI_QUERY),
         include((zones_patterns, "zones", "aoi-zones")),
         {"zones": True}),
-    url(r"^{}/maps/".format(AOI_QUERY),
-        include((file_patterns, "file", "aoi-map")),
-        {"file_type": models.MapDocument}),
+    #url(r"^{}/maps/".format(AOI_QUERY),
+    #    include((file_patterns, "file", "aoi-map")),
+    #    {"file_type": models.MapDocument}),
 ]
 
 pourpoint_patterns = [
@@ -419,12 +419,6 @@ urlpatterns = [
     url(r"^tables/",
         include((file_patterns, "file", "table-base")),
         {'file_type': models.Table}),
-    url(r"^maps/",
-        include((file_patterns, "file", "mapdocument-base")),
-        {'file_type': models.MapDocument}),
-    url(r"^xmls/",
-        include((file_patterns, "file", "xml-base")),
-        {'file_type': models.XML}),
 
     # Pourpoint URLs
     url(r"^pourpoints/", include((pourpoint_patterns,

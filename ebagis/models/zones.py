@@ -2,25 +2,19 @@ from __future__ import absolute_import
 import os
 
 from django.utils import timezone
-from django.contrib.gis.db import models
 
 from .. import constants
-from ..utils import transaction
 
 from .directory import Directory
 from .geodatabase import HRUZonesGDB, ParamGDB
-from .file import XML
+from .file import File
 
 
 class HRUZonesData(Directory):
-    xml = models.OneToOneField(XML, related_name="hru_xml", null=True)
-    hruzonesgdb = models.OneToOneField(HRUZonesGDB,
-                                       null=True,
-                                       related_name="hru_zones_data")
-    paramgdb = models.OneToOneField(ParamGDB,
-                                    null=True,
-                                    related_name="hru_zones_params")
-    hruzones = models.ForeignKey("HRUZones", related_name="versions")
+    _CREATE_DIRECTORY_ON_EXPORT = False
+
+    class Meta:
+        proxy = True
 
     def __init__(self, *args, **kwargs):
         # override default NO_ARCHIVING with GROUP_ARCHIVING rule
@@ -31,68 +25,49 @@ class HRUZonesData(Directory):
         super(HRUZonesData, self).__init__(*args, **kwargs)
 
     @property
-    def subdirectory_of(self):
-        return self.hruzones.path
+    def xml(self):
+        return self.files.get(name=constants.HRU_LOG_FILE)
 
     @property
-    def _parent_object(self):
-        return self.hruzones
+    def hruzonesgdb(self):
+        return self.subdirectories.get(classname=HRUZonesGDB.__name__)
+
+    @property
+    def paramgdb(self):
+        return self.subdirectories.get(classname=ParamGDB.__name__)
 
     def get_url(self, request):
-        return super(HRUZonesData, self).get_url(request, no_model_name=True)
+        return super(HRUZonesData, self).url(request, no_model_name=True)
 
-    @classmethod
-    @transaction.atomic
-    def create(cls, temp_hru_path, hruzones, user, id=None, comment=""):
-        # create a new HRUZonesData instance and save it
-        hruzonesdata_obj = HRUZonesData(aoi=hruzones.aoi,
-                                        name=hruzones.name,
-                                        hruzones=hruzones,
-                                        created_by=user,
-                                        id=id,
-                                        comment=comment)
-        hruzonesdata_obj.save()
-
+    def import_content(self, directory_to_import):
         # import the .gdb for this HRUZonesData instance
         # check first for hru gdb with _ prefixed: this is pre-cleaned
         # and does not have ignored layers
-        hruzones_gdb_name = hruzones.name + constants.GDB_EXT
-        hru_gdb_path = os.path.join(temp_hru_path, hruzones_gdb_name)
-        hru_gdb_path_underscore = os.path.join(temp_hru_path,
+        hruzones_gdb_name = self.name + constants.GDB_EXT
+        hru_gdb_path = os.path.join(directory_to_import, hruzones_gdb_name)
+        hru_gdb_path_underscore = os.path.join(directory_to_import,
                                                "_" + hruzones_gdb_name)
         if os.path.exists(hru_gdb_path_underscore):
             hru_gdb_path = hru_gdb_path_underscore
 
-        hruzonesdata_obj.hruzonesgdb = HRUZonesGDB.create(hru_gdb_path,
-                                                          user,
-                                                          hruzones.aoi,
-                                                          hruzonesdata_obj)
+        HRUZonesGDB.create(hru_gdb_path, self, self.created_by)
 
         # now import the param.gdb for this HRUZonesData instance
         param_gdb_path = os.path.join(
-            temp_hru_path,
+            directory_to_import,
             constants.HRU_PARAM_GDB_NAME + constants.GDB_EXT,
         )
 
         if os.path.exists(param_gdb_path):
-            hruzonesdata_obj.paramgdb = ParamGDB.create(
-                param_gdb_path,
-                user,
-                hruzones.aoi,
-                hruzonesdata_obj,
-            )
+            ParamGDB.create(param_gdb_path, self, self.created_by)
 
         # lastly import the HRU's xml log file
-        hru_XML_path = os.path.join(temp_hru_path, constants.HRU_LOG_FILE)
-        hruzonesdata_obj.xml = XML.create(hru_XML_path,
-                                          hruzonesdata_obj,
-                                          user)
+        hru_XML_path = os.path.join(
+            directory_to_import, constants.HRU_LOG_FILE
+        )
+        File.create(hru_XML_path, self, self.created_by)
 
-        # save the changes to this HRUZonesData instance and return it
-        hruzonesdata_obj.save()
-        return hruzonesdata_obj
-
-    def export(self, output_dir, querydate=timezone.now()):
+    def export_content(self, output_dir, querydate=timezone.now()):
         self.xml.export(output_dir, querydate)
         self.hruzonesgdb.export(output_dir, querydate)
         try:
@@ -103,74 +78,53 @@ class HRUZonesData(Directory):
 
 class HRUZones(Directory):
     _plural_name = "zones"
-    zones = models.ForeignKey("Zones", related_name="hruzones")
+
+    class Meta:
+        proxy = True
 
     @property
-    def subdirectory_of(self):
-        return self.zones.path
-
-    @property
-    def _parent_object(self):
+    def parent_object(self):
         return self.aoi
 
-    @classmethod
-    @transaction.atomic
-    def create(cls, temp_zones_path, hru_name, zones, user,
-               id=None, comment=""):
-        hruzones_obj = HRUZones(aoi=zones.aoi,
-                                name=hru_name,
-                                zones=zones,
-                                id=id,
-                                created_by=user,
-                                comment=comment)
-        hruzones_obj.save()
-        HRUZonesData.create(os.path.join(temp_zones_path, hru_name),
-                            hruzones_obj,
-                            user)
-        return hruzones_obj
+    @property
+    def versions(self):
+        return self.subdirectories.filter(classname=HRUZonesData.__name__)
 
-    def export(self, output_dir, querydate=timezone.now()):
-        super(HRUZones, self).export(output_dir, querydate)
-        outpath = os.path.join(output_dir, self.name)
-        os.mkdir(outpath)
+    def import_content(self, directory_to_import):
+        HRUZonesData.create(
+            directory_to_import,
+            self,
+            self.created_by,
+            name=self.name,
+        )
+
+    def export_content(self, output_dir, querydate=timezone.now()):
         versions = self.versions.filter(created_at__lt=querydate)
-        latest = versions.latest("created_at")
-        latest.export(outpath, querydate)
-        return outpath
+        versions.latest("created_at").export(output_dir,
+                                             querydate=querydate)
 
 
 class Zones(Directory):
+    class Meta:
+        proxy = True
+
     @property
-    def subdirectory_of(self):
-        return self.aoi.path
+    def hruzones(self):
+        return self.subdirectories.filter(classname=HRUZones.__name__)
 
-    @classmethod
-    @transaction.atomic
-    def create(cls, input_zones_dir, user, aoi, id=None, comment=""):
-        zones_obj = super(Zones, cls).create(aoi,
-                                             id=id,
-                                             user=user,
-                                             comment=comment)
-        zones_obj.save()
+    def import_content(self, directory_to_import):
+        if os.path.exists(directory_to_import):
+            hruzones = [d for d in os.listdir(directory_to_import)
+                        if os.path.isdir(os.path.join(directory_to_import, d))]
 
-        if os.path.exists(input_zones_dir):
-            hruzones = [d for d in os.listdir(input_zones_dir)
-                        if os.path.isdir(os.path.join(input_zones_dir, d))]
+            for hruzone_name in hruzones:
+                HRUZones.create(
+                    os.path.join(directory_to_import, hruzone_name),
+                    self,
+                    self.created_by,
+                    name=hruzone_name,
+                )
 
-            for hruzone in hruzones:
-                HRUZones.create(input_zones_dir,
-                                hruzone,
-                                zones_obj,
-                                user)
-
-        return zones_obj
-
-    def export(self, output_dir, querydate=timezone.now()):
-        super(Zones, self).export(output_dir, querydate)
-        outpath = os.path.join(output_dir, self.name)
-        os.mkdir(outpath)
-
-        for hruzone in self.hruzones.all():
-            hruzone.export(outpath, querydate)
-
-        return outpath
+    def export_content(self, output_dir, querydate=timezone.now()):
+        for hruzone in self.hruzones:
+            hruzone.export(output_dir, querydate)

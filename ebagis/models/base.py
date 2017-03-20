@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import uuid
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.gis.db import models
 
 from rest_framework.reverse import reverse
@@ -76,7 +77,10 @@ class ABC(models.Model):
             # in the field dict, though we have to do some funny
             # business to flatten the two lists together
             for field in [x for y in self._archive_fields.values() for x in y]:
-                dict_to_write[field] = getattr(self, field)
+                try:
+                    dict_to_write[field] = getattr(self, field)
+                except ObjectDoesNotExist:
+                    dict_to_write[field] = None
             # and we'll use our metadata module to make the changes
             write_metadata(self._metadata_path, dict_to_write)
 
@@ -109,12 +113,12 @@ class ABC(models.Model):
         # am not certain if I am going to keep the current behavior
         # or revert to this method
 
-        #if not self._parent_object:
+        #if not self.parent_object:
         #    view = self._classname + "-base:detail"
         #    kwargs = {"pk": pk}
         #    return reverse(view, kwargs=kwargs, request=request)
 
-        #url = self._parent_object.get_url(request)
+        #url = self.parent_object.get_url(request)
 
         #if self._singular:
         #    url += "{}/".format(self._classname)

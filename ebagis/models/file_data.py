@@ -3,8 +3,6 @@ import os
 import shutil
 from logging import exception
 
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.contrib.gis.db import models
 
@@ -22,9 +20,10 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
                AOIRelationMixin, ABC):
     path = models.CharField(max_length=1024, unique=True)
     encoding = models.CharField(max_length=20, null=True, blank=True)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.UUIDField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    _parent_object = models.ForeignKey('File',
+                                       related_name='versions',
+                                       on_delete=models.CASCADE)
+
     # we are using sha256 for file hashes; others would suffice,
     # but sha256 has less collisions so is a little bit safer
     sha256 = models.CharField(max_length=64, null=True, blank=True)
@@ -34,14 +33,10 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
     # the hash of the file is included as it might prove
     # useful for version detection later on
     _archive_fields = {
-        "read_only": ["id", "created_at", "created_by", "sha256", "object_id"],
+        "read_only": ["id", "created_at", "created_by",
+                      "sha256", "_parent_object"],
         "writable": ["comment"]
     }
-
-    class Meta:
-        index_together = [
-            ["object_id", "content_type", "classname"],
-        ]
 
     @property
     def _main_path(self):
@@ -49,7 +44,7 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
 
     @property
     def name(self):
-        return self.content_object.name
+        return self._parent_object.name
 
     def save(self, *args, **kwargs):
         to_update = False
@@ -64,27 +59,21 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
 
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, File, user, id=None, comment=""):
-        content_type = ContentType.objects.get_for_model(
-            File.__class__,
-            for_concrete_model=False,
-        )
-
+    def create(cls, input_file, File, id=None, comment=""):
         if not id:
             id = generate_uuid(cls)
 
         now = timezone.now()
         ext = os.path.splitext(os.path.basename(input_file))[1]
-        path = os.path.join(File.path,
+        path = os.path.join(File.parent_directory,
                             str(id) + ext)
         shutil.copy(input_file, path)
 
         try:
             data_obj = cls(aoi=File.aoi,
-                           content_type=content_type,
-                           object_id=File.id,
+                           _parent_object=File,
                            path=path,
-                           created_by=user,
+                           created_by=File.created_by,
                            created_at=now,
                            id=id,
                            comment=comment)
@@ -95,80 +84,41 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
             except:
                 exception("Failed to remove File Data on create error.")
             raise
-        return data_obj
+        else:
+            return data_obj
 
     def export(self, output_dir, name=None, copy_function=shutil.copy):
         if not name:
             name = self.name
         copy_function(self._main_path, os.path.join(output_dir, name))
 
-# "Data" types must match their enclosing layer type, e.g., a vector
-# data instance can only relate to a vector layer instance. Thus,
-# each type needs to have the content type choices limited to
-# restrict allowable relations to the appropriate class.
-FileData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'file'}
-
-
-class TXTData(FileData):
-    class Meta:
-        proxy = True
-
-TXTData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'txt'}
-
-
-class XMLData(FileData):
-    class Meta:
-        proxy = True
-
-XMLData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'xml'}
-
-
-class MapDocumentData(FileData):
-    class Meta:
-        proxy = True
-
-MapDocumentData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'mapdocument'}
-
 
 class LayerData(FileData):
-    ext = ""
+    #ext = ""
 
     class Meta:
         proxy = True
 
-    @property
-    def _main_path(self):
-        return self.path + self.ext
+    #@property
+    #def _main_path(self):
+    #    return self.path + self.ext
 
     @classmethod
     @transaction.atomic
-    def create(cls, arcpy_ext_layer, File, user, id=None, comment=""):
-        content_type = ContentType.objects.get_for_model(
-            File.__class__,
-            for_concrete_model=False
-        )
-
+    def create(cls, arcpy_ext_layer, File, id=None, comment=""):
         if not id:
             id = generate_uuid(cls)
 
         now = timezone.now()
-        output_dir = File.path
-        # the following line is dead now that IDs are used for file names,
-        # but I want to keep it around for reference in case I need later
-        #output_name = arcpy_ext_layer.name + now.strftime("_%Y%m%d%H%M%S")
+        output_dir = File.parent_directory
         newlyr = arcpy_ext_layer.copy_to_file(output_dir,
                                               outname=sanitize_uuid(str(id)))
 
         try:
             data_obj = cls(aoi=File.aoi,
-                           content_type=content_type,
-                           object_id=File.id,
-                           path=os.path.splitext(newlyr.path)[0],
-                           created_by=user,
+                           _parent_object=File,
+                           path=newlyr.path,
+                           created_by=File.created_by,
                            created_at=now,
                            id=id,
                            comment=comment)
@@ -180,13 +130,12 @@ class LayerData(FileData):
             except:
                 exception("Failed to remove File Data on create error.")
             raise
-        return data_obj
+        else:
+            return data_obj
 
 
 class VectorData(LayerData):
-#    srs_wkt = models.CharField(max_length=1000)
-#    geom_type = models.CharField(max_length=50)
-    ext = constants.FC_EXT
+    #ext = constants.FC_EXT
 
     class Meta:
         proxy = True
@@ -195,14 +144,9 @@ class VectorData(LayerData):
         from arcpy.management import CopyFeatures
         super(VectorData, self).export(output_dir, name, CopyFeatures)
 
-VectorData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'vector'}
-
 
 class RasterData(LayerData):
-    #srs_wkt = models.CharField(max_length=1000)
-    #resolution = models.FloatField()
-    ext = constants.RASTER_EXT
+    #ext = constants.RASTER_EXT
 
     class Meta:
         proxy = True
@@ -211,12 +155,9 @@ class RasterData(LayerData):
         from arcpy.management import CopyRaster
         super(RasterData, self).export(output_dir, name, CopyRaster)
 
-RasterData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'raster'}
-
 
 class TableData(LayerData):
-    ext = constants.TABLE_EXT
+    #ext = constants.TABLE_EXT
 
     class Meta:
         proxy = True
@@ -224,9 +165,6 @@ class TableData(LayerData):
     def export(self, output_dir, name=None):
         from arcpy.management import CopyRows
         super(TableData, self).export(output_dir, name, CopyRows)
-
-TableData._meta.get_field('content_type').limit_choices_to =\
-    {"app_label": "ebagis", 'name': 'table'}
 
 
 # used in the Layer class to find the proper data class to go

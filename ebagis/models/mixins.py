@@ -1,12 +1,9 @@
 from __future__ import absolute_import
-import logging
-import os
 
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models
 
-from .. import constants
 from ..utils.misc import get_subclasses
 
 from .metaclass import InheritanceMetaclass
@@ -14,12 +11,10 @@ from .metaclass import InheritanceMetaclass
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
-logger = logging.getLogger(__name__)
-
 
 class AOIRelationMixin(models.Model):
     """Generic mixin to provide a relation to the AOI model"""
-    aoi = models.ForeignKey("AOI", related_name="%(class)s_related")
+    aoi = models.ForeignKey("AOI", related_name="%(class)s")
 
     class Meta:
         abstract = True
@@ -37,7 +32,7 @@ class DateMixin(models.Model):
         get_latest_by = 'created_at'
         abstract = True
 
-    def _valid_querydate(self, querydate):
+    def _validate_querydate(self, querydate):
         if querydate < self.created_at:
             name = self.__class__.__name__
             raise Exception(
@@ -60,9 +55,6 @@ class DateMixin(models.Model):
             if set_modified:
                 self.modified_at = timezone.now()
         return super(DateMixin, self).save(*args, **kwargs)
-
-    def export(self, output_dir, querydate, *args, **kwargs):
-        self._valid_querydate(querydate)
 
 
 class CreatedByMixin(models.Model):
@@ -101,122 +93,6 @@ class UniqueNameMixin(models.Model):
 
     class Meta:
         abstract = True
-
-
-class DirectoryMixin(DateMixin, NameMixin, models.Model):
-    """Mixin providing directory creation and deletion to
-    directory-type models."""
-    _path = models.CharField(max_length=1000,
-                             db_column="path")
-    archiving_rule = models.CharField(max_length=10,
-                                      choices=constants.ARCHIVING_CHOICES,
-                                      default=constants.NO_ARCHIVING,
-                                      editable=False)
-    subdirectory_of = os.getcwd()
-
-    class Meta:
-        unique_together = ("subdirectory_of", "name")
-        abstract = True
-
-    @property
-    def _metadata_path(self):
-        """overriding this property to put the metadata file in the
-        directory above the directory represented by this object
-        """
-        # I don't think this object could ever represent the root
-        # of a disk, so I believe this property will always return a
-        # consistent value
-        return os.path.dirname(self._path)
-
-    @property
-    def _filesystem_name(self):
-        """this property is the name of the file system dir
-        that gets created when an instance is first saved
-        we simply default to using the value of the
-        "name" field, though this method can be overridden
-        to change what field/value subclasses use
-        """
-        return self.name
-
-    def save(self, *args, **kwargs):
-        """Overrides the default save method adding the following:
-
-        - if the path has not been set:
-            - sets the created at time
-            - set the path property to ensure a file system directory
-              is created for this directory object within its
-              enclosing file system folder
-        """
-        if not getattr(self, '_path', None):
-            # while a default created_at datetime is set by the
-            # date mixin, we have to explictly set the created_at
-            # datetime here, as it is required by the path method
-            # when creating the new directory and only would be set
-            # by default when the save method is called (after the
-            # path method has already been called)
-            now = timezone.now()
-            self.created_at = now
-            self.path
-        return super(DirectoryMixin, self).save(*args, **kwargs)
-
-    def delete(self, delete_file=True, *args, **kwargs):
-        """Overrides the default delete method adding the following:
-
-         - removes the directory at the path from the file system"""
-        if delete_file:
-            import shutil
-            if os.path.exists(self.path):
-                shutil.rmtree(self.path)
-        return super(DirectoryMixin, self).delete(*args, **kwargs)
-
-    @property
-    def path(self):
-        """On first run, creates the directory for a directory-using
-        model, returning the path of the created directory. If already
-        set, simply returns the directory path."""
-
-        # check to see if path property is set
-        if not getattr(self, '_path', None):
-            # default path is simply the value of the name field
-            # inside the subdirectory_of path
-            path = os.path.join(self.subdirectory_of, self._filesystem_name)
-
-            # if archiving rule set to group archiving, then the
-            # directory name need needs the date appended
-            if self.archiving_rule == constants.GROUP_ARCHIVING:
-                path += self.created_at.strftime("_%Y%m%d%H%M%S")
-
-            # try to create the directory
-            try:
-                os.makedirs(path)
-            except Exception as e:
-                logger.exception("Failed create directory: {}".format(path))
-                raise e
-            else:
-                # set the value of the directory path field
-                self._path = path
-
-        return self._path
-
-    # I hate this name but what are you going to do--can't use import
-    @classmethod
-    def create(cls, *args, **kwargs):
-        raise NotImplementedError
-        # I think this can be a generic function for the class...
-        # No, it can't, as arcpy functions must be used in geodatabases...
-        # I may implement it here and then override it in the geodatabase...
-        # name should default to the name of the directory, but geodatabases
-        # will need to strip the .gdb...
-        # With more thought, this really is as complex and specific as the
-        # export methods -- need to implement each subclass individually.
-
-    def export(self, output_dir, querydate, *args, **kwargs):
-        # this super references the export in the date mixin, which
-        # validates the querydate argument
-        super(DirectoryMixin, self).export(output_dir,
-                                           querydate,
-                                           *args,
-                                           **kwargs)
 
 
 class ProxyManager(models.Manager):
