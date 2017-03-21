@@ -85,7 +85,7 @@ class AOIDirectory(Directory):
 
     @property
     def maps(self):
-        return self.subdirectories.get(classname='MapDir')
+        return self.subdirectories.get(classname='Maps')
 
     @property
     def _zones(self):

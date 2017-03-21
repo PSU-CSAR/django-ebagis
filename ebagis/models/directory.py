@@ -40,6 +40,7 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     _archive_fields = {"read_only": ["id", "created_at", "created_by"],
                        "writable": ["name", "comment"]}
 
+    _path = models.CharField(max_length=1000, db_column="path")
     archiving_rule = models.CharField(max_length=10,
                                       choices=constants.ARCHIVING_CHOICES,
                                       default=constants.NO_ARCHIVING,
@@ -126,7 +127,7 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
         and the object's name."""
 
         # check to see if path property is set
-        if not getattr(self, 'parent_directory', None):
+        if not getattr(self, '_path', None):
             # default path is simply the value of the name field
             # inside the subdirectory_of path
             path = os.path.join(self.subdirectory_of, self._filesystem_name)
@@ -144,9 +145,9 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
                 raise e
             else:
                 # set the value of the directory path field
-                self.parent_directory = self.subdirectory_of
+                self._path = path
 
-        return os.path.join(self.parent_directory, self._filesystem_name)
+        return self._path
 
     @classmethod
     @transaction.atomic
@@ -179,17 +180,22 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
             # to define what content is actually imported
             dir_obj.import_content(import_dir)
 
-        except Exception as e:
+        except:
+            import sys
+            exc_info = sys.exc_info()
+
             try:
-                if dir_obj.path:
-                    shutil.rmtree(dir_obj.path)
-            except Exception as e2:
-                logger.exception(e2)
-                logger.exception(
-                    "Failed to remove directory on import error: {}"
-                    .format(dir_obj.path)
-                )
-            raise e
+                shutil.rmtree(dir_obj._path)
+            except Exception as e:
+                # check to see if the error was
+                # that the dir does not exist
+                if e.errno != errno.ENOENT:
+                    logger.exception(
+                        "Failed to remove directory on import error: {}"
+                        .format(dir_obj._path)
+                    )
+
+            raise exc_info[0], exc_info[1], exc_info[2]
 
         return dir_obj
 
@@ -268,16 +274,21 @@ class Maps(Directory):
         ]
 
         for _file in other_files:
-            File.create(_file, self, self.created_by)
+            try:
+                File.create(_file, self, self.created_by)
+            except Exception as e:
+                if e.errno != errno.ENOENT:
+                    raise e
 
 
 class PrismDir(Directory):
-    class Meta:
-        proxy = True
-
+    _CREATE_DIRECTORY_ON_EXPORT = False
     _prefetch = ["versions"]
     _singular = True
     _path_name = constants.PRISM_DIR_NAME
+
+    class Meta:
+        proxy = True
 
     @property
     def versions(self):

@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 import os
+import errno
 import shutil
-from logging import exception
 
-from django.utils import timezone
 from django.contrib.gis.db import models
 
 from .. import constants
@@ -18,7 +17,6 @@ from .mixins import (
 
 class FileData(ProxyMixin, DateMixin, CreatedByMixin,
                AOIRelationMixin, ABC):
-    path = models.CharField(max_length=1024, unique=True)
     encoding = models.CharField(max_length=20, null=True, blank=True)
     _parent_object = models.ForeignKey('File',
                                        related_name='versions',
@@ -26,7 +24,7 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
 
     # we are using sha256 for file hashes; others would suffice,
     # but sha256 has less collisions so is a little bit safer
-    sha256 = models.CharField(max_length=64, null=True, blank=True)
+    sha256 = models.CharField(max_length=64)
 
     # lists of field names to be written to the XML metadata file
     # we only need those that cannot be recreated, though
@@ -39,103 +37,89 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
     }
 
     @property
-    def _main_path(self):
-        return self.path
+    def ext(self):
+        return "." + os.path.splitext(self.name)[1]
+
+    @property
+    def directory(self):
+        return self._parent_object.parent_directory
+
+    @property
+    def _path_name(self):
+        return str(self.id) + self.ext
+
+    @property
+    def path(self):
+        return os.path.join(self.directory, self._path_name)
 
     @property
     def name(self):
         return self._parent_object.name
 
-    def save(self, *args, **kwargs):
+    def save(self, src=None, *args, **kwargs):
         to_update = False
+
+        if src:
+            self.id = kwargs.get('id', generate_uuid(self.__class__))
+            self._copy_file(src)
+
         if not self.sha256:
             # if the hash has never been calc'd, we know this is a
             # new record and we need to update the metadata file,
             # and we of course know we need to hash the file
+            self.sha256 = hash_file(self.path)
             to_update = True
-            self.sha256 = hash_file(self._main_path)
 
         return super(FileData, self).save(*args, to_update=to_update, **kwargs)
 
+    def _copy_file(self, src):
+        shutil.copy(src, self.path)
+
     @classmethod
     @transaction.atomic
-    def create(cls, input_file, File, id=None, comment=""):
-        if not id:
-            id = generate_uuid(cls)
-
-        now = timezone.now()
-        ext = os.path.splitext(os.path.basename(input_file))[1]
-        path = os.path.join(File.parent_directory,
-                            str(id) + ext)
-        shutil.copy(input_file, path)
-
-        try:
-            data_obj = cls(aoi=File.aoi,
-                           _parent_object=File,
-                           path=path,
-                           created_by=File.created_by,
-                           created_at=now,
-                           id=id,
-                           comment=comment)
-            data_obj.save()
-        except:
-            try:
-                os.remove(path)
-            except:
-                exception("Failed to remove File Data on create error.")
-            raise
-        else:
-            return data_obj
+    def create(cls, input_file, File, user, id=None, comment=""):
+        data_obj = cls(aoi=File.aoi,
+                       _parent_object=File,
+                       created_by=user,
+                       id=id,
+                       comment=comment)
+        data_obj.save(src=input_file)
+        return data_obj
 
     def export(self, output_dir, name=None, copy_function=shutil.copy):
         if not name:
             name = self.name
-        copy_function(self._main_path, os.path.join(output_dir, name))
+        copy_function(self.path, os.path.join(output_dir, name))
 
 
 class LayerData(FileData):
-    #ext = ""
+    ext = ""
 
     class Meta:
         proxy = True
 
-    #@property
-    #def _main_path(self):
-    #    return self.path + self.ext
+    @property
+    def _path_name(self):
+        return sanitize_uuid(str(self.id)) + self.ext
 
     @classmethod
     @transaction.atomic
-    def create(cls, arcpy_ext_layer, File, id=None, comment=""):
-        if not id:
-            id = generate_uuid(cls)
+    def create(cls, arcpy_ext_layer, File, user, id=None, comment=""):
+        data_obj = cls(aoi=File.aoi,
+                       _parent_object=File,
+                       created_by=user,
+                       id=id,
+                       comment=comment)
+        data_obj.save(src=arcpy_ext_layer)
+        return data_obj
 
-        now = timezone.now()
-        output_dir = File.parent_directory
-        newlyr = arcpy_ext_layer.copy_to_file(output_dir,
-                                              outname=sanitize_uuid(str(id)))
-
-        try:
-            data_obj = cls(aoi=File.aoi,
-                           _parent_object=File,
-                           path=newlyr.path,
-                           created_by=File.created_by,
-                           created_at=now,
-                           id=id,
-                           comment=comment)
-            data_obj.save()
-        except:
-            try:
-                from arcpy.management import Delete
-                Delete(newlyr.path)
-            except:
-                exception("Failed to remove File Data on create error.")
-            raise
-        else:
-            return data_obj
+    def _copy_file(self, src):
+        src.copy_to_file(self.directory,
+                         outname=sanitize_uuid(str(self.id)))
 
 
 class VectorData(LayerData):
-    #ext = constants.FC_EXT
+    ext = constants.FC_EXT
 
     class Meta:
         proxy = True
@@ -146,7 +130,7 @@ class VectorData(LayerData):
 
 
 class RasterData(LayerData):
-    #ext = constants.RASTER_EXT
+    ext = constants.RASTER_EXT
 
     class Meta:
         proxy = True
@@ -157,7 +141,7 @@ class RasterData(LayerData):
 
 
 class TableData(LayerData):
-    #ext = constants.TABLE_EXT
+    ext = constants.TABLE_EXT
 
     class Meta:
         proxy = True

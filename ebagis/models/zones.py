@@ -50,7 +50,7 @@ class HRUZonesData(Directory):
         if os.path.exists(hru_gdb_path_underscore):
             hru_gdb_path = hru_gdb_path_underscore
 
-        HRUZonesGDB.create(hru_gdb_path, self, self.created_by)
+        HRUZonesGDB.create(hru_gdb_path, self, self.created_by, name=self.name)
 
         # now import the param.gdb for this HRUZonesData instance
         param_gdb_path = os.path.join(

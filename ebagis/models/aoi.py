@@ -42,6 +42,10 @@ class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
     def parent_object(self):
         return self.parent_aoi
 
+    @property
+    def contents(self):
+         return self.directory.get(classname='AOIDirectory')
+
     @classmethod
     def create_from_upload(cls, upload, temp_aoi_path):
         aoi_name = os.path.splitext(upload.filename)[0]
@@ -120,9 +124,10 @@ class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
         raise NotImplementedError
 
     def export(self, output_dir, querydate=timezone.now(), outname=None):
-        return self.aoidirectory.export(output_dir,
-                                        querydate=querydate,
-                                        outname=outname)
+        outname = outname if outname else self.shortname
+        return self.contents.export(output_dir,
+                                    querydate=querydate,
+                                    outname=outname)
 
     def get_url(self, request):
         view = self._classname + "-base:detail"

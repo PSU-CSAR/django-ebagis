@@ -35,7 +35,7 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
 
     @property
     def parent_directory(self):
-        return self.parent_object.path
+        return self._parent_object.path
 
     @classmethod
     @transaction.atomic
@@ -49,7 +49,7 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
                        id=id,
                        comment=comment)
         file_obj.save()
-        data_class.create(input_file, file_obj)
+        data_class.create(input_file, file_obj, user)
         return file_obj
 
     @transaction.atomic
@@ -85,7 +85,8 @@ class Layer(File):
                        comment=comment)
         file_obj.save()
         LAYER_DATA_CLASSES[arcpy_ext_layer.type].create(arcpy_ext_layer,
-                                                        file_obj)
+                                                        file_obj,
+                                                        user)
         return file_obj
 
 
