@@ -244,9 +244,9 @@ zones_data_patterns = [
     url(r"^{}/$".format(PK_QUERY),
         hruzonesdata_detail,
         name="detail"),
-    #url(r"^{}/xml/".format(VERSION_QUERY),
-    #    include((file_patterns_no_id, "file", "hru-xml")),
-    #    {"file_type": models.XML}),
+    url(r"^{}/xml/".format(VERSION_QUERY),
+        include((file_patterns_no_id, "file", "hru-xml")),
+        {"file_type": models.File}),
     url(r"^{}/param/".format(VERSION_QUERY),
         include((geodatabase_patterns_no_id, "geodatabase", "hru-param")),
         {"geodatabase_type": models.ParamGDB}),
@@ -287,9 +287,9 @@ aoi_patterns = [
     url(r"^{}/zones/".format(AOI_QUERY),
         include((zones_patterns, "zones", "aoi-zones")),
         {"zones": True}),
-    #url(r"^{}/maps/".format(AOI_QUERY),
-    #    include((file_patterns, "file", "aoi-map")),
-    #    {"file_type": models.MapDocument}),
+    url(r"^{}/maps/".format(AOI_QUERY),
+        include((file_patterns, "file", "aoi-map")),
+        {"file_type": models.File}),
 ]
 
 pourpoint_patterns = [

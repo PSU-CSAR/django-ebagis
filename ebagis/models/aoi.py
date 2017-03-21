@@ -36,7 +36,7 @@ class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
     parent_aoi = models.ForeignKey("self", null=True, blank=True,
                                    related_name="child_aois",
                                    db_constraint=False,
-                                   on_delete=models.PROTECT)
+                                   on_delete=models.SET_NULL)
 
     @property
     def parent_object(self):

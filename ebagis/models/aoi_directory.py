@@ -138,7 +138,8 @@ class AOIDirectory(Directory):
 
             # import prism.gdb
             PrismDir.create(
-                temp_aoi_path,
+                os.path.join(temp_aoi_path,
+                             constants.PRISM_GDB),
                 self,
                 self.created_by,
             )
@@ -171,6 +172,4 @@ class AOIDirectory(Directory):
         self._zones.export(output_dir, querydate=querydate)
 
     def get_url(self, request):
-        view = self._classname + "-base:detail"
-        kwargs = {"pk": str(self.pk)}
-        return reverse(view, kwargs=kwargs, request=request)
+        return self.aoi.get_url(request)

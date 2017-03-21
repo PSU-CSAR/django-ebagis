@@ -37,7 +37,7 @@ class HRUZonesData(Directory):
         return self.subdirectories.get(classname=ParamGDB.__name__)
 
     def get_url(self, request):
-        return super(HRUZonesData, self).url(request, no_model_name=True)
+        return super(HRUZonesData, self).get_url(request, no_model_name=True)
 
     def import_content(self, directory_to_import):
         # import the .gdb for this HRUZonesData instance

@@ -40,12 +40,11 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     _archive_fields = {"read_only": ["id", "created_at", "created_by"],
                        "writable": ["name", "comment"]}
 
-    _path = models.CharField(max_length=1000, db_column="path")
     archiving_rule = models.CharField(max_length=10,
                                       choices=constants.ARCHIVING_CHOICES,
                                       default=constants.NO_ARCHIVING,
                                       editable=False)
-    parent_directory = models.CharField(max_length=1000)
+    _parent_directory = models.CharField(max_length=1000)
     _parent_object = models.ForeignKey('self',
                                        related_name='subdirectories',
                                        null=True,
@@ -58,6 +57,10 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     @property
     def parent_object(self):
         return self._parent_object
+
+    @property
+    def parent_directory(self):
+        return self._parent_directory
 
     @property
     def subdirectory_of(self):
@@ -81,6 +84,10 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
         "name" field, though this method can be overridden
         to change what field/value subclasses use
         """
+        # if archiving rule set to group archiving, then the
+        # directory name need needs the date appended
+        if self.archiving_rule == constants.GROUP_ARCHIVING:
+            return self.name + self.created_at.strftime("_%Y%m%d%H%M%S")
         return self.name
 
     def save(self, *args, **kwargs):
@@ -92,7 +99,7 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
               is created for this directory object within its
               enclosing file system folder
         """
-        if not getattr(self, 'parent_directory', None):
+        if not getattr(self, '_parent_directory', None):
             # while a default created_at datetime is set by the
             # date mixin, we have to explictly set the created_at
             # datetime here, as it is required by the path method
@@ -127,15 +134,10 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
         and the object's name."""
 
         # check to see if path property is set
-        if not getattr(self, '_path', None):
+        if not getattr(self, '_parent_directory', None):
             # default path is simply the value of the name field
             # inside the subdirectory_of path
             path = os.path.join(self.subdirectory_of, self._filesystem_name)
-
-            # if archiving rule set to group archiving, then the
-            # directory name need needs the date appended
-            if self.archiving_rule == constants.GROUP_ARCHIVING:
-                path += self.created_at.strftime("_%Y%m%d%H%M%S")
 
             # try to create the directory
             try:
@@ -145,9 +147,9 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
                 raise e
             else:
                 # set the value of the directory path field
-                self._path = path
+                self._parent_directory = self.subdirectory_of
 
-        return self._path
+        return os.path.join(self._parent_directory, self._filesystem_name)
 
     @classmethod
     @transaction.atomic
@@ -185,14 +187,15 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
             exc_info = sys.exc_info()
 
             try:
-                shutil.rmtree(dir_obj._path)
+                shutil.rmtree(dir_obj.path)
             except Exception as e:
                 # check to see if the error was
                 # that the dir does not exist
-                if e.errno != errno.ENOENT:
+                if not ((isinstance(e, IOError) or isinstance(e, OSError)) and
+                        e.errno == errno.ENOENT):
                     logger.exception(
                         "Failed to remove directory on import error: {}"
-                        .format(dir_obj._path)
+                        .format(dir_obj.path)
                     )
 
             raise exc_info[0], exc_info[1], exc_info[2]
@@ -296,8 +299,7 @@ class PrismDir(Directory):
 
     def import_content(self, directory_to_import):
         from .geodatabase import Prism
-        prism_gdb = os.path.join(directory_to_import, constants.PRISM_GDB)
-        Prism.create(prism_gdb, self, self.created_by)
+        Prism.create(directory_to_import, self, self.created_by)
 
     def export_content(self, output_dir, querydate=timezone.now()):
         filtered = self.versions.filter(created_at__lt=querydate)

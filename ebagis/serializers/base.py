@@ -33,7 +33,7 @@ class BaseSerializer(serializers.Serializer):
                 self.fields.pop(field_name)
 
     def get_parent_object(self, obj):
-        parent = obj._parent_object
+        parent = obj.parent_object
         url = None
 
         if parent:

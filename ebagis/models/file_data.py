@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import os
-import errno
 import shutil
+import logging
 
 from django.contrib.gis.db import models
 
@@ -13,6 +13,9 @@ from .base import ABC
 from .mixins import (
     ProxyMixin, DateMixin, CreatedByMixin, AOIRelationMixin,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class FileData(ProxyMixin, DateMixin, CreatedByMixin,
@@ -35,6 +38,10 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
                       "sha256", "_parent_object"],
         "writable": ["comment"]
     }
+
+    @property
+    def parent_object(self):
+        return self._parent_object
 
     @property
     def ext(self):
