@@ -27,13 +27,14 @@ class Download(DateMixin, NameMixin, models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(AUTH_USER_MODEL,
                              related_name="%(class)s",
-                             editable=False)
-    content_type = models.ForeignKey(ContentType)
+                             editable=False,
+                             on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id',
                                        for_concrete_model=False)
     task = models.ForeignKey(TaskMeta, related_name='download',
-                             null=True, blank=True)
+                             null=True, blank=True, on_delete=models.CASCADE)
     file = models.FileField(max_length=255, null=True, blank=True)
     # TODO: need a way to pass in a date to this
     querydate = models.DateTimeField(default=timezone.now)

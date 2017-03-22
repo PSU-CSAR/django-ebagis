@@ -19,21 +19,21 @@ class Upload(ChunkedUpload):
     STATUS_CHOICES = ChunkedUpload.STATUS_CHOICES + (
         (ABORTED, 'Aborted'),
     )
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField(null=True, blank=True)
     content_object = GenericForeignKey('content_type', 'object_id',
                                        for_concrete_model=False)
     is_update = models.BooleanField(default=False)
     parent_object_content_type = \
         models.ForeignKey(ContentType, related_name="upload_parent",
-                          null=True, blank=True)
+                          null=True, blank=True, on_delete=models.CASCADE)
     parent_object_id = models.UUIDField(null=True, blank=True)
     parent_object = GenericForeignKey('parent_object_content_type',
                                       'parent_object_id',
                                       for_concrete_model=False)
     comment = models.TextField(blank=True)
     task = models.ForeignKey(TaskMeta, related_name='upload',
-                             null=True, blank=True)
+                             null=True, blank=True, on_delete=models.CASCADE)
 
     def is_aborted(self):
         return self.status == self.ABORTED

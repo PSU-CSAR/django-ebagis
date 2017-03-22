@@ -14,7 +14,9 @@ AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 class AOIRelationMixin(models.Model):
     """Generic mixin to provide a relation to the AOI model"""
-    aoi = models.ForeignKey("AOI", related_name="%(class)s")
+    aoi = models.ForeignKey("AOI",
+                            related_name="%(class)s",
+                            on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -61,7 +63,9 @@ class CreatedByMixin(models.Model):
     """Generic mixin to provide user tracking to a model."""
     created_by = models.ForeignKey(
         AUTH_USER_MODEL,
-        related_name="%(app_label)s_%(class)s_created_by"
+        related_name="%(app_label)s_%(class)s_created_by",
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
