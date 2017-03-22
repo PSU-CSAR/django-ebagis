@@ -23,14 +23,14 @@ except ImportError:
 
 
 # this is a really stupid hack for arc 10.3
-try:
+#try:
     # needed this next line for a weird RuntimeError saying NotInitialized
-    import arcserver
-    import arcpy
-    arcpy.Exists(r"..\arcpy_hack\test_img.tif")
-except Exception as e:
-    print e
-    print "Error in initiallizing arcpy for django."
+#    import arcserver
+#    import arcpy
+#    arcpy.Exists(r"..\arcpy_hack\test_img.tif")
+#except Exception as e:
+#    print e
+#    print "Error in initiallizing arcpy for django."
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -55,7 +55,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     # project
     'ebagis',
-    'ebagis_ui',
+    'test_ui',
 
     # django libs
     'django.contrib.admin',
@@ -73,10 +73,12 @@ INSTALLED_APPS = (
     'djcelery',
     'corsheaders',
 
-    #'debug_toolbar',
+    'debug_toolbar',
+    #'ebagis_site.models',
 )
 
 MIDDLEWARE_CLASSES = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -107,6 +109,7 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
 ]
+INTERNAL_IPS = '127.0.0.1'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -182,11 +185,16 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-                'ebagis_ui.context_processors.site'
+                'ebagis_ui.context_processors.site',
+                'django.template.context_processors.request',
             ],
         },
     }
 ]
+
+
+# Django user model
+AUTH_USER_MODEL = 'auth.User'
 
 
 ## URL PATH SETTINGS
