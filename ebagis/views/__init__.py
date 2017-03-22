@@ -9,6 +9,7 @@ from .directory import (
     PrismViewSet,
     HRUZonesViewSet,
     HRUZonesDataViewSet,
+    MapsViewSet
 )
 
 from .download import DownloadViewSet

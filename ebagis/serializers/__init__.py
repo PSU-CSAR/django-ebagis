@@ -18,4 +18,5 @@ from .pourpoint import PourPointSerializer, PourPointBoundarySerializer
 from .data import (
     FileDataSerializer, FileSerializer, GeodatabaseSerializer,
     PrismDirSerializer, HRUZonesDataSerializer, HRUZonesSerializer,
+    MapsSerializer,
 )

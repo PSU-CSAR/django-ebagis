@@ -7,7 +7,7 @@ from ..models.aoi import AOI
 
 from .user import UserSerializer
 from .data import (
-    GeodatabaseSerializer, FileSerializer, HRUZonesSerializer,
+    GeodatabaseSerializer, FileSerializer, HRUZonesSerializer, MapsSerializer
 )
 
 
@@ -35,7 +35,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
     aoidb = serializers.SerializerMethodField()
     analysis = serializers.SerializerMethodField()
     prisms = serializers.SerializerMethodField()
-    #maps = serializers.SerializerMethodField()
+    maps = serializers.SerializerMethodField()
     zones = serializers.SerializerMethodField()
     parent_aoi = AOIListSerializer(read_only=True)
     child_aois = AOIListSerializer(read_only=True, many=True)
@@ -69,9 +69,8 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
         return [self._get_geodatabase(obj, prism)
                 for prism in obj.contents.prism]
 
-    #def get_maps(self, obj):
-    #    return [self._get_object(obj, _map, FileSerializer)
-    #            for _map in obj.contents.maps.files.all()]
+    def get_maps(self, obj):
+        return self._get_object(obj, obj.contents.maps, MapsSerializer)
 
     def get_zones(self, obj):
         return [self._get_object(obj, zone, HRUZonesSerializer)
@@ -81,7 +80,7 @@ class AOISerializer(serializers.HyperlinkedModelSerializer):
         model = AOI
         fields = ('id', 'url', 'name', 'created_by', 'created_at', 'comment',
                   'surfaces', 'layers', 'aoidb', 'analysis', 'prisms',
-                  #'maps',
+                  'maps',
                   'zones',
                   'parent_aoi', 'child_aois',
                   'modified_at',
@@ -96,7 +95,7 @@ class AOIGeoSerializer(GeoFeatureModelSerializer, AOISerializer):
         geo_field = 'boundary'
         fields = ('id', 'url', 'name', 'created_by', 'created_at', 'comment',
                   'surfaces', 'layers', 'aoidb', 'analysis', 'prisms',
-                  #'maps',
+                  'maps',
                   'zones',
                   'parent_aoi', 'child_aois',
                   'modified_at',

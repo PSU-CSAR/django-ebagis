@@ -25,10 +25,16 @@ class PrismDirSerializer(URLMixin, BaseSerializer):
 
 
 class HRUZonesDataSerializer(URLMixin, BaseSerializer):
-    hruzonesgdb = GeodatabaseSerializer(read_only=True)
-    paramgdb = GeodatabaseSerializer(read_only=True)
+    hru = GeodatabaseSerializer(read_only=True)
+    param = GeodatabaseSerializer(read_only=True)
     xml = FileSerializer(read_only=True)
 
 
 class HRUZonesSerializer(URLMixin, BaseSerializer):
     versions = HRUZonesDataSerializer(read_only=True, many=True)
+
+
+class MapsSerializer(URLMixin, BaseSerializer):
+    mapdocs = FileSerializer(read_only=True, many=True)
+    analysis_xml = FileSerializer(read_only=True)
+    map_parameters_txt = FileSerializer(read_only=True)

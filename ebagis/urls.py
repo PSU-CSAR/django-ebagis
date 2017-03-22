@@ -5,6 +5,7 @@ from rest_framework.documentation import include_docs_urls
 
 from . import views
 from . import models
+from . import constants
 
 
 API_TITLE = 'eBAGIS REST API'
@@ -19,10 +20,11 @@ UUID = r"[a-fA-F0-9]{{8}}-" + \
 ID_QUERY = r"(?P<{id}>{uuid})".format(uuid=UUID, id="{id}")
 PK_QUERY = ID_QUERY.format(id="pk")
 AOI_QUERY = ID_QUERY.format(id="aoi_id")
-ZONE_QUERY = ID_QUERY.format(id="zones_id")
-PRISM_QUERY = ID_QUERY.format(id="prism_id")
+PARENT_QUERY = ID_QUERY.format(id="parent_id")
+#ZONE_QUERY = ID_QUERY.format(id="zones_id")
+#PRISM_QUERY = ID_QUERY.format(id="prism_id")
 VERSION_QUERY = ID_QUERY.format(id="version_id")
-GEODATABASE_QUERY = ID_QUERY.format(id="geodatabase_id")
+#GEODATABASE_QUERY = ID_QUERY.format(id="geodatabase_id")
 PROXY_LIST = r"(?P<{base}_type>{proxy_name})"
 PROXY_DETAIL = r"{}/{}".format(PROXY_LIST, ID_QUERY)
 S = "s"
@@ -124,6 +126,20 @@ geodatabase_download = views.GeodatabaseViewSet.as_view({
     "get": "download",
 })
 
+maps_list = views.MapsViewSet.as_view({
+    "get": "list",
+    "post": "create"
+})
+maps_detail = views.MapsViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy"
+})
+maps_download = views.MapsViewSet.as_view({
+    "get": "download",
+})
+
 file_list = views.FileViewSet.as_view({
     "get": "list",
     "post": "create"
@@ -192,18 +208,18 @@ geodatabase_patterns = [
     url(r"^{}/download/$".format(PK_QUERY),
         geodatabase_download,
         name="download"),
-    url(r"^{}/layers/".format(GEODATABASE_QUERY),
+    url(r"^{}/layers/".format(PARENT_QUERY),
         include((file_patterns, "file", "layer")),
-        {'file_type': models.Layer}),
-    url(r"^{}/rasters/".format(GEODATABASE_QUERY),
+        {'file_class': models.Layer}),
+    url(r"^{}/rasters/".format(PARENT_QUERY),
         include((file_patterns, "file", "raster")),
-        {'file_type': models.Raster}),
-    url(r"^{}/vectors/".format(GEODATABASE_QUERY),
+        {'file_class': models.Raster}),
+    url(r"^{}/vectors/".format(PARENT_QUERY),
         include((file_patterns, "file", "vector")),
-        {'file_type': models.Vector}),
-    url(r"^{}/tables/".format(GEODATABASE_QUERY),
+        {'file_class': models.Vector}),
+    url(r"^{}/tables/".format(PARENT_QUERY),
         include((file_patterns, "file", "table")),
-        {'file_type': models.Table}),
+        {'file_class': models.Table}),
 ]
 
 geodatabase_patterns_no_id = [
@@ -211,16 +227,16 @@ geodatabase_patterns_no_id = [
     url(r"^download/$", geodatabase_download, name="download"),
     url(r"^layers/",
         include((file_patterns, "file", "layer")),
-        {'file_type': models.Layer}),
+        {'file_class': models.Layer}),
     url(r"^rasters/",
         include((file_patterns, "file", "raster")),
-        {'file_type': models.Raster}),
+        {'file_class': models.Raster}),
     url(r"^vectors/",
         include((file_patterns, "file", "vector")),
-        {'file_type': models.Vector}),
+        {'file_class': models.Vector}),
     url(r"^tables/",
         include((file_patterns, "file", "table")),
-        {'file_type': models.Table}),
+        {'file_class': models.Table}),
 ]
 
 prism_patterns = [
@@ -229,7 +245,7 @@ prism_patterns = [
     url(r"^{}/download/$".format(PK_QUERY), prism_download, name="download"),
     url(r"^{}/$".format(PK_QUERY),
         include((geodatabase_patterns, "geodatabase", "geodatabase-prism")),
-        {'geodatabase_type': models.Prism}),
+        {'directory_type': models.Prism}),
 ]
 
 prism_patterns_no_id = [
@@ -237,22 +253,21 @@ prism_patterns_no_id = [
     url(r"^download/$", prism_download, name="download"),
     url(r"^$",
         include((geodatabase_patterns, "geodatabase", "geodatabase-prism")),
-        {'geodatabase_type': models.Prism}),
+        {'directory_type': models.Prism}),
 ]
 
 zones_data_patterns = [
     url(r"^{}/$".format(PK_QUERY),
         hruzonesdata_detail,
         name="detail"),
-    url(r"^{}/xml/".format(VERSION_QUERY),
-        include((file_patterns_no_id, "file", "hru-xml")),
-        {"file_type": models.File}),
-    url(r"^{}/param/".format(VERSION_QUERY),
+    url(r"^{}/xml/".format(PARENT_QUERY),
+        include((file_patterns_no_id, "file", "hru-xml"))),
+    url(r"^{}/param/".format(PARENT_QUERY),
         include((geodatabase_patterns_no_id, "geodatabase", "hru-param")),
-        {"geodatabase_type": models.ParamGDB}),
-    url(r"^{}/hru/".format(VERSION_QUERY),
+        {"directory_type": models.ParamGDB}),
+    url(r"^{}/hru/".format(PARENT_QUERY),
         include((geodatabase_patterns_no_id, "geodatabase", "hru-hru")),
-        {"geodatabase_type": models.HRUZonesGDB}),
+        {"directory_type": models.HRUZonesGDB}),
 ]
 
 zones_patterns = [
@@ -261,8 +276,44 @@ zones_patterns = [
     url(r"^{}/download/$".format(PK_QUERY),
         hruzones_download,
         name="download"),
-    url(r"^{}/".format(ZONE_QUERY),
+    url(r"^{}/".format(PARENT_QUERY),
         include((zones_data_patterns, "zones_data", "zones-data"))),
+]
+
+maps_patterns = [
+    url(r"^$", maps_list, name="list"),
+    url(r"^{}/$".format(PK_QUERY), maps_detail, name="detail"),
+    url(r"^{}/download/$".format(PK_QUERY),
+        maps_download,
+        name="download"),
+    url(r"^{}/mapdocs/".format(PARENT_QUERY),
+        include((file_patterns, "file", "maps-maps"))),
+    url(r"^{}/analysis_xml/".format(PARENT_QUERY),
+        include((file_patterns_no_id, "file", "maps-analysis_xml"))),
+    url(r"^{}/map_parameters_xml/".format(PARENT_QUERY),
+        include((file_patterns_no_id, "file", "maps-map_parameters_txt"))),
+]
+
+maps_patterns_no_id = [
+    url(r"^$", maps_list, name="list"),
+    url(r"^download/$",
+        maps_download,
+        name="download"),
+    url(r"^mapdocs/",
+        include((file_patterns, "file", "maps-maps")),
+        {'literal_filters': {
+            'name__endswith': constants.MAP_EXT,
+        }}),
+    url(r"^analysis_xml/",
+        include((file_patterns_no_id, "file", "maps-analysis_xml")),
+        {'literal_filters': {
+            'name': constants.MAP_ANALYSISXML_FILE,
+        }}),
+    url(r"^map_parameters_txt/",
+        include((file_patterns_no_id, "file", "maps-map_parameters_txt")),
+        {'literal_filters': {
+            'name': constants.MAP_PARAMTXT_FILE,
+        }}),
 ]
 
 aoi_patterns = [
@@ -271,25 +322,25 @@ aoi_patterns = [
     url(r"^{}/download/$".format(PK_QUERY), aoi_download, name="download"),
     url(r"^{}/surfaces/".format(AOI_QUERY),
         include((geodatabase_patterns_no_id, "surfaces", "aoi-surfaces")),
-        {"geodatabase_type": models.Surfaces}),
+        {"directory_type": models.Surfaces}),
     url(r"^{}/layers/".format(AOI_QUERY),
         include((geodatabase_patterns_no_id, "layers", "aoi-layers")),
-        {"geodatabase_type": models.Layers}),
+        {"directory_type": models.Layers}),
     url(r"^{}/aoidb/".format(AOI_QUERY),
         include((geodatabase_patterns_no_id, "aoidb", "aoi-aoidb")),
-        {"geodatabase_type": models.AOIdb}),
+        {"directory_type": models.AOIdb}),
     url(r"^{}/analysis/".format(AOI_QUERY),
         include((geodatabase_patterns_no_id, "analysis", "aoi-analysis")),
-        {"geodatabase_type": models.Analysis}),
+        {"directory_type": models.Analysis}),
     url(r"^{}/prism/".format(AOI_QUERY),
         include((geodatabase_patterns, "prism", "aoi-prism")),
-        {"prism": True, "geodatabase_type": models.Prism}),
+        {"prism": True, "directory_type": models.Prism}),
     url(r"^{}/zones/".format(AOI_QUERY),
         include((zones_patterns, "zones", "aoi-zones")),
-        {"zones": True}),
+        {"generation_skip": True}),
     url(r"^{}/maps/".format(AOI_QUERY),
-        include((file_patterns, "file", "aoi-map")),
-        {"file_type": models.File}),
+        include((maps_patterns_no_id, "maps", "aoi-map")),
+        {'directory_type': models.Maps}),
 ]
 
 pourpoint_patterns = [
@@ -370,55 +421,56 @@ urlpatterns = [
         include((geodatabase_patterns, "geodatabase", "geodatabase-base"))),
     url(r"^surfaces/",
         include((geodatabase_patterns, "geodatabase", "surfaces-base")),
-        {'geodatabase_type': models.Surfaces}),
+        {'directory_type': models.Surfaces}),
     url(r"^layers/",
         include((geodatabase_patterns, "geodatabase", "layers-base")),
-        {'geodatabase_type': models.Layers}),
+        {'directory_type': models.Layers}),
     url(r"^aoidbs/",
         include((geodatabase_patterns, "geodatabase", "aoidb-base")),
-        {'geodatabase_type': models.AOIdb}),
+        {'directory_type': models.AOIdb}),
     url(r"^analyses/",
         include((geodatabase_patterns, "geodatabase", "analysis-base")),
-        {'geodatabase_type': models.Analysis}),
+        {'directory_type': models.Analysis}),
     url(r"^hruzonesgdbs/",
         include((geodatabase_patterns, "geodatabase", "hruzonesgdb-base")),
-        {'geodatabase_type': models.HRUZonesGDB}),
+        {'directory_type': models.HRUZonesGDB}),
     url(r"^prisms/",
         include((geodatabase_patterns, "geodatabase", "prism-base")),
         {"prism": True, 'geodatabase_type': models.Prism}),
     url(r"^paramgdbs/",
         include((geodatabase_patterns, "geodatabase", "paramgdb-base")),
-        {'geodatabase_type': models.ParamGDB}),
+        {'directory_type': models.ParamGDB}),
+
+    # Maps URLs
+    url(r"^maps/",
+        include((maps_patterns, "maps", "maps-base")),
+        {'directory_type': models.Maps}),
+
 
     # HRU URLs
-    url(r"^hruzones/",
+    url(r"^zones/",
         include((zones_patterns, "zones", "hruzones-base")),
-        {"zones": True}),
+        {"generation_skip": True}),
 
     url(r"^hruzonesdata/",
         include((zones_data_patterns, "zones_data", "hruzonesdata-base")),
-        {"zones": True}),
-
-    # Prism URLs
-    #url(r"^prisms/",
-    #    include((prism_patterns, "prism", "prism-base")),
-    #    {"prism": True}),
+        {"generation_skip": True}),
 
     # File URLs
     url(r"^files/",
         include((file_patterns, "file", "file-base"))),
     url(r"^layers/",
         include((file_patterns, "file", "layer-base")),
-        {'file_type': models.Layer}),
+        {'file_class': models.Layer}),
     url(r"^rasters/",
         include((file_patterns, "file", "raster-base")),
-        {'file_type': models.Raster}),
+        {'file_class': models.Raster}),
     url(r"^vectors/",
         include((file_patterns, "file", "vector-base")),
-        {'file_type': models.Vector}),
+        {'file_class': models.Vector}),
     url(r"^tables/",
         include((file_patterns, "file", "table-base")),
-        {'file_type': models.Table}),
+        {'file_class': models.Table}),
 
     # Pourpoint URLs
     url(r"^pourpoints/", include((pourpoint_patterns,

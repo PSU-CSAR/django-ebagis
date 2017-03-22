@@ -29,11 +29,11 @@ class HRUZonesData(Directory):
         return self.files.get(name=constants.HRU_LOG_FILE)
 
     @property
-    def hruzonesgdb(self):
+    def hru(self):
         return self.subdirectories.get(classname=HRUZonesGDB.__name__)
 
     @property
-    def paramgdb(self):
+    def param(self):
         return self.subdirectories.get(classname=ParamGDB.__name__)
 
     def get_url(self, request):
@@ -69,9 +69,9 @@ class HRUZonesData(Directory):
 
     def export_content(self, output_dir, querydate=timezone.now()):
         self.xml.export(output_dir, querydate)
-        self.hruzonesgdb.export(output_dir, querydate)
+        self.hru.export(output_dir, querydate)
         try:
-            self.paramgdb.export(output_dir, querydate)
+            self.param.export(output_dir, querydate)
         except AttributeError:
             pass
 
