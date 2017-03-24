@@ -13,7 +13,9 @@
     <meta name="theme-color" content="#000000">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>NWCC eBAGIS</title>
+    <title>NWCC eBAGIS -- {% block head_title %}{% endblock %}</title>
+    {% block extra_head %}
+    {% endblock %}
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -30,10 +32,27 @@
   </head>
 
   <body>
-    {% include "./navbar/navbar.html" %}
+    {% block body %}
 
-    {% block base_content %}
-    {% endblock base_content %}
+    {% if messages %}
+    <div id="messages">
+      <!--ul-->
+        {% for message in messages %}
+        <div id="messages" class="alert alert-success" role="alert">{{ message }}</div>
+        <!--li>{{message}}</li-->
+        {% endfor %}
+      <!--/ul-->
+    </div>
+    {% endif %}
+
+    {% include "./navbar/navbar.html" %}
+    
+    <div id="content" class="container">
+      {% block base_content %}
+      {% endblock base_content %}
+    </div>
+
+    {% endblock %}
 
     <script src="{% static 'rest_framework/js/coreapi-0.1.0.js' %}"></script>
     <script src="{% url 'api-docs:schema-js' %}"></script>
@@ -42,6 +61,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
     {% block js %}
+    {% endblock %}
+    {% block extra_body %}
     {% endblock %}
   </body>
 </html>

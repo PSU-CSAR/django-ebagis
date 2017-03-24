@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block head_title %}User Profile{% endblock %}
+
+{% block base_content %}
+{% with request.user as user %}
+<h1>{{ user.username }}</h1>
+
+<p><strong>First name:</strong> {{ user.first_name }}</p>
+<p><strong>Last name:</strong> {{ user.last_name }}</p>
+<p><strong>Email address:</strong> {{ user.email }}</p>
+<p><strong>Date joined:</strong> {{ user.date_joined }}</p>
+
+<a type="button" class="btn btn-primary" href="{% url 'account_email' %}">Edit your email address</a>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}

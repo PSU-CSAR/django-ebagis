@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+{% block head_title %}AOI Browser{% endblock %}
+
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.css">
@@ -11,50 +13,48 @@
 {% endblock %}
 
 {% block base_content %}
-<div class="container">
-  <div id="sidebar">
-    <div class="sidebar-wrapper" id="features">
-      <div class="card">
-        <div class="card-header card-heading">
-          <!--<div class="row">
-            <div class="col-9">
-              <h4 class="mb-0">Pour Points</h4>
-            </div>
-            <div class="col-3">
-              <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left" id="sidebar-hide-btn"></i></button>
-            </div>
-          </div>-->
-          <h4 class="card-title">
-            Pour Points
-            <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
-          </h4>
-        </div>
-        <div class="card-block">
-            <div class="card-text">
-              <div class="input-group">
-                <input id="filter" type="text" class="form-control search" placeholder="Filter">
-                <span class="input-group-btn">
-                  <a  id="clear-btn" href="#" class="btn btn-secondary btn-md" role="button" aria-disabled="true"><i class="fa fa-times" aria-hidden="true" value="Reset"></i></a>
-                  <!--<button class="btn btn-secondary btn-sm disabled" type="button"><i class="fa fa-times" aria-hidden="true"></i></button>-->
-                </span>
-              </div>
-            </div>
-            <!--<div class="col-sm-4 col-md-4">
-              <button type="button" class="btn btn-primary pull-right sort" data-sort="feature-name" id="sort-btn">Sort</button>
-            </div>-->
-        </div>
+<div id="sidebar">
+  <div class="sidebar-wrapper" id="features">
+    <div class="card">
+      <div class="card-header card-heading">
+        <!--<div class="row">
+          <div class="col-9">
+            <h4 class="mb-0">Pour Points</h4>
+          </div>
+          <div class="col-3">
+            <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left" id="sidebar-hide-btn"></i></button>
+          </div>
+        </div>-->
+        <h4 class="card-title">
+          Pour Points
+          <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
+        </h4>
       </div>
-      <div class="sidebar-table">
-        <div class="list" id="feature-list" role="tablist" aria-multiselectable="false">
-        </div>
+      <div class="card-block">
+          <div class="card-text">
+            <div class="input-group">
+              <input id="filter" type="text" class="form-control search" placeholder="Filter">
+              <span class="input-group-btn">
+                <a  id="clear-btn" href="#" class="btn btn-secondary btn-md" role="button" aria-disabled="true"><i class="fa fa-times" aria-hidden="true" value="Reset"></i></a>
+                <!--<button class="btn btn-secondary btn-sm disabled" type="button"><i class="fa fa-times" aria-hidden="true"></i></button>-->
+              </span>
+            </div>
+          </div>
+          <!--<div class="col-sm-4 col-md-4">
+            <button type="button" class="btn btn-primary pull-right sort" data-sort="feature-name" id="sort-btn">Sort</button>
+          </div>-->
+      </div>
+    </div>
+    <div class="sidebar-table">
+      <div class="list" id="feature-list" role="tablist" aria-multiselectable="false">
       </div>
     </div>
   </div>
-  <button type="button" class="btn btn-xs btn-default pull-left hidden" id="sidebar-show-btn"><i class="fa fa-chevron-right"></i></button>
-  <div id="map">
-    <div id="loading">
-      <div class="loader"></div>
-    </div>
+</div>
+<button type="button" class="btn btn-xs btn-default pull-left hidden" id="sidebar-show-btn"><i class="fa fa-chevron-right"></i></button>
+<div id="map">
+  <div id="loading">
+    <div class="loader"></div>
   </div>
 </div>
 

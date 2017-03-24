@@ -10,3 +10,20 @@
   padding-left: 1rem;
   padding-right: 1rem;
 }
+@media (max-width: 992px) {
+  .navbar .navbar-brand {
+    font-size: 1.78em;
+  }
+}
+/* Print Handling */
+@media print {
+  .navbar {
+    display: none !important;
+  }
+}
+@media (max-width: 833px) {
+  .nav-icon {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}

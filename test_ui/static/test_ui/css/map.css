@@ -1,10 +1,11 @@
-html, body, .container {
+html, body, #content {
   height: 100%;
   width: 100%;
   overflow: hidden;
   font-size: 14px;
   line-height: 1.1;
   padding: 0px;
+  margin-top: 0px;
 }
 body {
   padding-top: 48px;
@@ -21,6 +22,7 @@ body {
   width: auto;
   height: 100%;
 }
+
 .loader {
     border: 16px solid #f3f3f3;
     border-top: 16px solid #232323;
@@ -62,6 +64,8 @@ body {
 .zoom-to-pp {
   margin-top: -.1rem;
   padding: .2rem;
+  background-color: #f7f7f9;
+  border-color: #f7f7f9;
 }
 .white {
   color: #FFFFFF;

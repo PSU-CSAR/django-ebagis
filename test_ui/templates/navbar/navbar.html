@@ -36,21 +36,21 @@
     <ul class="nav navbar-nav pull-xs-right">
       {% if user.is_authenticated %}
         <li class="nav-item nav-icon dropdown pull-sm-right">
-          <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fa fa-user-circle" aria-hidden="true"></i>
             Hello {{ user.username }}
           </a>
           <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Your Profile</a>
-            <a class="dropdown-item" href="#">Your Requests</a>
+            <a class="dropdown-item" href="{% url 'account_profile' %}">Your Profile</a>
+            <a class="dropdown-item" href="{% url 'account_requests' %}">Your Requests</a>
             {% if user.is_staff %}
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href={% url 'admin:index' %}>eBAGIS Admin</a>
             {% endif %}
             <div class="dropdown-divider"></div>
-            <form class="dropdown-item" action={% url 'account_logout' %} method="post">
+            <form action={% url 'account_logout' %} method="post">
               {% csrf_token %}
-              <a href="javascript:;" onclick="parentNode.submit();">Sign Out</a>
+              <a class="dropdown-item" href="javascript:;" onclick="parentNode.submit();">Sign Out</a>
               <input type="hidden" name="mess" value="Sign Out">
             </form>
           </div>
