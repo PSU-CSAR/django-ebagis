@@ -248,16 +248,20 @@
 
 $('#file-list').on('show.bs.collapse', '.details-row', function(e) {
   console.log("--------------------------",this);
-  console.log("get", $(this).parent());
-  $(this).find(".expand-icon").removeClass('fa-plus-square').addClass('fa-minus-square');
+  console.log("get", $(this).find(".expand-icon").first());
+  $(this).find(".expand-icon").first().removeClass('fa-plus-square').addClass('fa-minus-square');
   console.log("fa-minus-square")
+  e.stopPropagation();
+  e.stopImmediatePropagation();
 });
 
 $('#file-list').on('hide.bs.collapse', '.details-row', function(e) {
   console.log("--------------------------",this);
-  console.log("get", $(this).closest(".expand-icon"));
-  $(this).find(".expand-icon").removeClass('fa-minus-square').addClass('fa-plus-square');
+  console.log("get", $(this));
+  $(this).find(".expand-icon").first().removeClass('fa-minus-square').addClass('fa-plus-square');
   console.log("fa-plus-square")
+  e.stopPropagation();
+  e.stopImmediatePropagation();
 });
 
 
