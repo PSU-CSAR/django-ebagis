@@ -106,9 +106,38 @@ input[type="radio"], input[type="checkbox"] {
 
 #file-list {
   height: 400px;
-  overflow-y: auto;
+  padding-left: 0px;
 }
 
+#file-list h6 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#file-list .card-block {
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
+#file-list .card {
+  border: 0px;
+  border-radius: 0px;
+}
+
+#file-list .card-header {
+  border-bottom: 0px;
+  padding: .25rem;
+  background-color: #fff;
+}
+
+#file-list-wrapper {
+  background-color: #fff;
+  overflow-y: auto;
+  padding: 1rem;
+  height: 100%;
+}
 .alert {
   margin-bottom: 0px;
 }
