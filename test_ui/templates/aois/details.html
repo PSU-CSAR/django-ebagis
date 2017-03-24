@@ -249,14 +249,14 @@
 $('#file-list').on('show.bs.collapse', '.details-row', function(e) {
   console.log("--------------------------",this);
   console.log("get", $(this).parent());
-  $(this).find(".expand-icon").last().removeClass('fa-plus-square').addClass('fa-minus-square');
+  $(this).find(".expand-icon").removeClass('fa-plus-square').addClass('fa-minus-square');
   console.log("fa-minus-square")
 });
 
 $('#file-list').on('hide.bs.collapse', '.details-row', function(e) {
   console.log("--------------------------",this);
   console.log("get", $(this).closest(".expand-icon"));
-  $(this).find(".expand-icon").last().removeClass('fa-minus-square').addClass('fa-plus-square');
+  $(this).find(".expand-icon").removeClass('fa-minus-square').addClass('fa-plus-square');
   console.log("fa-plus-square")
 });
 
