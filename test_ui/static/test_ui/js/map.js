@@ -1,29 +1,23 @@
-const coreapi = window.coreapi;
-const schema = window.schema;
-
-let auth = new coreapi.auth.SessionAuthentication({
-    csrfCookieName: 'csrftoken',
-    csrfHeaderName: 'X-CSRFToken'
-});
-let ebagisAPI = new coreapi.Client({auth: auth});
-
 var aois = {}
 
-// get pourpoint records with AOIs and
+// request for the pour points w/ their AOIs
 function getPourpoints(callback) {
-    ebagisAPI.action(
-        schema,
-        ["rest", "pourpoint-boundaries", "list"]
-    ).then(function(result) {
-        for (i=0; i < result['features'].length; i++) {
-            var _aois = result['features'][i]['properties']['aois']
-            for (j=0; j < _aois.length; j++) {
-                aois[_aois[j].id] = _aois[j];
-            }
-        }
-        callback(result);
-    });
+    jQuery.ajax({
+      'type': 'GET',
+      'url': POURPOINT_URL,
+      'datatype': 'json',
+      'success': function(result) {
+          for (i=0; i < result['features'].length; i++) {
+              var _aois = result['features'][i]['properties']['aois']
+              for (j=0; j < _aois.length; j++) {
+                  aois[_aois[j].id] = _aois[j];
+              }
+          }
+          callback(result);
+      }
+  });
 }
+
 
 var map, featureList, pourpointSearch = [];
 

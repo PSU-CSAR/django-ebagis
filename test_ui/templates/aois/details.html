@@ -30,10 +30,8 @@
 				{% with aoi.contents.surfaces as dir %}
 				<div class="details-row card">
 					<div class="details-row-header card-header" role="tab" id="{{ dir.name }}">
-						<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-							<a data-toggle="collapse" href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}">
-								{{ dir.name }}
-							</a>
+						<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+							<a>{{ dir.name }}</a>
 						</h6>
 					</div>
 
@@ -63,8 +61,8 @@
 				{% with aoi.contents.layers as dir %}
 				<div class="details-row card">
 					<div class="details-row-header card-header" role="tab" id="{{ dir.name }}">
-						<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-							<a data-toggle="collapse"  href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}">
+						<h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+							<a>
 								{{ dir.name }}
 							</a>
 						</h6>
@@ -96,8 +94,8 @@
 				{% with aoi.contents.zones_ as dir %}
 				<div class="details-row card">
 					<div class="details-row-header card-header" role="tab" id="{{ dir.id }}">
-						<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-							<a data-toggle="collapse"  href="#collapse{{ dir.id }}" aria-expanded="false" aria-controls="collapse{{ dir.id }}">
+						<h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.id }}" aria-expanded="false" aria-controls="collapse{{ dir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+							<a>
 								{{ dir.name }}
 							</a>
 						</h6>
@@ -110,8 +108,8 @@
 							    {% for subdir in dir.hruzones.all %}
 								<div class="details-row card">
 									<div class="details-row-header card-header" role="tab" id="{{ subdir.id }}">
-										<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-											<a data-toggle="collapse" href="#collapse{{ subdir.id }}" aria-expanded="false" aria-controls="collapse{{ subdir.id }}">
+										<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ subdir.id }}" aria-expanded="false" aria-controls="collapse{{ subdir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+											<a>
 											{{ subdir.name }}
 											</a>
 										</h6>
@@ -124,8 +122,8 @@
 												{% for version in subdir.versions.all %}
 												<div class="details-row card">
 													<div class="details-row-header card-header" role="tab" id="{{ version.id }}">
-														<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-															<a data-toggle="collapse" href="#collapse{{ version.id }}" aria-expanded="false" aria-controls="collapse{{ version.id }}">
+														<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ version.id }}" aria-expanded="false" aria-controls="collapse{{ version.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+															<a>
 															{{ version.name }}
 															</a>
 														</h6>
@@ -138,8 +136,8 @@
 																{% with version.hru as hru %}
 																<div class="details-row card">
 																	<div class="details-row-header card-header" role="tab" id="{{ hru.id }}">
-																		<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-																			<a data-toggle="collapse" href="#collapse{{ hru.id }}" aria-expanded="false" aria-controls="collapse{{ hru.id }}">
+																		<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ hru.id }}" aria-expanded="false" aria-controls="collapse{{ hru.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+																			<a>
 																				{{ hru.name }}
 																			</a>
 																		</h6>
@@ -171,8 +169,8 @@
 																{% with version.param as param %}
 																<div class="details-row card">
 																	<div class="details-row-header card-header" role="tab" id="{{ param.id }}">
-																		<h6 class="mb-0"><i class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-																			<a data-toggle="collapse" href="#collapse{{ param.id }}" aria-expanded="false" aria-controls="collapse{{ param.id }}">
+																		<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ param.id }}" aria-expanded="false" aria-controls="collapse{{ param.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+																			<a>
 																				{{ dir.name }}
 																			</a>
 																		</h6>
@@ -247,21 +245,15 @@
 <script>
 
 $('#file-list').on('show.bs.collapse', '.details-row', function(e) {
-  console.log("--------------------------",this);
-  console.log("get", $(this).find(".expand-icon").first());
   $(this).find(".expand-icon").first().removeClass('fa-plus-square').addClass('fa-minus-square');
-  console.log("fa-minus-square")
   e.stopPropagation();
-  e.stopImmediatePropagation();
+  //e.stopImmediatePropagation();
 });
 
 $('#file-list').on('hide.bs.collapse', '.details-row', function(e) {
-  console.log("--------------------------",this);
-  console.log("get", $(this));
   $(this).find(".expand-icon").first().removeClass('fa-minus-square').addClass('fa-plus-square');
-  console.log("fa-plus-square")
   e.stopPropagation();
-  e.stopImmediatePropagation();
+  //e.stopImmediatePropagation();
 });
 
 
