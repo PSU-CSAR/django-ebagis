@@ -64,13 +64,13 @@ input[type="radio"], input[type="checkbox"] {
   margin-top: 0.4rem;
 }
 
-#messages {
+/*#messages {
     -moz-animation: cssAnimation 0s ease-in 5s forwards;
-    /* Firefox */
+    /* Firefox 
     -webkit-animation: cssAnimation 0s ease-in 5s forwards;
-    /* Safari and Chrome */
+    /* Safari and Chrome 
     -o-animation: cssAnimation 0s ease-in 5s forwards;
-    /* Opera */
+    /* Opera 
     animation: cssAnimation 0s ease-in 5s forwards;
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
@@ -88,7 +88,7 @@ input[type="radio"], input[type="checkbox"] {
         height:0;
         visibility:hidden;
     }
-}
+}*/
 
 .no-value {
     font-style: italic;
