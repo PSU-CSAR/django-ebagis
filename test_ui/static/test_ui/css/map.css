@@ -61,6 +61,12 @@ body {
   padding-left: 0px;
   padding-right: 1px;
 }
+#sidebar-hide-btn:hover {
+  background-color: rgb(210,210,210);
+}
+#sidebar-show-btn.btn:hover {
+  background-color: rgb(210,210,210);
+}
 .zoom-to-pp {
   margin-top: -.1rem;
   padding: .2rem;
@@ -121,9 +127,6 @@ body {
 }
 .list-group-item {
   display: inline;
-}
-a {
-  color: #000;
 }
 .pourpoint-header:focus, .pourpoint-header:hover {
   background: #DCDCDC;
