@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 import os
-import shutil
 import uuid
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
+from django.db import transaction
 from django.contrib.gis.db import models
 
 from djcelery.models import TaskMeta
@@ -47,8 +47,13 @@ class Download(DateMixin, NameMixin, models.Model):
     def expired(self):
         return self.expires_at <= timezone.now()
 
+    def delete_file(self):
+        if self.file:
+            storage, path = self.file.storage, self.file.path
+            storage.delete(path)
+
+    @transaction.atomic
     def delete(self, remove_file=True, *args, **kwargs):
         super(Download, self).delete(*args, **kwargs)
         if remove_file:
-            shutil.rmtree(os.path.join(DOWNLOADS_DIRECTORY,
-                                       self.id))
+            self.delete_file()
