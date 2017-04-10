@@ -1,6 +1,3 @@
-https://github.com/jkeifer/drf-chunked-upload/tarball/master
 https://github.com/jkeifer/arcpy-extensions/tarball/master
-https://github.com/djangonauts/django-rest-framework-gis/tarball/master
-https://github.com/jkeifer/django-rest-auth/tarball/master
 
 -e .
