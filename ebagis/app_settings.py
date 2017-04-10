@@ -62,7 +62,9 @@ EBAGIS_APP_SETTINGS = {
             'rest_framework.authentication.SessionAuthentication',
             ),
         'DEFAULT_PERMISSION_CLASSES': (
-            'ebagis.permissions.IsAdminOrStaffOrAuthenticated',
+            'rest_framework.permissions.DjangoModelPermissions',
+            'rest_framework.permissions.IsAdminUser',
+            'ebagis.permissions.IsOwner',
             ),
         'PAGINATE_BY': 100,
         'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',

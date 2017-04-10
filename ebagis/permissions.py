@@ -4,6 +4,19 @@ from rest_framework import permissions
 ADMIN_METHODS = ('DELETE', )
 
 
+class IsOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj, user_field=None):
+        if user_field:
+            obj_user = getattr(obj, user_field)
+        else:
+            try:
+                obj_user = getattr(obj, 'created_by')
+            except AttributeError:
+                obj_user = getattr(obj, 'user')
+
+        return request.user == obj_user
+
+
 class IsAdminOrStaffOrAuthenticated(permissions.BasePermission):
     """
     The authenticated request is from a staff member,
