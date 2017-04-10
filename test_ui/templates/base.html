@@ -35,16 +35,13 @@
     {% block body %}
 
     {% if messages %}
-    <div id="messages">
-      <!--ul-->
+    <div id="messages" class="fixed-top ">
         {% for message in messages %}
-        <div class="alert alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger {% else %}{{ message.tags }}{% endif %} alert-dismissible" role="alert">
+        <div class="alert {{ message.tags }} fade show alert-fixed" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             {{ message }}
         </div>
-        <!--li>{{message}}</li-->
         {% endfor %}
-      <!--/ul-->
     </div>
     {% endif %}
 
@@ -57,8 +54,6 @@
 
     {% endblock %}
 
-    <script src="{% static 'rest_framework/js/coreapi-0.1.0.js' %}"></script>
-    <script src="{% url 'api-docs:schema-js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
@@ -67,5 +62,12 @@
     {% endblock %}
     {% block extra_body %}
     {% endblock %}
+    <script type="text/javascript">
+        window.setTimeout(function() {
+            $(".alert-autoclose").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 500);
+    </script>
   </body>
 </html>

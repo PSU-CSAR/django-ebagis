@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load ebagis_utils %}
 
 {% block head_title %}Account{% endblock %}
 
@@ -8,49 +9,56 @@
 {% if user.emailaddress_set.all %}
 <p>The following e-mail addresses are associated with your account:</p>
 
-<form action="{% url 'account_email' %}" class="email_list" method="post">
-{% csrf_token %}
-<fieldset class="blockLabels">
+<ul class="list-group">
 
-{% for emailaddress in user.emailaddress_set.all %}
-<div class="ctrlHolder">
-  <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
-    <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+  {% for emailaddress in user.emailaddress_set.all|dictsort_lower:"email" %}
+  <li class="list-group-item">
+    <form action="{% url 'account_email' %}" class="email_list" method="post">
+    {% csrf_token %}
+      <input name="email" value="{{emailaddress.email}}" hidden="true">
+      <div class="email-btn-group btn-group" role="group" aria-label="">
+        {% if emailaddress.verified %}
+        <button title="Verified" class="btn btn-secondary btn-md secondaryAction verified" disabled><i class="fa fa-check verified" aria-hidden="true"></i></button>
+        {% else %}
+        <button title="Send Verification" class="btn btn-secondary btn-md secondaryAction unverified" type="submit" name="action_send">
+          <i class="fa fa-times unverified" aria-hidden="true"></i>
+        </button>
+        {% endif %}
+        
+        {% if emailaddress.primary %}
+        <button title="Primary" class="btn btn-secondary btn-md secondaryAction primary" disabled><i class="fa fa-star primary" aria-hidden="true"></i></button>
+        <button title="Remove Email" class="btn btn-danger btn-md primaryAction"  disabled type="submit" name="action_remove" ><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        {% elif not emailaddress.verified %}
+        <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" disabled ><i class="fa fa-star-o" aria-hidden="true"></i></button>
+        <button title="Remove Email" class="btn btn-danger btn-md primaryAction" type="submit" name="action_remove" ><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        {% else %}
+        <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" type="submit" name="action_primary" ><i class="fa fa-star-o" aria-hidden="true"></i></button>
+        <button title="Remove Email" class="btn btn-danger btn-md primaryAction" type="submit" name="action_remove" ><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        {% endif %}
+      
+      </div>
+      {{ emailaddress.email }}
+    </form>
+  </li>
+  {% endfor %}
 
-    {{ emailaddress.email }}
+  {% else %}
+  <li class="list-group-item"><p><strong>Warning:</strong>You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p></li>
 
-    {% if emailaddress.verified %}
-    <span class="verified">Verified</span>
-    {% else %}
-    <span class="unverified">Unverified</span>
-    {% endif %}
-    {% if emailaddress.primary %}
-    <span class="primary">Primary</span>
   {% endif %}
-  </label>
-</div>
-{% endfor %}
-
-<div class="buttonHolder">
-      <button class="btn btn-primary secondaryAction" type="submit" name="action_primary" >Make Primary</button>
-      <button class="btn btn-primary secondaryAction" type="submit" name="action_send" >Re-send Verification</button>
-      <button class="btn btn-primary primaryAction" type="submit" name="action_remove" >Remove</button>
-</div>
-
-</fieldset>
-</form>
-
-{% else %}
-<p><strong>Warning:</strong>You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p>
-
-{% endif %}
-<h2>Add E-mail Address</h2>
-<form method="post" action="{% url 'account_email' %}" class="add_email">
-        {% csrf_token %}
-        {{ form|crispy }}
-  <button class="btn btn-primary" name="action_add" type="submit">Add E-mail</button>
-</form>
-
+  <!--h2>Add E-mail Address</h2-->
+  <li class="list-group-item">
+    <form method="post" action="{% url 'account_email' %}" class="add_email form-inline">
+      {% csrf_token %}
+      <div class="input-group"> 
+        <input class="textinput textInput form-control" id="id_email" name="email" placeholder="Add new E-mail address" size="30" type="email" required />
+        <span class="input-group-btn">
+          <button class="btn btn-primary" name="action_add" type="submit">Add</button>
+        </span>  
+      </div>
+    </form>
+  </li>
+</ul>
 {% endblock %}
 
 {% block extra_body %}

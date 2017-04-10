@@ -4,9 +4,7 @@ html, body {
   font-size: 14px;
   line-height: 1.1;
 }
-/*.page-content {
-  padding-top: 2rem;
-}*/
+
 body {
   padding-top: 48px;
 }
@@ -64,32 +62,14 @@ input[type="radio"], input[type="checkbox"] {
   margin-top: 0.4rem;
 }
 
-/*#messages {
-    -moz-animation: cssAnimation 0s ease-in 5s forwards;
-    /* Firefox 
-    -webkit-animation: cssAnimation 0s ease-in 5s forwards;
-    /* Safari and Chrome 
-    -o-animation: cssAnimation 0s ease-in 5s forwards;
-    /* Opera 
-    animation: cssAnimation 0s ease-in 5s forwards;
-    -webkit-animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
+.alert-fixed {
+    top: 49px; 
+    left: 0px; 
+    width: 100%;
+    z-index:9999; 
+    border-radius:0px;
+    margin-top: 49px;
 }
-@keyframes cssAnimation {
-    to {
-        width:0;
-        height:0;
-        overflow:hidden;
-    }
-}
-@-webkit-keyframes cssAnimation {
-    to {
-        width:0;
-        height:0;
-        visibility:hidden;
-    }
-}*/
-
 .no-value {
     font-style: italic;
     color: #adadad;
@@ -151,4 +131,37 @@ input[type="radio"], input[type="checkbox"] {
   border-radius: 3px;
   padding: 1rem;
   background-color: #fff;
+}
+
+.verified {
+  color: #00b300;
+}
+
+.unverified {
+  color: #B33A3A;
+}
+.add_email .form-control-label {
+  display: none;
+}
+
+.primary {
+  color: gold;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: orange;
+}
+
+.btn:disabled {
+  cursor: default;
+}
+
+.email_list {
+  padding-bottom: .25rem;
+}
+
+.email-btn-group {
+  padding-right: .25rem
+}
+
+.fa-times.unverified {
+  width: 14px;
 }
