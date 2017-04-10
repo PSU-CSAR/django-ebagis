@@ -38,7 +38,10 @@ setup(
         'django-rest-swagger>=2.0.4',
         'django-filter>=1.0.1',
         'django-allauth>=0.31.0',
-	'django-redis>=4.3.0',
+        'django-redis>=4.3.0',
+        'django-extensions>=1.4.9',
+        'django-windows-tools>=0.1.1',
+        'django-cors-middleware>=1.2.0',
     ],
     license='',
 )

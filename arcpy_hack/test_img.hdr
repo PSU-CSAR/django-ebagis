@@ -1,0 +1,38 @@
+ENVI
+description = {
+/Users/phoetrymaster/Documents/School/Geography/Thesis/Data/MODIS_KANSAS_2007-2012/reprojected/clips/KansasNDVI_2012_clip6.tif}
+samples = 100
+lines   = 100
+bands   = 23
+header offset = 0
+file type = ENVI Standard
+data type = 2
+interleave = bsq
+byte order = 0
+map info = {Albers Conical Equal Area, 1, 1, -124475.835878788, 1851204.17937519, 231.656358263967, 231.656358263937,WGS-84}
+projection info = {9, 6378137, 6356752.314245179, 23, -96, 0, 0, 29.5, 45.5,WGS-84, Albers Conical Equal Area}
+coordinate system string = {PROJCS["Albers",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Albers"],PARAMETER["standard_parallel_1",29.5],PARAMETER["standard_parallel_2",45.5],PARAMETER["latitude_of_origin",23],PARAMETER["central_meridian",-96],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["Meter",1]]}
+band names = {
+Band 1,
+Band 2,
+Band 3,
+Band 4,
+Band 5,
+Band 6,
+Band 7,
+Band 8,
+Band 9,
+Band 10,
+Band 11,
+Band 12,
+Band 13,
+Band 14,
+Band 15,
+Band 16,
+Band 17,
+Band 18,
+Band 19,
+Band 20,
+Band 21,
+Band 22,
+Band 23}
