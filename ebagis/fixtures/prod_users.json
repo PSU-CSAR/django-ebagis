@@ -1,0 +1,68 @@
+[
+    {
+        "fields": {
+            "date_joined": "2017-04-05T03:13:10.301Z",
+            "email": "jkeifer@pdx.edu",
+            "first_name": "",
+            "groups": [
+                [
+                    "NWCC_ADMIN"
+                ]
+            ],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": null,
+            "last_name": "",
+            "password": "",
+            "user_permissions": [],
+            "username": "jkeifer"
+        },
+        "model": "auth.user"
+    },
+    {
+        "fields": {
+            "date_joined": "2017-04-05T03:13:48.208Z",
+            "email": "jduh@pdx.edu",
+            "first_name": "",
+            "groups": [
+                [
+                    "NWCC_ADMIN"
+                ]
+            ],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": null,
+            "last_name": "",
+            "password": "",
+            "user_permissions": [],
+            "username": "jduh"
+        },
+        "model": "auth.user"
+    },
+    {
+        "fields": {
+            "email": "jkeifer@pdx.edu",
+            "primary": true,
+            "user": [
+                "jkeifer"
+            ],
+            "verified": true
+        },
+        "model": "account.emailaddress",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "email": "jduh@pdx.edu",
+            "primary": true,
+            "user": [
+                "jduh"
+            ],
+            "verified": true
+        },
+        "model": "account.emailaddress",
+        "pk": 2
+    }
+]
