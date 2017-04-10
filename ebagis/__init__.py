@@ -1,3 +1,5 @@
+default_app_config = 'ebagis.apps.EbagisConfig'
+
 def setup(settings_module_name):
     '''get the settings module and add the INSTALLED_APPS and settings
     variables to its scope'''
