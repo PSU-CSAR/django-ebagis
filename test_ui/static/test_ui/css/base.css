@@ -63,16 +63,16 @@ input[type="radio"], input[type="checkbox"] {
 }
 
 .alert-fixed {
-    top: 49px; 
-    left: 0px; 
-    width: 100%;
-    z-index:9999; 
-    border-radius:0px;
-    margin-top: 49px;
+  top: 49px; 
+  left: 0px; 
+  width: 100%;
+  z-index:9999; 
+  border-radius:0px;
+  margin-top: 49px;
 }
 .no-value {
-    font-style: italic;
-    color: #adadad;
+  font-style: italic;
+  color: #adadad;
 }
 
 #file-browser {
@@ -133,6 +133,7 @@ input[type="radio"], input[type="checkbox"] {
   background-color: #fff;
 }
 
+/* Emails */
 .verified {
   color: #00b300;
 }
@@ -162,9 +163,12 @@ input[type="radio"], input[type="checkbox"] {
   padding-right: .25rem
 }
 
+/* Max width of verified icon */
 .fa-times.unverified {
   width: 14px;
 }
+
+/* Requests */
 .gray-box {
   border-radius: 3px;
   padding: 1rem;
