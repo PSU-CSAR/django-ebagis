@@ -173,3 +173,24 @@ input[type="radio"], input[type="checkbox"] {
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
   margin: 0 auto;
 }
+
+.requests {
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+
+.request-title {
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: .5rem;
+  width: 100%;
+  background-color: rgb(238, 238, 238);
+}
+
+.success {
+  color: #00b300;
+}
+
+.fail {
+  color: #B33A3A;
+}

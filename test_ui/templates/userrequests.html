@@ -1,18 +1,101 @@
 {% extends 'base.html' %}
 
-{% block head_title %}User Profile{% endblock %}
+{% block head_title %}User Requests{% endblock %}
 
 {% block base_content %}
 {% with request.user as user %}
-<h1>{{ user.username }}</h1>
+<h1>Your Requests</h1>
 
-<p><strong>First name:</strong> {{ user.first_name }}</p>
-<p><strong>Last name:</strong> {{ user.last_name }}</p>
-<p><strong>Email address:</strong> {{ user.email }}</p>
-<p><strong>Date joined:</strong> {{ user.date_joined }}</p>
+<div class="requests">
+	<div class="request-title"><h4>Upload Requests</h4></div>
 
-<a type="button" class="btn btn-primary" href="{% url 'account_email' %}">Edit your email address</a>
+	<table class="table">
+	  <thead>
+		<tr>
+			<th>Status</th>
+			<th>File Name</th>
+			<th>Date Uploaded</th>
+			<th>Operation</th>
+			<th>Actions</th>
+		</tr>
+	  </thead>
+	  <tbody>
+			{% for upload in uploads %}
+			<tr>
+				{% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
+				<td><span class="badge badge-success">Completed</span></td>
+				{% elif upload.status == 2 and upload.task.status in processing_states  %}
+				<td><span class="badge badge-primary">Processing</span></td>
+				{% elif upload.status == 1  %}
+				<td><span class="badge badge-info">Incomplete</span></td>
+				{% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
+				<td><span class="badge badge-danger">Failed</span></td>
+				{% elif upload.status == 2 and upload.task.status in cancelled_states %}
+				<td><span class="badge badge-warning">Cancelled</span></td>
+				{% elif upload.status == 4 %}
+				<td><span class="badge badge-warning">Cancelled</span></td>
+				{% else %}
+				<td><span class="badge badge-default">Unknown</span></td>
+				{% endif %}
 
+				<td>{{ upload.filename }}</td>
+				<td>{{ upload.created_at }}</td>
+
+				{% if upload.is_update %}
+				<td>
+					<span class="badge badge-info">Update</span>
+				</td>
+				{% else %}
+				<td>
+					<span class="badge badge-primary">Create</span>
+				</td>
+				{% endif %}
+				<td>
+					<!-- view processed data -> something that is completed -->
+					{% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
+					<button class="btn btn-sm btn-success"><i class="fa fa-eye" aria-hidden="true"></i> View Result</button>
+					<!-- processing or incomplete -->
+					{% elif upload.status == 2 and upload.task.status in processing_states  %}
+					<button class="btn btn-sm btn-warning"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
+					{% elif upload.status == 1  %}
+					<button class="btn btn-sm btn-warning"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
+					<!-- if failed -> button for get error information -->
+					{% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
+					<button class="btn btn-sm btn-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
+					{% else %}
+					<span class="badge badge-default">N/A</span>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+	<button class="btn btn-primary">Choose File</button>
+</div>
+
+<div class="requests">
+	<div class="request-title"><h4>Dowload Requests</h4></div>
+	<table class="table">
+	  <thead>
+		<tr>
+		  <th>Status</th>
+		  <th>File Name</th>
+		  <th>Date Downloaded</th>
+		  <th>Operation</th>
+		  <th>Actions</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<tr>
+		  <td>File 1</td>
+		  <td>Otto</td>
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		</tr>
+	  </tbody>
+	</table>
+</div>
 {% endwith %}
 {% endblock %}
 

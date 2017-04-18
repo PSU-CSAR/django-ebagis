@@ -39,7 +39,7 @@ urlpatterns = [
         TemplateView.as_view(template_name='userprofile.html'),
         name="account_profile"),
     url(r'^accounts/requests/$',
-        TemplateView.as_view(template_name='userrequests.html'),
+        views.UserRequestView.as_view(),
         name="account_requests"),
     url(r'^accounts/', include('allauth.urls')),
 
