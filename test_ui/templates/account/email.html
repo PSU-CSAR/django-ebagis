@@ -37,13 +37,15 @@
         {% endif %}
       
       </div>
-      {{ emailaddress.email }}
+      <strong>{{ emailaddress.email }}</strong>
     </form>
   </li>
   {% endfor %}
 
   {% else %}
-  <li class="list-group-item"><p><strong>Warning:</strong>You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p></li>
+  <li class="list-group-item">
+    <p><strong>Warning:</strong> You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p>
+  </li>
 
   {% endif %}
   <!--h2>Add E-mail Address</h2-->
