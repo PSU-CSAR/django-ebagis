@@ -48,14 +48,19 @@ class AOIDetailsView(generic.DetailView):
 
 
 class UserRequestView(LoginRequiredMixin, TemplateView):
-	template_name = 'userrequests.html'
+    template_name = 'userrequests.html'
+    success_url = reverse_lazy('account_requests')
 
-	def get_context_data(self, **kwargs):
-		context = super(UserRequestView, self).get_context_data(**kwargs)
-		context['uploads'] = Upload.objects.filter(user=self.request.user)
-		context['downloads'] = Download.objects.filter(user=self.request.user)
-		context['processing_states'] = ['PENDING', 'RETRY', 'STARTED']
-		context['cancelled_states'] = ['ABORTED', 'REVOKED']
-		return context
+    def get_context_data(self, **kwargs):
+        context = super(UserRequestView, self).get_context_data(**kwargs)
+        context['uploads'] = Upload.objects.filter(user=self.request.user)
+        context['downloads'] = Download.objects.filter(user=self.request.user)
+        context['processing_states'] = ['PENDING', 'RETRY', 'STARTED']
+        context['cancelled_states'] = ['ABORTED', 'REVOKED']
+        return context
 
-	# write post method to cancel an upload, cancel download UserRequestView
+    # write post method to cancel an upload, cancel download UserRequestView
+    def post(self, request, *args, **kwargs):
+        if 'cancel_upload' in request.POST:
+            Upload.objects.get(id=request.POST['cancel_upload']).cancel()
+        return HttpResponseRedirect(self.success_url)

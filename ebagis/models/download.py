@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import os
 import uuid
 
 from django.conf import settings
@@ -36,6 +37,10 @@ class Download(DateMixin, NameMixin, models.Model):
     file = models.FileField(max_length=255, null=True, blank=True)
     # TODO: need a way to pass in a date to this
     querydate = models.DateTimeField(default=timezone.now)
+
+    @property
+    def filename(self):
+        return self.content_object.name
 
     @property
     def expires_at(self):

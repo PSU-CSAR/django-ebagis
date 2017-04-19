@@ -7,97 +7,152 @@
 <h1>Your Requests</h1>
 
 <div class="requests">
-	<div class="request-title"><h4>Upload Requests</h4></div>
+    <div class="request-title"><h4>Upload Requests</h4></div>
 
-	<table class="table">
-	  <thead>
-		<tr>
-			<th>Status</th>
-			<th>File Name</th>
-			<th>Date Uploaded</th>
-			<th>Operation</th>
-			<th>Actions</th>
-		</tr>
-	  </thead>
-	  <tbody>
-			{% for upload in uploads %}
-			<tr>
-				{% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
-				<td><span class="badge badge-success">Completed</span></td>
-				{% elif upload.status == 2 and upload.task.status in processing_states  %}
-				<td><span class="badge badge-primary">Processing</span></td>
-				{% elif upload.status == 1  %}
-				<td><span class="badge badge-info">Incomplete</span></td>
-				{% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
-				<td><span class="badge badge-danger">Failed</span></td>
-				{% elif upload.status == 2 and upload.task.status in cancelled_states %}
-				<td><span class="badge badge-warning">Cancelled</span></td>
-				{% elif upload.status == 4 %}
-				<td><span class="badge badge-warning">Cancelled</span></td>
-				{% else %}
-				<td><span class="badge badge-default">Unknown</span></td>
-				{% endif %}
+    <table class="table">
+      <thead>
+        <tr>
+            <th>Status</th>
+            <th>File Name</th>
+            <th>Date Uploaded</th>
+            <th>Operation</th>
+            <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+            {% for upload in uploads %}
+            <tr>
+                {% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
+                <td><span class="badge badge-success">Completed</span></td>
+                {% elif upload.status == 2 and upload.task.status in processing_states  %}
+                <td><span class="badge badge-primary">Processing</span></td>
+                {% elif upload.status == 1  %}
+                <td><span class="badge badge-info">Incomplete</span></td>
+                {% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
+                <td><span class="badge badge-danger">Failed</span></td>
+                {% elif upload.status == 2 and upload.task.status in cancelled_states %}
+                <td><span class="badge badge-warning">Cancelled</span></td>
+                {% elif upload.status == 4 %}
+                <td><span class="badge badge-warning">Cancelled</span></td>
+                {% else %}
+                <td><span class="badge badge-default">Unknown</span></td>
+                {% endif %}
 
-				<td>{{ upload.filename }}</td>
-				<td>{{ upload.created_at }}</td>
+                <td>{{ upload.filename }}</td>
+                <td>{{ upload.created_at }}</td>
 
-				{% if upload.is_update %}
-				<td>
-					<span class="badge badge-info">Update</span>
-				</td>
-				{% else %}
-				<td>
-					<span class="badge badge-primary">Create</span>
-				</td>
-				{% endif %}
-				<td>
-					<!-- view processed data -> something that is completed -->
-					{% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
-					<button class="btn btn-sm btn-success"><i class="fa fa-eye" aria-hidden="true"></i> View Result</button>
-					<!-- processing or incomplete -->
-					{% elif upload.status == 2 and upload.task.status in processing_states  %}
-					<button class="btn btn-sm btn-warning"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
-					{% elif upload.status == 1  %}
-					<button class="btn btn-sm btn-warning"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
-					<!-- if failed -> button for get error information -->
-					{% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
-					<button class="btn btn-sm btn-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
-					{% else %}
-					<span class="badge badge-default">N/A</span>
-					{% endif %}
-				</td>
-			</tr>
-		{% endfor %}
-	  </tbody>
-	</table>
-	<button class="btn btn-primary">Choose File</button>
+                {% if upload.is_update %}
+                <td>
+                    <span class="badge badge-info">Update</span>
+                </td>
+                {% else %}
+                <td>
+                    <span class="badge badge-primary">Create</span>
+                </td>
+                {% endif %}
+                <td>
+                    <!-- view processed data -> something that is completed -->
+                    {% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
+                    <a type="button" class="btn btn-sm btn-success" href="{% url 'aoi_details' upload.get_objects_aoi_id %}"><i class="fa fa-eye" aria-hidden="true"></i> View AOI</a>
+                    
+                    <!-- processing or incomplete -->
+                    {% elif upload.status == 2 and upload.task.status in processing_states  %}
+                    <form method="post" action="{% url 'account_requests' %}">
+                        {% csrf_token %}
+                        <input name="cancel_upload" value="{{ upload.id }}" hidden="true">
+                        <button class=class="btn btn-sm btn-warning" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
+                    </form>
+                    {% elif upload.status == 1  %}
+                    <form method="post" action="{% url 'account_requests' %}">
+                        {% csrf_token %}
+                        <input name="cancel_upload" value="{{ upload.id }}" hidden="true">
+                        <button class=class="btn btn-sm btn-warning" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
+                    </form>
+                    
+                    <!-- if failed -> button for get error information -->
+                    {% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
+                    <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ upload.filename }}" data-upload-traceback="{{ upload.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
+                    
+                    {% else %}
+                    <span class="badge badge-default">N/A</span>
+                    {% endif %}
+
+                </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 </div>
 
 <div class="requests">
-	<div class="request-title"><h4>Dowload Requests</h4></div>
-	<table class="table">
-	  <thead>
-		<tr>
-		  <th>Status</th>
-		  <th>File Name</th>
-		  <th>Date Downloaded</th>
-		  <th>Operation</th>
-		  <th>Actions</th>
-		</tr>
-	  </thead>
-	  <tbody>
-		<tr>
-		  <td>File 1</td>
-		  <td>Otto</td>
-		  <td></td>
-		  <td></td>
-		  <td></td>
-		</tr>
-	  </tbody>
-	</table>
+    <div class="request-title"><h4>Dowload Requests</h4></div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>File Name</th>
+          <th>Date Requested</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+            {% for download in downloads %}
+            <tr>
+                {% if download.task.status  == 'SUCCESS' %}
+                <td><span class="badge badge-success">Completed</span></td>
+                {% elif download.task.status in processing_states  %}
+                <td><span class="badge badge-primary">Processing</span></td>
+                {% elif download.task.status == 'FAILURE' %}
+                <td><span class="badge badge-danger">Failed</span></td>
+                {% elif download.task.status in cancelled_states %}
+                <td><span class="badge badge-warning">Cancelled</span></td>
+                {% else %}
+                <td><span class="badge badge-default">Unknown</span></td>
+                {% endif %}
+
+                <td>{{ download.filename }}</td>
+                <td>{{ download.created_at }}</td>
+
+                <td>
+                    <!-- view processed data -> something that is completed -->
+                    {% if download.task.status  == 'SUCCESS' %}
+                    <a type="button" class="btn btn-sm btn-success" href="{% url 'download-detail' download.id %}"><i class="fa fa-download" aria-hidden="true"></i> Get Download</a>
+                    
+                    <!-- if failed -> button for get error information -->
+                    {% elif download.task.status == 'FAILURE' %}
+                    <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ download.filename }}" data-upload-traceback="{{ download.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
+                    
+                    {% else %}
+                    <span class="badge badge-default">N/A</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 </div>
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+</div>
+{% include "./handlebars/taskerror.html" %}
 {% endwith %}
 {% endblock %}
 
 {% block extra_body %}
+<script type="text/javascript">
+$(document).on('click', '.task-error-button', function(event){
+    var button = this;
+    context = {
+        'upload_filename': $(button).attr('data-upload-filename'),
+        'traceback': $(button).attr('data-upload-traceback')
+    };
+    makeErrorModal(context);
+});
+
+var errorModalTemplate = Handlebars.compile($('#taskerrormodal-template').html());
+function makeErrorModal(context) {
+    $("#errorModal").html(errorModalTemplate(context));
+    $("#errorModal").modal("show");
+}
+</script>
 {% endblock %}

@@ -12,6 +12,8 @@ from drf_chunked_upload.models import ChunkedUpload
 
 from celery.states import state, REVOKED
 
+from ..data.models.aoi import AOI
+
 
 class Upload(ChunkedUpload):
     upload_dir = settings.UPLOADS_DIRECTORY
@@ -56,8 +58,17 @@ class Upload(ChunkedUpload):
             self.status = self.ABORTED
             self.save()
             return True
-        elif self.status >= self.FAILED or \
+        elif self.status >= self.ABORTED or \
                 (self.task and state(self.task.status) >= REVOKED):
             return False
         else:
             return None
+
+    def get_objects_aoi_id(self):
+        if self.content_type == ContentType.objects.get_for_model(AOI):
+            return self.object_id
+        else:
+            try:
+                return self.content_object.aoi.id
+            except AttributeError:
+                return None
