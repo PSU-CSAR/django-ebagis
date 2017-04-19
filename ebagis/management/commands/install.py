@@ -461,7 +461,7 @@ class Install(object):
             parse_version(
                 os.path.basename(os.path.dirname(d))[len('Desktop'):]
             )
-            for d in glob.glob(ARC_INSTALL_PREFIX+'*/')
+            for d in glob(ARC_INSTALL_PREFIX+'*/')
         ])[-1])
 
         self.vprint(2, 'Found version {} at {}'.format(
