@@ -9,6 +9,7 @@ import subprocess
 from getpass import getpass
 
 from six import iteritems
+from six.moves import input
 
 try:
     from django.core.management.base import (
