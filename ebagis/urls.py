@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from django.conf.urls import include, url
 from django.contrib.gis import admin
 
-#import test_ui.urls
+import ebagis_ui.urls
 
 from .settings import REST_ROOT, DEBUG
 from . import rest_urls
@@ -18,7 +18,7 @@ urlpatterns = [
     # rest urls
     url(r'^{}'.format(REST_ROOT), include(rest_urls.urlpatterns)),
 
-    #url(r'^', include(test_ui.urls.urlpatterns)),
+    url(r'^', include(ebagis_ui.urls.urlpatterns)),
 ]
 
 if DEBUG:
