@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load ebagis_utils %}
 
 {% block head_title %}AOI {{ aoi.name }}{% endblock %}
 
@@ -22,6 +23,16 @@
 	<span class="no-value">never</span>
 	{% endif %}
 </p>
+
+{% with aoi|content_type as ctype %}
+<form method="post" action="{% url 'aoi_details' aoi.id %}">
+    {% csrf_token %}
+    <input name="object_id" value="{{ aoi.id }}" hidden="true">
+    <input name="content_type" value="{{ ctype }}" hidden="true">
+    <input name="object_name" vlaue="{{ aoi.name }}" hidden="true">
+    <button class="btn btn-primary btn-block" type="submit" name="action_download"><i class="fa fa-download" aria-hidden="true"></i> Submit Download Request</button>
+</form>
+{% endwith %}
 
 <div class="row gray-box" id="file-browser">
 	<div class="col-4" id="file-list">
@@ -91,6 +102,7 @@
 				</div>
 				{% endwith %}
 
+				{% if aoi.contents.zones_ %}}
 				{% with aoi.contents.zones_ as dir %}
 				<div class="details-row card">
 					<div class="details-row-header card-header" role="tab" id="{{ dir.id }}">
@@ -232,6 +244,7 @@
 
 				</div>
 				{% endwith %}
+				{% endif %}
 
 			</div>
 		</div>
