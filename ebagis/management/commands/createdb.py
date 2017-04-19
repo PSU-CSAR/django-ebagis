@@ -37,6 +37,12 @@ class Command(BaseCommand):
                  'Default is to prompt user for input.',
         )
         parser.add_argument(
+            '--create-superuser',
+            action='store_false',
+            help='Make the created DB user a superuser. '
+                 'Default is false, unless ENV is development.',
+        )
+        parser.add_argument(
             '--template',
             default='postgis_21',
             help='An existing database template to use. '
@@ -95,10 +101,16 @@ class Command(BaseCommand):
 
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
+
         try:
             cur.execute("CREATE USER {} WITH ENCRYPTED PASSWORD '{}' CREATEDB;".format(dbuser, dbpass))
         except ProgrammingError:
             pass
+        else:
+            if options.get('create_superuser') or \
+                    settings.ENV == 'development':
+                cur.execute('ALTER ROLE {} SUPERUSER'.format(dbuser))
+
         cur.execute('CREATE DATABASE {} WITH ENCODING \'UTF-8\' OWNER {} TEMPLATE {} TABLESPACE {};'.format(dbname, dbuser, options['template'], options['tablespace']))
         cur.execute('GRANT ALL PRIVILEGES ON DATABASE {} TO {};'.format(dbname, dbuser))
         cur.close()

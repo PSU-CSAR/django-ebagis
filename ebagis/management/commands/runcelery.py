@@ -76,6 +76,7 @@ class Command(BaseCommand):
                 'broker': settings.BROKER_URL,
                 'loglevel': 'INFO',
                 'traceback': True,
+                'hostname': settings.INSTANCE_NAME,
             }
 
             celery_worker.run(**options)
