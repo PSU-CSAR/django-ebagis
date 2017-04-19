@@ -1,0 +1,16 @@
+{% extends "account/base.html" %}
+
+{% block head_title %}Verify Your E-mail Address{% endblock %}
+
+{% block content %}
+<h1>Almost there!</h1>
+
+{% url 'account_email' as email_url %}
+
+<p>We have sent an e-mail to you for
+verification. Please click on the link inside this e-mail.</p>
+
+<p><strong>Note:</strong> you can still <a href="{{ email_url }}">change your e-mail address</a>.</p>
+
+
+{% endblock %}

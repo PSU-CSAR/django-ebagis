@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load ebagis_utils %}
+
+{% block head_title %}Account{% endblock %}
+
+{% block base_content %}
+<h1>E-mail Addresses</h1>
+{% if user.emailaddress_set.all %}
+<p>The following e-mail addresses are associated with your account:</p>
+
+<ul class="list-group">
+
+  {% for emailaddress in user.emailaddress_set.all|dictsort_lower:"email" %}
+  <li class="list-group-item">
+    <form action="{% url 'account_email' %}" class="email_list" method="post">
+    {% csrf_token %}
+      <input name="email" value="{{emailaddress.email}}" hidden="true">
+      <div class="email-btn-group btn-group" role="group" aria-label="">
+        {% if emailaddress.verified %}
+        <button title="Verified" class="btn btn-secondary btn-md secondaryAction verified" disabled><i class="fa fa-check verified" aria-hidden="true"></i></button>
+        {% else %}
+        <button title="Send Verification" class="btn btn-secondary btn-md secondaryAction unverified" type="submit" name="action_send">
+          <i class="fa fa-times unverified" aria-hidden="true"></i>
+        </button>
+        {% endif %}
+        
+        {% if emailaddress.primary %}
+        <button title="Primary" class="btn btn-secondary btn-md secondaryAction primary" disabled><i class="fa fa-star primary" aria-hidden="true"></i></button>
+        <button title="Remove Email" class="btn btn-danger btn-md primaryAction"  disabled type="submit" name="action_remove" ><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        {% elif not emailaddress.verified %}
+        <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" disabled ><i class="fa fa-star-o" aria-hidden="true"></i></button>
+        <button title="Remove Email" class="btn btn-danger btn-md primaryAction" type="submit" name="action_remove" ><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        {% else %}
+        <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" type="submit" name="action_primary" ><i class="fa fa-star-o" aria-hidden="true"></i></button>
+        <button title="Remove Email" class="btn btn-danger btn-md primaryAction" type="submit" name="action_remove" ><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        {% endif %}
+      
+      </div>
+      <strong>{{ emailaddress.email }}</strong>
+    </form>
+  </li>
+  {% endfor %}
+
+  {% else %}
+  <li class="list-group-item">
+    <p><strong>Warning:</strong> You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p>
+  </li>
+
+  {% endif %}
+  <!--h2>Add E-mail Address</h2-->
+  <li class="list-group-item">
+    <form method="post" action="{% url 'account_email' %}" class="add_email form-inline">
+      {% csrf_token %}
+      <div class="input-group"> 
+        <input class="textinput textInput form-control" id="id_email" name="email" placeholder="Add new E-mail address" size="30" type="email" required />
+        <span class="input-group-btn">
+          <button class="btn btn-primary" name="action_add" type="submit">Add</button>
+        </span>  
+      </div>
+    </form>
+  </li>
+</ul>
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+(function() {
+  var message = "Do you really want to remove the selected e-mail address?";
+  var actions = document.getElementsByName('action_remove');
+  if (actions.length) {
+    actions[0].addEventListener("click", function(e) {
+      if (! confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}User Profile{% endblock %}
+
+{% block base_content %}
+{% with request.user as user %}
+<h1>{{ user.username }}</h1>
+
+<p><strong>First name:</strong> {{ user.first_name }}</p>
+<p><strong>Last name:</strong> {{ user.last_name }}</p>
+<p><strong>Email address:</strong> {{ user.email }}</p>
+<p><strong>Date joined:</strong> {{ user.date_joined }}</p>
+
+<a type="button" class="btn btn-primary" href="{% url 'account_email' %}">Edit your email address</a>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+(function() {
+  var message = "Do you really want to remove the selected e-mail address?";
+  var actions = document.getElementsByName('action_remove');
+  if (actions.length) {
+    actions[0].addEventListener("click", function(e) {
+      if (! confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  }
+})();
+
+function submitForm(form, action) {
+  $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize() + '&' + action,
+      success: function (data) {
+          console.log(form.serialize());
+          console.log("success");
+          $("#ctrlHolder").html(data);
+      },
+      error: function(data) {
+          console.log(form.serialize());
+          console.log("fail")
+          $("#MESSAGE-DIV").html("Something went wrong!");
+      }
+  });
+  event.preventDefault();
+  return false;
+}
+</script>
+{% endblock %}

@@ -71,4 +71,3 @@ touch_this_file_to_update_cgi.txt
 *.db
 *~
 .DS_Store
-
