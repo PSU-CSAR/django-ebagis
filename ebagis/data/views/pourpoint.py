@@ -3,6 +3,8 @@ from __future__ import absolute_import
 from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 
 from ...renderers import GeoJSONRenderer
 
@@ -14,6 +16,7 @@ from ..serializers.pourpoint import (
 from ..serializers.aoi import AOIListSerializer
 
 
+@permission_classes((AllowAny, ))
 class PourPointViewSet(viewsets.ModelViewSet):
     # we only want to show pourpoints with an associated AOI record
     queryset = PourPoint.objects.filter(aois__isnull=False).distinct()
@@ -30,6 +33,7 @@ class PourPointViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+@permission_classes((AllowAny, ))
 class PourPointBoundaryViewSet(viewsets.ModelViewSet):
     # we only want to show pourpoints with an associated AOI record
     queryset = PourPoint.objects.filter(aois__isnull=False).distinct()

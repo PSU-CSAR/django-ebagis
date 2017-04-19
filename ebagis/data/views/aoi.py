@@ -6,6 +6,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 
 from ...renderers import GeoJSONRenderer
 
@@ -26,6 +28,7 @@ from .mixins import (
 )
 
 
+@permission_classes((AllowAny, ))
 class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
                  viewsets.ModelViewSet):
     """
