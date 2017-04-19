@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import os
+
 import uuid
 
 from django.conf import settings
@@ -10,8 +10,6 @@ from django.db import transaction
 from django.contrib.gis.db import models
 
 from djcelery.models import TaskMeta
-
-from ..settings import DOWNLOADS_DIRECTORY, EXPIRATION_DELTA
 
 from .mixins import DateMixin, NameMixin
 
@@ -41,7 +39,7 @@ class Download(DateMixin, NameMixin, models.Model):
 
     @property
     def expires_at(self):
-        return self.created_at + EXPIRATION_DELTA
+        return self.created_at + settings.EXPIRATION_DELTA
 
     @property
     def expired(self):

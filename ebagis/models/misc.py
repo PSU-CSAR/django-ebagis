@@ -18,12 +18,6 @@ from django.utils.translation import ugettext_lazy as _
 # get the expire hours setting, default of 1 week
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS',  168)
 
-# Prior to Django 1.5, the AUTH_USER_MODEL setting does not exist.
-# Note that we don't perform this code in the compat module due to
-# bug report #1297
-# See: https://github.com/tomchristie/django-rest-framework/issues/1297
-AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
-
 MAX_RETRIES = 2**16
 
 
@@ -35,7 +29,7 @@ class ExpiringToken(models.Model):
     """
     key = models.CharField(_("Key"), max_length=40, unique=True)
     user = models.OneToOneField(
-        AUTH_USER_MODEL,
+        settings.AUTH_USER_MODEL,
         related_name='token',
         on_delete=models.CASCADE, verbose_name=_("User"),
         primary_key=True

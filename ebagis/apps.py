@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
+from django.db.utils import Error
 
 
 def create_or_update_nwcc_user_groups():
@@ -10,9 +11,9 @@ def create_or_update_nwcc_user_groups():
     from django.db.models import Q
     from django.contrib.contenttypes.models import ContentType
 
-    # we get the content type IDs for all ebagis models
+    # we get the content type IDs for all ebagis.data models
     ebagis_content_types = \
-        [ct.id for ct in ContentType.objects.filter(app_label='ebagis')]
+        [ct.id for ct in ContentType.objects.filter(app_label='ebagis_data')]
 
     # we get all the permissions for the ebagis models
     ebagis_permissions = Permission.objects.filter(
@@ -50,4 +51,7 @@ class EbagisConfig(AppConfig):
         # every time the app loads, we want to ensure
         # the NWCC group permissions are up-to-date
         # in case any new models were added
-        create_or_update_nwcc_user_groups()
+        try:
+            create_or_update_nwcc_user_groups()
+        except Error:
+            print 'Warning: DB does not exist, is not initialized, or otherwise has errors.'

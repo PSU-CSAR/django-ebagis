@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from django.conf import settings
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
@@ -10,11 +12,9 @@ from drf_chunked_upload.models import ChunkedUpload
 
 from celery.states import state, REVOKED
 
-from ..settings import UPLOADS_DIRECTORY
-
 
 class Upload(ChunkedUpload):
-    upload_dir = UPLOADS_DIRECTORY
+    upload_dir = settings.UPLOADS_DIRECTORY
     ABORTED = 4
     STATUS_CHOICES = ChunkedUpload.STATUS_CHOICES + (
         (ABORTED, 'Aborted'),

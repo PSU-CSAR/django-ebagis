@@ -61,9 +61,11 @@ target/
 
 # ebagis stuff
 start_celery.bat
-*secret.py
-ebagis_site/email.py
+project.conf
 aois/
+ebagis/settings/email.py
+ebagis/settings/local_settings.py
+touch_this_file_to_update_cgi.txt
 
 # Other
 *.db
