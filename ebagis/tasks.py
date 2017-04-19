@@ -11,18 +11,16 @@ from .utils.filesystem import tempdirectory, get_path_from_tempdir
 from .utils.zipfile import unzipfile, zip_directory
 from .utils.transaction import abortable_task
 
-from .settings import TEMP_DIRECTORY, DOWNLOADS_DIRECTORY
+from .settings import EBAGIS_TEMP_DIRECTORY, EBAGIS_DOWNLOADS_DIRECTORY
 
 
 @abortable_task
 def export_data(self, download_id):
     download = Download.objects.get(pk=download_id)
-    out_dir = os.path.join(DOWNLOADS_DIRECTORY, download_id)
+    out_dir = os.path.join(EBAGIS_DOWNLOADS_DIRECTORY, download_id)
     os.makedirs(out_dir)
 
-    print download.querydate
-
-    with tempdirectory(prefix="AOI_", dir=TEMP_DIRECTORY,
+    with tempdirectory(prefix="AOI_", dir=EBAGIS_TEMP_DIRECTORY,
                        do_not_remove=settings.DEBUG) as tempdir:
         temp_aoi_dir = download.content_object.export(
             tempdir,
@@ -49,7 +47,7 @@ def process_upload(self, upload_id):
 
     temp_prefix = upload_class.__name__ + "_"
 
-    with tempdirectory(prefix=temp_prefix, dir=TEMP_DIRECTORY,
+    with tempdirectory(prefix=temp_prefix, dir=EBAGIS_TEMP_DIRECTORY,
                        do_not_remove=settings.DEBUG) as tempdir:
         print "Extracting upload zip to {}.".format(tempdir)
         unzipfile(zip_path, tempdir)

@@ -23,7 +23,7 @@ except ImportError:
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 ALLOWED_HOSTS = []
 
@@ -31,7 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = (
     # project
-    #'test_ui',
+    'ebagis',
+    'ebagis.data',
+    'ebagis_ui',
 
     # django libs
     'django.contrib.admin',
@@ -42,6 +44,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.sites',
+
+    'crispy_forms',
+    'django_filters',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -90,3 +95,22 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+
+
+# Message settings
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info alert-autoclose',
+    messages.INFO: 'alert-info alert-dismissible',
+    messages.SUCCESS: 'alert-success alert-autoclose',
+    messages.WARNING: 'alert-warning alert-dismissible',
+    messages.ERROR: 'alert-danger alert-dismissible',
+}
+
+MIGRATION_MODULES = {
+    'sites': 'ebagis.fixtures.sites_migrations',
+    'socialaccount': 'ebagis.fixtures.socialaccount_migrations',
+}
+
+# django sites
+SITE_ID = 1

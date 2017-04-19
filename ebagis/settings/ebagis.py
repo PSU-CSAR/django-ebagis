@@ -1,16 +1,17 @@
 import os
 from datetime import timedelta
 
-INSTALLED_APPS += (
-    'ebagis',
-    'ebagis.data',
-)
+#INSTALLED_APPS += (
+#    'ebagis',
+#    'ebagis.data',
+#    'ebagis_ui',
+#)
 
 # Path where AOI files will be stored
 AOI_DIRECTORY = os.path.join(BASE_DIR, 'AOIs')
 
 # Path where AOI and download zips will be temporarily stored unzipped
-TEMP_DIRECTORY = None
+EBAGIS_TEMP_DIRECTORY = None
 
 # Path where download files will be stored
 UPLOADS_DIRECTORY = os.path.join(
@@ -18,7 +19,7 @@ UPLOADS_DIRECTORY = os.path.join(
 )
 
 # Path where download files will be stored
-DOWNLOADS_DIRECTORY = os.path.join(MEDIA_ROOT, r'downloads')
+EBAGIS_DOWNLOADS_DIRECTORY = os.path.join(MEDIA_ROOT, 'downloads2')
 
 # Download Expiration Time
 EXPIRATION_DELTA = timedelta(days=1)

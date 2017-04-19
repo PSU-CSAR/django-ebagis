@@ -1,7 +1,7 @@
 # templates settings
 TEMPLATES = (
     {
-        'TEMPLATE_DEBUG': DEBUG,
+        #'DEBUG': DEBUG,
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             'templates',
@@ -21,3 +21,6 @@ TEMPLATES = (
         },
     },
 )
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_FAIL_SILENTLY = not DEBUG
