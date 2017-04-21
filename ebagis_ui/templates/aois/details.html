@@ -256,7 +256,6 @@
 
 {% block extra_body %}
 <script>
-
 $('#file-list').on('show.bs.collapse', '.details-row', function(e) {
   $(this).find(".expand-icon").first().removeClass('fa-plus-square').addClass('fa-minus-square');
   e.stopPropagation();
@@ -267,11 +266,6 @@ $('#file-list').on('hide.bs.collapse', '.details-row', function(e) {
   $(this).find(".expand-icon").first().removeClass('fa-minus-square').addClass('fa-plus-square');
   e.stopPropagation();
   //e.stopImmediatePropagation();
-});
-
-
-$(document).on('click', '.file-name', function(){
-  console.log("file-name");
 });
 </script>
 {% endblock %}
