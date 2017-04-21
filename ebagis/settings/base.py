@@ -112,5 +112,11 @@ MIGRATION_MODULES = {
     'socialaccount': 'ebagis.fixtures.socialaccount_migrations',
 }
 
+
 # django sites
 SITE_ID = 1
+
+
+# project-wide email settings
+EMAIL_SUBJECT_PREFIX = "[ebagis] "
+DEFAULT_FROM_EMAIL = "ebagis@pdx.edu"

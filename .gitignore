@@ -63,7 +63,6 @@ target/
 start_celery.bat
 project.conf
 aois/
-ebagis/settings/email.py
 ebagis/settings/local_settings.py
 touch_this_file_to_update_cgi.txt
 

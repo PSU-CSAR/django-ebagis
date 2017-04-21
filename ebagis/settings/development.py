@@ -12,3 +12,6 @@ GRAPH_MODELS = {
     'all_applications': True,
     'group_models': True,
 }
+
+# send emails to the console for devs
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
