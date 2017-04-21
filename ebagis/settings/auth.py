@@ -16,7 +16,6 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-ACCOUNT_ADAPTER = "ebagis.user.adapter.AccountAdapter"
 
 #REST_SESSION_LOGIN = False,
 #REST_AUTH_TOKEN_MODEL = 'ebagis.models.ExpiringToken'
