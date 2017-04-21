@@ -22,6 +22,10 @@ urlpatterns = [
         TemplateView.as_view(template_name='map/map.html'),
         name='ebagis_home'),
 
+    # we have to have this seemingly useless route to
+    # the aoi_root_url because we have to reverse it in
+    # the AOI modal on the map, and provide an id for
+    # the details page using handlebars and ajax data
     url(r'^aois/$'.format(PK_QUERY),
         TemplateView.as_view(template_name='map/map.html'),
         name='aoi_root_url'),
