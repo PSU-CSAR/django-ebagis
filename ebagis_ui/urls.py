@@ -40,7 +40,7 @@ urlpatterns = [
     url(r'^accounts/login/$', allauth_views.login, name="account_login",
         kwargs={'redirect_authenticated_user': True}),
     url(r'^accounts/profile/$',
-        TemplateView.as_view(template_name='userprofile.html'),
+        views.UserProfileView.as_view(template_name='userprofile.html'),
         name="account_profile"),
 
     url(r'^accounts/downloads/$',

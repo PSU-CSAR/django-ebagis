@@ -7,6 +7,8 @@ from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 
+from allauth.account.views import EmailView
+
 from djcelery.models import TaskMeta
 
 from ebagis.data.models.aoi import AOI
@@ -74,3 +76,22 @@ class UploadRequestView(LoginRequiredMixin, TemplateView):
         if 'cancel_upload' in request.POST:
             Upload.objects.get(id=request.POST['cancel_upload']).cancel()
         return HttpResponseRedirect(self.success_url)
+
+
+class UserProfileView(LoginRequiredMixin, EmailView):
+    template_name = "userprofile.html"
+    success_url = reverse_lazy('account_profile')
+
+    def post(self, request, *args, **kwargs):
+        if "action_update" in request.POST:
+            request.user.first_name = request.POST['first_name']
+            request.user.last_name = request.POST['last_name']
+            request.user.save()
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                'User details updated successfully.',
+            )
+            return HttpResponseRedirect(self.success_url)
+        else:
+            return super(UserProfileView, self).post(request, *args, **kwargs)

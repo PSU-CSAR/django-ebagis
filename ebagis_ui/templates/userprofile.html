@@ -1,18 +1,95 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load ebagis_utils %}
 
 {% block head_title %}User Profile{% endblock %}
 
 {% block base_content %}
 {% with request.user as user %}
 <h1>{{ user.username }}</h1>
+<p><em>Date joined: {{ user.date_joined }}</em></p>
 
-<p><strong>First name:</strong> {{ user.first_name }}</p>
-<p><strong>Last name:</strong> {{ user.last_name }}</p>
-<p><strong>Email address:</strong> {{ user.email }}</p>
-<p><strong>Date joined:</strong> {{ user.date_joined }}</p>
+<form action="{% url 'account_profile' %}" class="user_info" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_first_name">First Name</label>
+        <input name="first_name" id="id_first_name" class="form-control" type="text" value="{{ user.first_name }}" placeholder="First Name">
+    </div>
+    <div class="form-group">
+        <label for="id_last_name">Last Name</label>
+        <input name="last_name" id="id_last_name" class="form-control" type="text" value="{{ user.last_name }}" placeholder="Last Name">
+    </div>
+    <button title="Save Changes" class="btn btn-primary btn-md primaryAction" type="submit" name="action_update" >Save Changes</button>
+    <button title="Cancel Changes" type="button" class="btn btn-primary btn-md primaryAction" onclick="resetForm('{{ user.first_name }}', '{{ user.last_name }}');" >Cancel</button>
+    <a class="btn btn-primary btn-md primaryAction pull-right" href="{% url 'account_change_password' %}" role="button" title="Change Password">Change Password</a>
+</form>
 
-<a type="button" class="btn btn-primary" href="{% url 'account_email' %}">Edit your email address</a>
+<div class="emails">
+    <table class="table table-striped">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Your Email Addresses</th>
+                <th class='text-right'>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if user.emailaddress_set.all %}
+            {% for emailaddress in user.emailaddress_set.all|dictsort_lower:"email" %}
+            <tr>
+                <form action="{% url 'account_profile' %}" class="email_list" method="post">
+                    {% csrf_token %}
+                    <td>
+                      {{ emailaddress.email }}
+                      <input name="email" value="{{emailaddress.email}}" hidden="true">
+                    </td>
+                    <td class='text-right'>
+                        <div class="email-btn-group btn-group" role="group" aria-label="">
+                            {% if emailaddress.verified %}
+                            <button title="Verified" class="btn btn-secondary btn-md secondaryAction verified" disabled><i class="fa fa-check verified" aria-hidden="true"></i></button>
+                            {% else %}
+                            <button title="Send Verification" class="btn btn-secondary btn-md secondaryAction unverified" type="submit" name="action_send">
+                              <i class="fa fa-paper-plane-o unverified" aria-hidden="true"></i>
+                            </button>
+                            {% endif %}
+                            
+                            {% if emailaddress.primary %}
+                            <button title="Primary" class="btn btn-secondary btn-md secondaryAction primary" disabled><i class="fa fa-star primary" aria-hidden="true"></i></button>
+                            <button title="Remove Email" class="btn btn-danger btn-md primaryAction"  disabled type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                            {% elif not emailaddress.verified %}
+                            <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" disabled><i class="fa fa-star-o" aria-hidden="true"></i></button>
+                            <button title="Remove Email" class="btn btn-danger btn-md primaryAction action-remove" type="submit" name="action_remove"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                            {% else %}
+                            <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" type="submit" name="action_primary"><i class="fa fa-star-o" aria-hidden="true"></i></button>
+                            <button title="Remove Email" class="btn btn-danger btn-md primaryAction action-remove" type="submit" name="action_remove"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </form>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>     
+                <td colspan="2">
+                    <p><strong>Warning:</strong> You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p>
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td colspan="2">
+                    <form method="post" action="{% url 'account_profile' %}" class="add_email">
+                        {% csrf_token %}
+                        <div class="input-group"> 
+                            <input class="textinput textInput form-control" id="id_email" name="email" placeholder="Add new E-mail address" type="email" required>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" name="action_add" type="submit">Add</button>
+                            </span>  
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 {% endwith %}
 {% endblock %}
@@ -21,34 +98,16 @@
 <script type="text/javascript">
 (function() {
   var message = "Do you really want to remove the selected e-mail address?";
-  var actions = document.getElementsByName('action_remove');
-  if (actions.length) {
-    actions[0].addEventListener("click", function(e) {
-      if (! confirm(message)) {
-        e.preventDefault();
-      }
-    });
-  }
+  $(document).on('click', '.action-remove', function(event) {
+    if (! confirm(message)) {
+      event.preventDefault();
+    }
+  });
 })();
 
-function submitForm(form, action) {
-  $.ajax({
-      type: form.attr('method'),
-      url: form.attr('action'),
-      data: form.serialize() + '&' + action,
-      success: function (data) {
-          console.log(form.serialize());
-          console.log("success");
-          $("#ctrlHolder").html(data);
-      },
-      error: function(data) {
-          console.log(form.serialize());
-          console.log("fail")
-          $("#MESSAGE-DIV").html("Something went wrong!");
-      }
-  });
-  event.preventDefault();
-  return false;
+function resetForm(firstName, lastName) {
+    $('#id_first_name').val(firstName);
+    $('#id_last_name').val(lastName);
 }
 </script>
 {% endblock %}
