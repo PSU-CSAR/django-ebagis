@@ -42,7 +42,8 @@
           </a>
           <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="{% url 'account_profile' %}">Your Profile</a>
-            <a class="dropdown-item" href="{% url 'account_requests' %}">Your Requests</a>
+            <a class="dropdown-item" href="{% url 'account_requests_upload' %}">Upload Requests</a>
+            <a class="dropdown-item" href="{% url 'account_requests_download' %}">Download Requests</a>
             {% if user.is_staff %}
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href={% url 'admin:index' %}>eBAGIS Admin</a>

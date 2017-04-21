@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block head_title %}Download Requests{% endblock %}
+
+{% block base_content %}
+{% with request.user as user %}
+<h1>Download Requests</h1>
+
+<div class="requests">
+    <div class="request-wrapper">
+    	<h4 class="request-title">Dowload Requests</h4>
+    	<div class="request-table-wrapper">
+	    	<table class="table request-table">
+		      	<thead>
+			        <tr>
+						<th>Status</th>
+						<th>File Name</th>
+						<th>Date Requested</th>
+						<th>Actions</th>
+			        </tr>
+		      	</thead>
+		      	<tbody>
+		            {% for download in downloads %}
+		            <tr>
+		                {% if download.task.status  == 'SUCCESS' %}
+		                <td><span class="badge badge-success">Completed</span></td>
+		                {% elif download.task.status in processing_states  %}
+		                <td><span class="badge badge-primary">Processing</span></td>
+		                {% elif download.task.status == 'FAILURE' %}
+		                <td><span class="badge badge-danger">Failed</span></td>
+		                {% elif download.task.status in cancelled_states %}
+		                <td><span class="badge badge-warning">Cancelled</span></td>
+		                {% else %}
+		                <td><span class="badge badge-default">Unknown</span></td>
+		                {% endif %}
+
+		                <td>{{ download.filename }}</td>
+		                <td>{{ download.created_at }}</td>
+
+		                <td>
+		                    <!-- view processed data -> something that is completed -->
+		                    {% if download.task.status  == 'SUCCESS' %}
+		                    <a class="btn btn-sm btn-success" href="{% url 'download-detail' download.id %}" role="button"><i class="fa fa-download" aria-hidden="true"></i> Get Download</a>
+		                    
+		                    <!-- if failed -> button for get error information -->
+		                    {% elif download.task.status == 'FAILURE' %}
+		                    <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ download.filename }}" data-upload-traceback="{{ download.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
+		                    
+		                    {% else %}
+		                    <span class="badge badge-default">N/A</span>
+		                    {% endif %}
+		                </td>
+		            </tr>
+		        	{% endfor %}
+				</tbody>
+	    	</table>
+    	</div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+</div>
+{% include "./handlebars/taskerror.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+$(document).on('click', '.task-error-button', function(event){
+    var button = this;
+    context = {
+        'upload_filename': $(button).attr('data-upload-filename'),
+        'traceback': $(button).attr('data-upload-traceback')
+    };
+    makeErrorModal(context);
+});
+
+var errorModalTemplate = Handlebars.compile($('#taskerrormodal-template').html());
+function makeErrorModal(context) {
+    $("#errorModal").html(errorModalTemplate(context));
+    $("#errorModal").modal("show");
+}
+</script>
+{% endblock %}

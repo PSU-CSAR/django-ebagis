@@ -41,25 +41,35 @@ class AOIDetailsView(generic.DetailView):
                 request,
                 messages.INFO,
                 mark_safe(('AOI download request submitted successfully. '
-                           '<a href="{}">View your requests here.</a>'
-                           .format(reverse('account_requests')))),
+                           '<a href="{}">View your download requests here.</a>'
+                           .format(reverse('account_requests_download')))),
             )
             return HttpResponseRedirect(request.path)
 
 
-class UserRequestView(LoginRequiredMixin, TemplateView):
-    template_name = 'userrequests.html'
-    success_url = reverse_lazy('account_requests')
+class DownloadRequestView(LoginRequiredMixin, TemplateView):
+    template_name = 'downloadrequests.html'
+    success_url = reverse_lazy('account_requests_download')
 
     def get_context_data(self, **kwargs):
-        context = super(UserRequestView, self).get_context_data(**kwargs)
-        context['uploads'] = Upload.objects.filter(user=self.request.user)
-        context['downloads'] = Download.objects.filter(user=self.request.user)
+        context = super(DownloadRequestView, self).get_context_data(**kwargs)
+        context['downloads'] = Download.objects.filter(user=self.request.user).order_by('-created_at')
         context['processing_states'] = ['PENDING', 'RETRY', 'STARTED']
         context['cancelled_states'] = ['ABORTED', 'REVOKED']
         return context
 
-    # write post method to cancel an upload, cancel download UserRequestView
+
+class UploadRequestView(LoginRequiredMixin, TemplateView):
+    template_name = 'uploadrequests.html'
+    success_url = reverse_lazy('account_requests_upload')
+
+    def get_context_data(self, **kwargs):
+        context = super(UploadRequestView, self).get_context_data(**kwargs)
+        context['uploads'] = Upload.objects.filter(user=self.request.user).order_by('-created_at')
+        context['processing_states'] = ['PENDING', 'RETRY', 'STARTED']
+        context['cancelled_states'] = ['ABORTED', 'REVOKED']
+        return context
+
     def post(self, request, *args, **kwargs):
         if 'cancel_upload' in request.POST:
             Upload.objects.get(id=request.POST['cancel_upload']).cancel()

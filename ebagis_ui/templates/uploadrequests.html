@@ -4,7 +4,7 @@
 
 {% block base_content %}
 {% with request.user as user %}
-<h1>Your Requests</h1>
+<h1>Upload Requests</h1>
 
 <div class="requests">
     <div class="request-wrapper">
@@ -58,13 +58,13 @@
 	                        
 	                        <!-- processing or incomplete -->
 	                        {% elif upload.status == 2 and upload.task.status in processing_states  %}
-	                        <form method="post" action="{% url 'account_requests' %}">
+	                        <form method="post" action="{% url 'account_requests_upload' %}">
 	                            {% csrf_token %}
 	                            <input name="cancel_upload" value="{{ upload.id }}" hidden="true">
 	                            <button class="btn btn-sm btn-warning" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
 	                        </form>
 	                        {% elif upload.status == 1  %}
-	                        <form method="post" action="{% url 'account_requests' %}">
+	                        <form method="post" action="{% url 'account_requests_upload' %}">
 	                            {% csrf_token %}
 	                            <input name="cancel_upload" value="{{ upload.id }}" hidden="true">
 	                            <button class="btn btn-sm btn-warning" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
@@ -84,58 +84,6 @@
 	          	</tbody>
 	        </table>
         </div>
-    </div>
-</div>
-
-<div class="requests">
-    <div class="request-wrapper">
-    	<h4 class="request-title">Dowload Requests</h4>
-    	<div class="request-table-wrapper">
-	    	<table class="table request-table">
-		      	<thead>
-			        <tr>
-						<th>Status</th>
-						<th>File Name</th>
-						<th>Date Requested</th>
-						<th>Actions</th>
-			        </tr>
-		      	</thead>
-		      	<tbody>
-		            {% for download in downloads %}
-		            <tr>
-		                {% if download.task.status  == 'SUCCESS' %}
-		                <td><span class="badge badge-success">Completed</span></td>
-		                {% elif download.task.status in processing_states  %}
-		                <td><span class="badge badge-primary">Processing</span></td>
-		                {% elif download.task.status == 'FAILURE' %}
-		                <td><span class="badge badge-danger">Failed</span></td>
-		                {% elif download.task.status in cancelled_states %}
-		                <td><span class="badge badge-warning">Cancelled</span></td>
-		                {% else %}
-		                <td><span class="badge badge-default">Unknown</span></td>
-		                {% endif %}
-
-		                <td>{{ download.filename }}</td>
-		                <td>{{ download.created_at }}</td>
-
-		                <td>
-		                    <!-- view processed data -> something that is completed -->
-		                    {% if download.task.status  == 'SUCCESS' %}
-		                    <a class="btn btn-sm btn-success" href="{% url 'download-detail' download.id %}" role="button"><i class="fa fa-download" aria-hidden="true"></i> Get Download</a>
-		                    
-		                    <!-- if failed -> button for get error information -->
-		                    {% elif download.task.status == 'FAILURE' %}
-		                    <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ download.filename }}" data-upload-traceback="{{ download.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
-		                    
-		                    {% else %}
-		                    <span class="badge badge-default">N/A</span>
-		                    {% endif %}
-		                </td>
-		            </tr>
-		        	{% endfor %}
-				</tbody>
-	    	</table>
-    	</div>
     </div>
 </div>
 

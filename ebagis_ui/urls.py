@@ -38,9 +38,14 @@ urlpatterns = [
     url(r'^accounts/profile/$',
         TemplateView.as_view(template_name='userprofile.html'),
         name="account_profile"),
-    url(r'^accounts/requests/$',
-        views.UserRequestView.as_view(),
-        name="account_requests"),
+
+    url(r'^accounts/downloads/$',
+        views.DownloadRequestView.as_view(),
+        name="account_requests_download"),
+    url(r'^accounts/uploads/$',
+        views.UploadRequestView.as_view(),
+        name="account_requests_upload"),
+
     url(r'^accounts/', include('allauth.urls')),
 
 ]
