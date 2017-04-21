@@ -9,7 +9,7 @@ from django.conf import settings
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ebagis.settings')
 
-app = Celery('ebagis_site',
+app = Celery(settings.INSTANCE_NAME,
              broker=settings.BROKER_URL)
 
 # Using a string here means the worker will not have to
