@@ -3,9 +3,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin.sites import NotRegistered
 
+from .models.download import Download
 from .models.misc import ExpiringToken
+from .models.upload import Upload
 
 from .utils.user import deactivate
+
+
+admin.site.register(Upload, admin.ModelAdmin)
+admin.site.register(Download, admin.ModelAdmin)
 
 
 def gen_new_token(modeladmin, request, queryset):
