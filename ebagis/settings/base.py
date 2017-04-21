@@ -9,19 +9,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from __future__ import absolute_import
 
-
-#email settings from external file
-try:
-    from .email import *
-except ImportError:
-    raise Exception(
-        "Please copy ebagis_site/email_template.py to " +
-        "ebagis_site/email.py and edit the values as required."
-    )
+import os
+from django.contrib.messages import constants as messages
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -98,7 +90,6 @@ STATICFILES_FINDERS = (
 
 
 # Message settings
-from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info alert-autoclose',
     messages.INFO: 'alert-info alert-dismissible',
