@@ -81,7 +81,7 @@ input[type="radio"], input[type="checkbox"] {
   border: 1px solid rgba(0,0,0,0.15);
   background-color: #eee;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-  margin: 0 auto;
+  margin: 1rem auto;
 }
 
 #file-list {
@@ -175,7 +175,7 @@ input[type="radio"], input[type="checkbox"] {
   border: 1px solid rgba(0,0,0,0.15);
   background-color: #eee;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-  margin: 0 auto;
+  margin: 1rem auto;
 }
 
 .requests {
@@ -191,4 +191,13 @@ input[type="radio"], input[type="checkbox"] {
   color: #B33A3A;
 }
 
+/* Profile Page */
+.white-box {
+  background-color: #fff;
+  overflow-y: auto;
+  height: 100%;
+}
 
+.email-wrapper {
+  margin-top: 1rem;
+}
