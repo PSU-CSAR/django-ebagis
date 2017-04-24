@@ -5,6 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 from djcelery.models import TaskMeta
 
@@ -24,6 +26,7 @@ from ..utils.queries import admin_queryset_filter
 from .filters import make_model_filter
 
 
+@permission_classes((IsAuthenticated, ))
 class DownloadViewSet(viewsets.ModelViewSet):
     model = Download
     serializer_class = DownloadSerializer
