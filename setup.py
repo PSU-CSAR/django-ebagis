@@ -49,7 +49,7 @@ def main():
             'Django>=1.10.6',
             'djangorestframework>=3.6.2',
             'GDAL>=2.1.0',
-            'drf-chunked-upload>=0.2.2',
+            'drf-chunked-upload>=0.3.0',
             'arcpy-extensions>=0.0.4',
             'djangorestframework-gis>=0.11.0',
             'django-rest-swagger>=2.0.4',

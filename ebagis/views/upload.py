@@ -80,7 +80,7 @@ class UploadView(ChunkedUploadView):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request is None or self.request.method not in ['PUT', 'POST']:
-            serializer_class = UploadSerializer
+            serializer_class = UploadCreateSerializer
         return serializer_class
 
     def get_queryset(self):
