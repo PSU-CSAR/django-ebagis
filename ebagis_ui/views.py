@@ -17,7 +17,7 @@ from ebagis.models.download import Download
 from ebagis.tasks import export_data
 
 
-class AOIDetailsView(generic.DetailView):
+class AOIDetailsView(LoginRequiredMixin, generic.DetailView):
     template_name = 'aois/details.html'
     queryset = AOI.objects.all()
 
