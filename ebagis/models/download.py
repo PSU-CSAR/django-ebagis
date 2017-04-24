@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import os
 import uuid
 
 from django.conf import settings
@@ -9,6 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.gis.db import models
+
+from celery import states
 
 from djcelery.models import TaskMeta
 
@@ -49,6 +50,22 @@ class Download(DateMixin, NameMixin, models.Model):
     @property
     def expired(self):
         return self.expires_at <= timezone.now()
+
+    @property
+    def nstatus(self):
+        if self.task.status == states.SUCCESS:
+            status = 'COMPLETED'
+        elif self.task.status == states.PENDING:
+            status = 'QUEUED'
+        elif self.task.status in [states.RETRY, states.STARTED]:
+            status = 'PROCESSING'
+        elif self.task.status == states.FAILURE:
+            status = 'FAILED'
+        elif self.task.status in ['ABORTED', states.REVOKED]:
+            status = 'CANCELLED'
+        else:
+            status = 'UNKNOWN'
+        return status
 
     def delete_file(self):
         if self.file:

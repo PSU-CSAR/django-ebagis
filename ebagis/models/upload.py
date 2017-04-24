@@ -10,7 +10,7 @@ from djcelery.models import TaskMeta
 
 from drf_chunked_upload.models import ChunkedUpload
 
-from celery.states import state, REVOKED
+from celery import states
 
 from ..data.models.aoi import AOI
 
@@ -37,6 +37,24 @@ class Upload(ChunkedUpload):
     task = models.ForeignKey(TaskMeta, related_name='upload',
                              null=True, blank=True, on_delete=models.CASCADE)
 
+    @property
+    def nstatus(self):
+        if self.status == self.COMPLETE and self.task.status  == states.SUCCESS:
+            status = 'COMPLETED'
+        elif self.status == self.COMPLETE and self.task.status  == states.PENDING:
+            status = 'QUEUED'
+        elif self.status == self.COMPLETE and self.task.status in [states.RETRY, states.STARTED]:
+            status = 'PROCESSING'
+        elif self.status == self.UPLOADING:
+            status = 'INCOMPLETE'
+        elif self.status == self.COMPLETE and self.task.status == states.FAILURE:
+            status = 'FAILED'
+        elif (self.status == self.COMPLETE and self.task.status in ['ABORTED', states.REVOKED]) or self.status == self.ABORTED:
+            status = 'CANCELLED'
+        else:
+            status = 'UNKNOWN'
+        return status
+
     def is_aborted(self):
         return self.status == self.ABORTED
 
@@ -52,14 +70,15 @@ class Upload(ChunkedUpload):
             self.save()
             return True
         elif self.status == self.COMPLETE and \
-                state(self.task.status) < REVOKED:
+                states.state(self.task.status) < states.REVOKED:
             task = process_upload.AsyncResult(self.task.task_id)
             task.abort()
             self.status = self.ABORTED
             self.save()
             return True
         elif self.status >= self.ABORTED or \
-                (self.task and state(self.task.status) >= REVOKED):
+                (self.task and states.state(self.task.status) >=
+                 states.REVOKED):
             return False
         else:
             return None

@@ -19,13 +19,15 @@
       	<tbody>
             {% for download in downloads %}
             <tr>
-                {% if download.task.status  == 'SUCCESS' %}
+                {% if download.nstatus == 'COMPLETED' %}
                 <td><span class="badge badge-success">Completed</span></td>
-                {% elif download.task.status in processing_states  %}
+                {% elif download.nstatus == 'QUEUED'  %}
+                <td><span class="badge badge-primary">Queued</span></td>
+                {% elif download.nstatus == 'PROCESSING'  %}
                 <td><span class="badge badge-primary">Processing</span></td>
-                {% elif download.task.status == 'FAILURE' %}
+                {% elif download.nstatus == 'FAILED' %}
                 <td><span class="badge badge-danger">Failed</span></td>
-                {% elif download.task.status in cancelled_states %}
+                {% elif download.nstatus == 'CANCELLED' %}
                 <td><span class="badge badge-warning">Cancelled</span></td>
                 {% else %}
                 <td><span class="badge badge-default">Unknown</span></td>
@@ -35,12 +37,10 @@
                 <td>{{ download.created_at }}</td>
 
                 <td>
-                    <!-- view processed data -> something that is completed -->
-                    {% if download.task.status  == 'SUCCESS' %}
+                    {% if download.nstatus  == 'COMPLETED' %}
                     <a class="btn btn-sm btn-success" href="{% url 'download-detail' download.id %}" role="button"><i class="fa fa-download" aria-hidden="true"></i> Get Download</a>
                     
-                    <!-- if failed -> button for get error information -->
-                    {% elif download.task.status == 'FAILURE' %}
+                    {% elif download.nstatus == 'FAILED' %}
                     <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ download.filename }}" data-upload-traceback="{{ download.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
                     
                     {% else %}

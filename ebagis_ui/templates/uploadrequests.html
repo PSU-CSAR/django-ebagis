@@ -20,17 +20,17 @@
       	<tbody>
             {% for upload in uploads %}
             <tr>
-                {% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
+                {% if upload.nstatus == 'COMPLETED' %}
                 <td><span class="badge badge-success">Completed</span></td>
-                {% elif upload.status == 2 and upload.task.status in processing_states  %}
+                {% elif upload.nstatus == 'QUEUED'  %}
+                <td><span class="badge badge-primary">Queued</span></td>
+                {% elif upload.nstatus == 'PROCESSING'  %}
                 <td><span class="badge badge-primary">Processing</span></td>
-                {% elif upload.status == 1  %}
+                {% elif upload.nstatus == 'INCOMPLETE'  %}
                 <td><span class="badge badge-info">Incomplete</span></td>
-                {% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
+                {% elif upload.nstatus == 'FAILED' %}
                 <td><span class="badge badge-danger">Failed</span></td>
-                {% elif upload.status == 2 and upload.task.status in cancelled_states %}
-                <td><span class="badge badge-warning">Cancelled</span></td>
-                {% elif upload.status == 4 %}
+                {% elif upload.nstatus == 'CANCELLED' %}
                 <td><span class="badge badge-warning">Cancelled</span></td>
                 {% else %}
                 <td><span class="badge badge-default">Unknown</span></td>
@@ -49,32 +49,22 @@
                 </td>
                 {% endif %}
                 <td>
-                    <!-- view processed data -> something that is completed -->
-                    {% if upload.status  == 2 and upload.task.status  == 'SUCCESS' %}
+                    {% if upload.nstatus == 'COMPLETED' %}
                     <a class="btn btn-sm btn-success" href="{% url 'aoi_details' upload.get_objects_aoi_id %}" role="button"><i class="fa fa-eye" aria-hidden="true"></i> View AOI</a>
                     
-                    <!-- processing or incomplete -->
-                    {% elif upload.status == 2 and upload.task.status in processing_states  %}
-                    <form method="post" action="{% url 'account_requests_upload' %}">
-                        {% csrf_token %}
-                        <input name="cancel_upload" value="{{ upload.id }}" hidden="true">
-                        <button class="btn btn-sm btn-warning" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
-                    </form>
-                    {% elif upload.status == 1  %}
+                    {% elif upload.nstatus == 'QUEUED' or upload.nstatus == 'PROCESSING' or upload.nstatus == 'INCOMPLETE' %}
                     <form method="post" action="{% url 'account_requests_upload' %}">
                         {% csrf_token %}
                         <input name="cancel_upload" value="{{ upload.id }}" hidden="true">
                         <button class="btn btn-sm btn-warning" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
                     </form>
                     
-                    <!-- if failed -> button for get error information -->
-                    {% elif upload.status == 2 and upload.task.status == 'FAILURE' %}
+                    {% elif upload.nstatus == 'FAILED' %}
                     <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ upload.filename }}" data-upload-traceback="{{ upload.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
                     
                     {% else %}
                     <span class="badge badge-default">N/A</span>
                     {% endif %}
-
                 </td>
             </tr>
         	{% endfor %}
