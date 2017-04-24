@@ -153,6 +153,10 @@ class FileWrapper(object):
         self.start = start
         self.filelike.seek(start)
         self.end = end
+
+        # get methods off filelike
+        self.tell = filelike.tell
+        self.read = filelike.read
         if hasattr(filelike, ' close'):
             self.close = filelike.close
 
@@ -164,18 +168,18 @@ class FileWrapper(object):
 
     def _read(self, key=None):
         blocksize = self.blocksize
-        current_position = self.filelike.tell()
+        current_position = self.tell()
 
         if key:
-            self.filelike.seek(self.start + blocksize * key)
+            self.seek(blocksize * key)
 
-        if self.end and self.filelike.tell() + self.blocksize > self.end:
-            blocksize = self.end - self.filelike.tell()
+        if self.end and self.tell() + self.blocksize > self.end:
+            blocksize = self.end - self.tell()
 
-        data = self.filelike.read(blocksize)
+        data = self.read(blocksize)
 
         if key:
-            self.filelike.seek(current_position)
+            self.seek(current_position)
 
         if data:
             return data
