@@ -10,7 +10,7 @@
 
 
 <h1>{{ user.username }}</h1>
-<p><em>Date joined: {{ user.date_joined }}</em></p>
+<p><em>Date joined: {{ user.date_joined|date:"DATE_FORMAT" }}</em></p>
 
 <div class="gray-box ">
     <h5>Your Info</h5>  
@@ -18,20 +18,20 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="id_first_name">First Name</label>
-            <input name="first_name" id="id_first_name" class="form-control" type="text" value="{{ user.first_name }}" placeholder="First Name">
+            <input name="first_name" id="id_first_name" class="form-control" type="text" value="{{ user.first_name }}" placeholder="First Name" data-original-val="{{ user.first_name }}" oninput="inputHandler()">
         </div>
         <div class="form-group">
             <label for="id_last_name">Last Name</label>
-            <input name="last_name" id="id_last_name" class="form-control" type="text" value="{{ user.last_name }}" placeholder="Last Name">
+            <input name="last_name" id="id_last_name" class="form-control" type="text" value="{{ user.last_name }}" placeholder="Last Name" data-original-val="{{ user.last_name }}" oninput="inputHandler()">
         </div>
-        <button title="Save Changes" class="btn btn-primary btn-md primaryAction" type="submit" name="action_update" >Save Changes</button>
-        <button title="Cancel Changes" type="button" class="btn btn-primary btn-md primaryAction" onclick="resetForm('{{ user.first_name }}', '{{ user.last_name }}');" >Cancel</button>
+        <button id="user-save-btn" title="Save Changes" class="btn btn-primary btn-md primaryAction" type="submit" name="action_update" disabled>Save Changes</button>
+        <button id="user-cancel-btn" title="Cancel Changes" type="button" class="btn btn-primary btn-md primaryAction" onclick="resetForm()" disabled>Cancel</button>
         <a class="btn btn-primary btn-md primaryAction pull-right" href="{% url 'account_change_password' %}" role="button" title="Change Password">Change Password</a>
     </form>
 </div>
 <div class="gray-box">
     <div class="white-box emails">
-        <table class="table table-striped">
+        <table class="table">
             <thead class="thead-inverse">
                 <tr>
                     <th>Your Email Addresses</th>
@@ -112,9 +112,23 @@
   });
 })();
 
-function resetForm(firstName, lastName) {
-    $('#id_first_name').val(firstName);
-    $('#id_last_name').val(lastName);
+function inputHandler() {
+    var firstName = $('#id_first_name');
+    var lastName = $('#id_last_name');
+    if (firstName.val() === firstName.attr('data-original-val') && lastName.val() === lastName.attr('data-original-val')) {
+        $('#user-save-btn').attr('disabled', true);
+        $('#user-cancel-btn').attr('disabled', true);
+    } else {
+        $('#user-save-btn').removeAttr('disabled');
+        $('#user-cancel-btn').removeAttr('disabled');
+    }
+}
+
+function resetForm() {
+    $('#id_first_name').val($('#id_first_name').attr('data-original-val'));
+    $('#id_last_name').val($('#id_last_name').attr('data-original-val'));
+    $('#user-save-btn').attr('disabled', true);
+    $('#user-cancel-btn').attr('disabled', true);
 }
 </script>
 {% endblock %}
