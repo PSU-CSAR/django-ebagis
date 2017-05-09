@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
 
 from allauth.account.views import EmailView
 
@@ -49,28 +51,26 @@ class AOIDetailsView(LoginRequiredMixin, generic.DetailView):
             return HttpResponseRedirect(request.path)
 
 
-class DownloadRequestView(LoginRequiredMixin, TemplateView):
+class DownloadRequestView(LoginRequiredMixin, generic.ListView):
     template_name = 'downloadrequests.html'
     success_url = reverse_lazy('account_requests_download')
+    model = Download
+    context_object_name = 'downloads'
+    paginate_by = 20
 
-    def get_context_data(self, **kwargs):
-        context = super(DownloadRequestView, self).get_context_data(**kwargs)
-        context['downloads'] = Download.objects.filter(user=self.request.user).order_by('-created_at')
-        context['processing_states'] = ['PENDING', 'RETRY', 'STARTED']
-        context['cancelled_states'] = ['ABORTED', 'REVOKED']
-        return context
+    def get_queryset(self):
+        return Download.objects.filter(user=self.request.user).order_by('-created_at')
 
 
-class UploadRequestView(LoginRequiredMixin, TemplateView):
+class UploadRequestView(LoginRequiredMixin, generic.ListView):
     template_name = 'uploadrequests.html'
     success_url = reverse_lazy('account_requests_upload')
+    model = Upload
+    context_object_name = 'uploads'
+    paginate_by = 20
 
-    def get_context_data(self, **kwargs):
-        context = super(UploadRequestView, self).get_context_data(**kwargs)
-        context['uploads'] = Upload.objects.filter(user=self.request.user).order_by('-created_at')
-        context['processing_states'] = ['PENDING', 'RETRY', 'STARTED']
-        context['cancelled_states'] = ['ABORTED', 'REVOKED']
-        return context
+    def get_queryset(self):
+        return Upload.objects.filter(user=self.request.user).order_by('-created_at')
 
     def post(self, request, *args, **kwargs):
         if 'cancel_upload' in request.POST:
