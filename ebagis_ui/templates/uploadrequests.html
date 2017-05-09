@@ -21,34 +21,34 @@
             {% for upload in uploads %}
             <tr>
                 {% if upload.nstatus == 'COMPLETED' %}
-                <td><span class="badge badge-success">Completed</span></td>
+                <td class="align-middle"><span class="badge badge-success">Completed</span></td>
                 {% elif upload.nstatus == 'QUEUED'  %}
-                <td><span class="badge badge-primary">Queued</span></td>
+                <td class="align-middle"><span class="badge badge-primary">Queued</span></td>
                 {% elif upload.nstatus == 'PROCESSING'  %}
-                <td><span class="badge badge-primary">Processing</span></td>
+                <td class="align-middle"><span class="badge badge-primary">Processing</span></td>
                 {% elif upload.nstatus == 'INCOMPLETE'  %}
-                <td><span class="badge badge-info">Incomplete</span></td>
+                <td class="align-middle"><span class="badge badge-info">Incomplete</span></td>
                 {% elif upload.nstatus == 'FAILED' %}
-                <td><span class="badge badge-danger">Failed</span></td>
+                <td class="align-middle"><span class="badge badge-danger">Failed</span></td>
                 {% elif upload.nstatus == 'CANCELLED' %}
-                <td><span class="badge badge-warning">Cancelled</span></td>
+                <td class="align-middle"><span class="badge badge-warning">Cancelled</span></td>
                 {% else %}
-                <td><span class="badge badge-default">Unknown</span></td>
+                <td class="align-middle"><span class="badge badge-default">Unknown</span></td>
                 {% endif %}
 
-                <td>{{ upload.filename }}</td>
-                <td>{{ upload.created_at }}</td>
+                <td class="align-middle">{{ upload.filename }}</td>
+                <td class="align-middle">{{ upload.created_at }}</td>
 
                 {% if upload.is_update %}
-                <td>
+                <td class="align-middle">
                     <span class="badge badge-info">Update</span>
                 </td>
                 {% else %}
-                <td>
+                <td class="align-middle">
                     <span class="badge badge-primary">Create</span>
                 </td>
                 {% endif %}
-                <td>
+                <td class="align-middle">
                     {% if upload.nstatus == 'COMPLETED' %}
                     <a class="btn btn-sm btn-success" href="{% url 'aoi_details' upload.get_objects_aoi_id %}" role="button"><i class="fa fa-eye" aria-hidden="true"></i> View AOI</a>
                     
