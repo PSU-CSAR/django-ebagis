@@ -75,55 +75,6 @@ input[type="radio"], input[type="checkbox"] {
   color: #adadad;
 }
 
-#file-browser {
-  border-radius: 3px;
-  padding: 1rem;
-  border: 1px solid rgba(0,0,0,0.15);
-  background-color: #eee;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16);
-  margin: 1rem auto;
-}
-
-#file-list {
-  height: 400px;
-  padding-left: 0px;
-}
-
-#file-list h6 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#file-list .card-block {
-  padding-right: 0px;
-  padding-bottom: 0px;
-  padding-top: 0px;
-}
-
-#file-list .card {
-  border: 0px;
-  border-radius: 0px;
-}
-
-#file-list .card-header {
-  cursor: pointer; 
-  border-bottom: 0px;
-  padding: .25rem;
-  background-color: #fff;
-}
-#file-list .card-header:hover {
-  background-color: rgba(0,0,0,0.15);
-}
-#file-list-wrapper {
-  background-color: #fff;
-  overflow-y: auto;
-  padding: 1rem;
-  height: 100%;
-}
-#file-list .expand-icon {
-  cursor: default;
-}
 .alert {
   margin-bottom: 0px;
 }

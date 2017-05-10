@@ -15,3 +15,7 @@ def content_type(obj):
     if not obj:
         return None
     return ContentType.objects.get_for_model(obj).id
+
+@register.filter
+def multiply(value, arg):
+    return value*arg

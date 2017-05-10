@@ -1,258 +1,526 @@
 {% extends 'base.html' %}
 {% load ebagis_utils %}
+{% load staticfiles %}
 
 {% block head_title %}AOI {{ aoi.name }}{% endblock %}
 
-{% block base_content %}
-<h1>{{ aoi.name }}</h1>
-
-{% if aoi.comment == '' %}
-<p class="no-value">No description</p>
-{% else %}
-<p>{{ aoi.comment }}</p>
-{% endif %}
-
-<p><strong>Created by:</strong> {{ aoi.created_by.username }}</p>
-
-<p><strong>Created at:</strong> {{ aoi.created_at }}</p>
-
-<p><strong>Last updated:</strong> 
-	{% if aoi.modified_at and aoi.modified_at != aoi.created_at %}
-	{{ aoi.modified_at }}
-	{% else %}
-	<span class="no-value">never</span>
-	{% endif %}
-</p>
-
-{% with aoi|content_type as ctype %}
-<form method="post" action="{% url 'aoi_details' aoi.id %}">
-    {% csrf_token %}
-    <input name="object_id" value="{{ aoi.id }}" hidden="true">
-    <input name="content_type" value="{{ ctype }}" hidden="true">
-    <input name="object_name" vlaue="{{ aoi.name }}" hidden="true">
-    <button class="btn btn-primary btn-block" type="submit" name="action_download"><i class="fa fa-download" aria-hidden="true"></i> Submit Download Request</button>
-</form>
-{% endwith %}
-
-<div class="row gray-box" id="file-browser">
-	<div class="col-4" id="file-list">
-		<div id="file-list-wrapper">
-			<div id="accordionAOI" role="tablist" aria-multiselectable="true">
-				{% with aoi.contents.surfaces as dir %}
-				<div class="details-row card">
-					<div class="details-row-header card-header" role="tab" id="{{ dir.name }}">
-						<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-							<a>{{ dir.name }}</a>
-						</h6>
-					</div>
-
-					<div id="collapse{{ dir.name }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.name }}">
-						<div class="card-block">
-
-							<div id="accordion{{ dir.name }}objects" role="tablist" aria-multiselectable="true">
-								{% for file in dir.files.all %}
-								<div class="card">
-									<div class="file-name card-header" role="tab" id="{{ dir.name }}-file-{{ file.id }}">
-										<h6 class="mb-0">
-											<!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
-											{{ file.name }}
-											<!--/a-->
-										</h6>
-									</div>
-								</div>
-								{% endfor %}
-							</div>
-
-						</div>
-					</div>
-
-				</div>
-				{% endwith %}
-
-				{% with aoi.contents.layers as dir %}
-				<div class="details-row card">
-					<div class="details-row-header card-header" role="tab" id="{{ dir.name }}">
-						<h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-							<a>
-								{{ dir.name }}
-							</a>
-						</h6>
-					</div>
-
-					<div id="collapse{{ dir.name }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.name }}">
-						<div class="card-block">
-
-							<div id="accordion{{ dir.name }}objects" role="tablist" aria-multiselectable="true">
-								{% for file in dir.files.all %}
-								<div class="card">
-									<div class="file-name card-header" role="tab" id="{{ dir.name }}-file-{{ file.id }}">
-										<h6 class="mb-0">
-											<!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
-											{{ file.name }}
-											<!--/a-->
-										</h6>
-									</div>
-								</div>
-								{% endfor %}
-							</div>
-
-						</div>
-					</div>
-
-				</div>
-				{% endwith %}
-
-				{% if aoi.contents.zones_ %}}
-				{% with aoi.contents.zones_ as dir %}
-				<div class="details-row card">
-					<div class="details-row-header card-header" role="tab" id="{{ dir.id }}">
-						<h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.id }}" aria-expanded="false" aria-controls="collapse{{ dir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-							<a>
-								{{ dir.name }}
-							</a>
-						</h6>
-					</div>
-
-					<div id="collapse{{ dir.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.id }}">
-						<div class="card-block">
-
-							<div id="accordion{{ dir.id }}objects" role="tablist" aria-multiselectable="true">
-							    {% for subdir in dir.hruzones.all %}
-								<div class="details-row card">
-									<div class="details-row-header card-header" role="tab" id="{{ subdir.id }}">
-										<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ subdir.id }}" aria-expanded="false" aria-controls="collapse{{ subdir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-											<a>
-											{{ subdir.name }}
-											</a>
-										</h6>
-									</div>
-
-									<div id="collapse{{ subdir.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ subdir.id }}">
-										<div class="card-block">
-
-											<div id="accordion{{ subdir.id }}objects" role="tablist" aria-multiselectable="true">
-												{% for version in subdir.versions.all %}
-												<div class="details-row card">
-													<div class="details-row-header card-header" role="tab" id="{{ version.id }}">
-														<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ version.id }}" aria-expanded="false" aria-controls="collapse{{ version.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-															<a>
-															{{ version.name }}
-															</a>
-														</h6>
-													</div>
-
-													<div id="collapse{{ version.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ version.id }}">
-														<div class="card-block">
-
-															<div id="accordion{{ version.id }}objects" role="tablist" aria-multiselectable="true">
-																{% with version.hru as hru %}
-																<div class="details-row card">
-																	<div class="details-row-header card-header" role="tab" id="{{ hru.id }}">
-																		<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ hru.id }}" aria-expanded="false" aria-controls="collapse{{ hru.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-																			<a>
-																				{{ hru.name }}
-																			</a>
-																		</h6>
-																	</div>
-
-																	<div id="collapse{{ hru.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ hru.id }}">
-																		<div class="card-block">
-
-																			<div id="accordion{{ hru.id }}objects" role="tablist" aria-multiselectable="true">
-																				{% for file in hru.files.all %}
-																				<div class="card">
-																					<div class="file-name card-header" role="tab" id="{{ file.id }}">
-																						<h6 class="mb-0">
-																							<!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
-																							{{ file.name }}
-																							<!--/a-->
-																						</h6>
-																					</div>
-																				</div>
-																				{% endfor %}
-																			</div>
-
-																		</div>
-																	</div>
-
-																</div>
-																{% endwith %}
-
-																{% with version.param as param %}
-																<div class="details-row card">
-																	<div class="details-row-header card-header" role="tab" id="{{ param.id }}">
-																		<h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ param.id }}" aria-expanded="false" aria-controls="collapse{{ param.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
-																			<a>
-																				{{ dir.name }}
-																			</a>
-																		</h6>
-																	</div>
-
-																	<div id="collapse{{ param.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ param.id }}">
-																		<div class="card-block">
-
-																			<div id="accordion{{ param.id }}objects" role="tablist" aria-multiselectable="true">
-																				{% for file in param.files.all %}
-																				<div class="card">
-																					<div class="file-name card-header" role="tab" id="{{ file.id }}">
-																						<h6 class="mb-0">
-																							<!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
-																							{{ file.name }}
-																							<!--/a-->
-																						</h6>
-																					</div>
-																				</div>
-																				{% endfor %}
-																			</div>
-
-																		</div>
-																	</div>
-
-																</div>
-																{% endwith %}
-
-																{% with version.xml as file %}
-																<div class="card">
-																	<div class="file-name card-header" role="tab" id="{{ file.id }}">
-																		<h6 class="mb-0">
-																			<!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
-																			{{ file.name }}
-																			<!--/a-->
-																		</h6>
-																	</div>
-																</div>
-																{% endwith %}
-
-														    </div>
-														</div>
-												    </div>
-
-												</div>
-												{% endfor %}
-
-											</div>
-										</div>
-									</div>
-
-								</div>
-								{% endfor %}
-								
-							</div>
-
-						</div>
-					</div>
-
-				</div>
-				{% endwith %}
-				{% endif %}
-
-			</div>
-		</div>
-	</div>	
-	<div id="info" class="col-8">some info</div>
-</div>
-
+{% block css %}
+<link rel="stylesheet" href="{% static 'ebagis_ui/css/details.css' %}">
 {% endblock %}
+
+{% block base_content %}
+
+<!--<div id="sidebar">
+  <div class="sidebar-wrapper" id="aoi-info">
+    <div class="card">
+      <div class="card-header">
+        <h1>{{ aoi.name }}</h1>
+      </div>
+    </div>
+    <div class="sidebar-table">
+      <div class="list" id="file-list" role="tablist" aria-multiselectable="false">
+        <div id="accordionAOI" role="tablist" aria-multiselectable="true">
+        {% with aoi.contents.surfaces as dir %}
+        <div class="details-row card">
+          <div class="details-row-header card-header" role="tab" id="{{ dir.name }}">
+            <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+              <a>{{ dir.name }}</a>
+            </h6>
+          </div>
+
+          <div id="collapse{{ dir.name }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.name }}">
+            <div class="card-block">
+
+              <div id="accordion{{ dir.name }}objects" role="tablist" aria-multiselectable="true">
+                {% for file in dir.files.all %}
+                <div class="card">
+                  <div class="file-name card-header" role="tab" id="{{ dir.name }}-file-{{ file.id }}">
+                    <h6 class="mb-0">
+                      !--><!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                      <!--{{ file.name }}-->
+                      <!--/a-->
+                    <!--</h6>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endwith %}
+
+        {% with aoi.contents.layers as dir %}
+        <div class="details-row card">
+          <div class="details-row-header card-header" role="tab" id="{{ dir.name }}">
+            <h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+              <a>
+                {{ dir.name }}
+              </a>
+            </h6>
+          </div>
+
+          <div id="collapse{{ dir.name }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.name }}">
+            <div class="card-block">
+
+              <div id="accordion{{ dir.name }}objects" role="tablist" aria-multiselectable="true">
+                {% for file in dir.files.all %}
+                <div class="card">
+                  <div class="file-name card-header" role="tab" id="{{ dir.name }}-file-{{ file.id }}">
+                    <h6 class="mb-0">
+                      !--><!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                      <!--{{ file.name }}-->
+                      <!--/a-->
+                    <!--</h6>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endwith %}
+
+        {% if aoi.contents.zones_ %}}
+        {% with aoi.contents.zones_ as dir %}
+        <div class="details-row card">
+          <div class="details-row-header card-header" role="tab" id="{{ dir.id }}">
+            <h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.id }}" aria-expanded="false" aria-controls="collapse{{ dir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+              <a>
+                {{ dir.name }}
+              </a>
+            </h6>
+          </div>
+
+          <div id="collapse{{ dir.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.id }}">
+            <div class="card-block">
+
+              <div id="accordion{{ dir.id }}objects" role="tablist" aria-multiselectable="true">
+                  {% for subdir in dir.hruzones.all %}
+                <div class="details-row card">
+                  <div class="details-row-header card-header" role="tab" id="{{ subdir.id }}">
+                    <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ subdir.id }}" aria-expanded="false" aria-controls="collapse{{ subdir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                      <a>
+                      {{ subdir.name }}
+                      </a>
+                    </h6>
+                  </div>
+
+                  <div id="collapse{{ subdir.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ subdir.id }}">
+                    <div class="card-block">
+
+                      <div id="accordion{{ subdir.id }}objects" role="tablist" aria-multiselectable="true">
+                        {% for version in subdir.versions.all %}
+                        <div class="details-row card">
+                          <div class="details-row-header card-header" role="tab" id="{{ version.id }}">
+                            <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ version.id }}" aria-expanded="false" aria-controls="collapse{{ version.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                              <a>
+                              {{ version.name }}
+                              </a>
+                            </h6>
+                          </div>
+
+                          <div id="collapse{{ version.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ version.id }}">
+                            <div class="card-block">
+
+                              <div id="accordion{{ version.id }}objects" role="tablist" aria-multiselectable="true">
+                                {% with version.hru as hru %}
+                                <div class="details-row card">
+                                  <div class="details-row-header card-header" role="tab" id="{{ hru.id }}">
+                                    <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ hru.id }}" aria-expanded="false" aria-controls="collapse{{ hru.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                                      <a>
+                                        {{ hru.name }}
+                                      </a>
+                                    </h6>
+                                  </div>
+
+                                  <div id="collapse{{ hru.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ hru.id }}">
+                                    <div class="card-block">
+
+                                      <div id="accordion{{ hru.id }}objects" role="tablist" aria-multiselectable="true">
+                                        {% for file in hru.files.all %}
+                                        <div class="card">
+                                          <div class="file-name card-header" role="tab" id="{{ file.id }}">
+                                            <h6 class="mb-0">
+                                              !--><!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                                              <!--{{ file.name }}-->
+                                              <!--/a-->
+                                            <!--</h6>
+                                          </div>
+                                        </div>
+                                        {% endfor %}
+                                      </div>
+
+                                    </div>
+                                  </div>
+
+                                </div>
+                                {% endwith %}
+
+                                {% with version.param as param %}
+                                <div class="details-row card">
+                                  <div class="details-row-header card-header" role="tab" id="{{ param.id }}">
+                                    <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ param.id }}" aria-expanded="false" aria-controls="collapse{{ param.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                                      <a>
+                                        {{ dir.name }}
+                                      </a>
+                                    </h6>
+                                  </div>
+
+                                  <div id="collapse{{ param.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ param.id }}">
+                                    <div class="card-block">
+
+                                      <div id="accordion{{ param.id }}objects" role="tablist" aria-multiselectable="true">
+                                        {% for file in param.files.all %}
+                                        <div class="card">
+                                          <div class="file-name card-header" role="tab" id="{{ file.id }}">
+                                            <h6 class="mb-0">
+                                              !--><!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                                              <!--{{ file.name }}-->
+                                              <!--/a-->
+                                            <!--</h6>
+                                          </div>
+                                        </div>
+                                        {% endfor %}
+                                      </div>
+
+                                    </div>
+                                  </div>
+
+                                </div>
+                                {% endwith %}
+
+                                {% with version.xml as file %}
+                                <div class="card">
+                                  <div class="file-name card-header" role="tab" id="{{ file.id }}">
+                                    <h6 class="mb-0">
+                                      !--><!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                                      <!--{{ file.name }}-->
+                                      <!--/a-->
+                                    <!--</h6>
+                                  </div>
+                                </div>
+                                {% endwith %}
+
+                                </div>
+                            </div>
+                            </div>
+
+                        </div>
+                        {% endfor %}
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                {% endfor %}
+                
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endwith %}
+        {% endif %}
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="details">
+  <h1>{{ aoi.name }}</h1>
+  {% if aoi.comment == '' %}
+  <p class="no-value">No description</p>
+  {% else %}
+  <p>{{ aoi.comment }}</p>
+  {% endif %}
+
+  <p><strong>Created by:</strong> {{ aoi.created_by.username }}</p>
+
+  <p><strong>Created at:</strong> {{ aoi.created_at }}</p>
+
+  <p><strong>Last updated:</strong> 
+    {% if aoi.modified_at and aoi.modified_at != aoi.created_at %}
+    {{ aoi.modified_at }}
+    {% else %}
+    <span class="no-value">never</span>
+    {% endif %}
+  </p>
+
+  {% with aoi|content_type as ctype %}
+  <form method="post" action="{% url 'aoi_details' aoi.id %}">
+      {% csrf_token %}
+      <input name="object_id" value="{{ aoi.id }}" hidden="true">
+      <input name="content_type" value="{{ ctype }}" hidden="true">
+      <input name="object_name" vlaue="{{ aoi.name }}" hidden="true">
+      <button class="btn btn-primary" type="submit" name="action_download"><i class="fa fa-download" aria-hidden="true"></i> Submit Download Request</button>
+  </form>
+  {% endwith %}
+</div>-->
+
+<div class="container-fluid">
+      <div class="row">
+        <nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
+          <div class="sidebar-wrapper" id="aoi-info">
+        <h2 style="padding-left: 0.5rem">{{ aoi.name }}</h2>
+    
+    {% with 1.2 as padding %}
+    <div class="sidebar-details-table">
+      <div class="list" id="file-list" role="tablist" aria-multiselectable="false">
+        <div id="accordionAOI" role="tablist" aria-multiselectable="true">
+        {% with aoi.contents.surfaces as dir %}
+        <div class="details-row card">
+          <div class="details-row-header card-header" role="tab" id="{{ dir.name }}" style="padding-left: {{ padding }}rem;">
+            <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+              <a>{{ dir.name }}</a>
+            </h6>
+          </div>
+
+          <div id="collapse{{ dir.name }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.name }}">
+            <div class="card-block">
+
+              <div id="accordion{{ dir.name }}objects" role="tablist" aria-multiselectable="true">
+                {% for file in dir.files.all %}
+                <div class="card">
+                  <div class="file-name card-header" role="tab" id="{{ dir.name }}-file-{{ file.id }}" style="padding-left: {{ padding|multiply:2 }}rem;">
+                    <h6 class="mb-0">
+                      <!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                      {{ file.name }}
+                      <!--/a-->
+                    </h6>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endwith %}
+
+        {% with aoi.contents.layers as dir %}
+        <div class="details-row card">
+          <div class="details-row-header card-header" role="tab" id="{{ dir.name }}" style="padding-left: {{ padding }}rem;">
+            <h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.name }}" aria-expanded="false" aria-controls="collapse{{ dir.name }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+              <a>
+                {{ dir.name }}
+              </a>
+            </h6>
+          </div>
+
+          <div id="collapse{{ dir.name }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.name }}">
+            <div class="card-block">
+
+              <div id="accordion{{ dir.name }}objects" role="tablist" aria-multiselectable="true">
+                {% for file in dir.files.all %}
+                <div class="card">
+                  <div class="file-name card-header" role="tab" id="{{ dir.name }}-file-{{ file.id }}" style="padding-left: {{ padding|multiply:2 }}rem;">
+                    <h6 class="mb-0">
+                      <!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                      {{ file.name }}
+                      <!--/a-->
+                    </h6>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endwith %}
+
+        {% if aoi.contents.zones_ %}}
+        {% with aoi.contents.zones_ as dir %}
+        <div class="details-row card">
+          <div class="details-row-header card-header" role="tab" id="{{ dir.id }}" style="padding-left: {{ padding }}rem;">
+            <h6 class="mb-0"><i data-toggle="collapse"  href="#collapse{{ dir.id }}" aria-expanded="false" aria-controls="collapse{{ dir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+              <a>
+                {{ dir.name }}
+              </a>
+            </h6>
+          </div>
+
+          <div id="collapse{{ dir.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ dir.id }}">
+            <div class="card-block">
+
+              <div id="accordion{{ dir.id }}objects" role="tablist" aria-multiselectable="true">
+                  {% for subdir in dir.hruzones.all %}
+                <div class="details-row card">
+                  <div class="details-row-header card-header" role="tab" id="{{ subdir.id }}" style="padding-left: {{ padding|multiply:2 }}rem;">
+                    <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ subdir.id }}" aria-expanded="false" aria-controls="collapse{{ subdir.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                      <a>
+                      {{ subdir.name }}
+                      </a>
+                    </h6>
+                  </div>
+
+                  <div id="collapse{{ subdir.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ subdir.id }}">
+                    <div class="card-block">
+
+                      <div id="accordion{{ subdir.id }}objects" role="tablist" aria-multiselectable="true">
+                        {% for version in subdir.versions.all %}
+                        <div class="details-row card">
+                          <div class="details-row-header card-header" role="tab" id="{{ version.id }}" style="padding-left: {{ padding|multiply:3 }}rem;">
+                            <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ version.id }}" aria-expanded="false" aria-controls="collapse{{ version.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                              <a>
+                              {{ version.name }}
+                              </a>
+                            </h6>
+                          </div>
+
+                          <div id="collapse{{ version.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ version.id }}">
+                            <div class="card-block">
+
+                              <div id="accordion{{ version.id }}objects" role="tablist" aria-multiselectable="true">
+                                {% with version.hru as hru %}
+                                <div class="details-row card">
+                                  <div class="details-row-header card-header" role="tab" id="{{ hru.id }}" style="padding-left: {{ padding|multiply:4 }}rem;">
+                                    <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ hru.id }}" aria-expanded="false" aria-controls="collapse{{ hru.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                                      <a>
+                                        {{ hru.name }}
+                                      </a>
+                                    </h6>
+                                  </div>
+
+                                  <div id="collapse{{ hru.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ hru.id }}">
+                                    <div class="card-block">
+
+                                      <div id="accordion{{ hru.id }}objects" role="tablist" aria-multiselectable="true">
+                                        {% for file in hru.files.all %}
+                                        <div class="card">
+                                          <div class="file-name card-header" role="tab" id="{{ file.id }}" style="padding-left: {{ padding|multiply:5 }}rem;">
+                                            <h6 class="mb-0">
+                                              <!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                                              {{ file.name }}
+                                              <!--/a-->
+                                            </h6>
+                                          </div>
+                                        </div>
+                                        {% endfor %}
+                                      </div>
+
+                                    </div>
+                                  </div>
+
+                                </div>
+                                {% endwith %}
+
+                                {% with version.param as param %}
+                                <div class="details-row card">
+                                  <div class="details-row-header card-header" role="tab" id="{{ param.id }}" style="padding-left: {{ padding|multiply:5 }}rem;">
+                                    <h6 class="mb-0"><i data-toggle="collapse" href="#collapse{{ param.id }}" aria-expanded="false" aria-controls="collapse{{ param.id }}" class="fa fa-plus-square expand-icon" aria-hidden="true"></i>
+                                      <a>
+                                        {{ dir.name }}
+                                      </a>
+                                    </h6>
+                                  </div>
+
+                                  <div id="collapse{{ param.id }}" class="collapse" role="tabpanel" aria-labelledby="{{ param.id }}">
+                                    <div class="card-block">
+
+                                      <div id="accordion{{ param.id }}objects" role="tablist" aria-multiselectable="true">
+                                        {% for file in param.files.all %}
+                                        <div class="card">
+                                          <div class="file-name card-header" role="tab" id="{{ file.id }}" style="padding-left: {{ padding|multiply:6 }}rem;">
+                                            <h6 class="mb-0">
+                                              <!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                                              {{ file.name }}
+                                              <!--/a-->
+                                            </h6>
+                                          </div>
+                                        </div>
+                                        {% endfor %}
+                                      </div>
+
+                                    </div>
+                                  </div>
+
+                                </div>
+                                {% endwith %}
+
+                                {% with version.xml as file %}
+                                <div class="card">
+                                  <div class="file-name card-header" role="tab" id="{{ file.id }}" style="padding-left: {{ padding|multiply:5 }}rem;">
+                                    <h6 class="mb-0">
+                                      <!--a data-toggle="collapse" data-parent="#accordionSurfacesFiles" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"-->
+                                      {{ file.name }}
+                                      <!--/a-->
+                                    </h6>
+                                  </div>
+                                </div>
+                                {% endwith %}
+
+                                </div>
+                            </div>
+                            </div>
+
+                        </div>
+                        {% endfor %}
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                {% endfor %}
+                
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        {% endwith %}
+        {% endif %}
+
+      </div>
+      </div>
+    </div>
+    {% endwith %}
+        </nav>
+
+        <main class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
+          <h1>{{ aoi.name }}</h1>
+          {% if aoi.comment == '' %}
+          <p class="no-value">No description</p>
+          {% else %}
+          <p>{{ aoi.comment }}</p>
+          {% endif %}
+
+          <p><strong>Created by:</strong> {{ aoi.created_by.username }}</p>
+
+          <p><strong>Created at:</strong> {{ aoi.created_at }}</p>
+
+          <p><strong>Last updated:</strong> 
+            {% if aoi.modified_at and aoi.modified_at != aoi.created_at %}
+            {{ aoi.modified_at }}
+            {% else %}
+            <span class="no-value">never</span>
+            {% endif %}
+          </p>
+
+          {% with aoi|content_type as ctype %}
+          <form method="post" action="{% url 'aoi_details' aoi.id %}">
+              {% csrf_token %}
+              <input name="object_id" value="{{ aoi.id }}" hidden="true">
+              <input name="content_type" value="{{ ctype }}" hidden="true">
+              <input name="object_name" vlaue="{{ aoi.name }}" hidden="true">
+              <button class="btn btn-primary" type="submit" name="action_download"><i class="fa fa-download" aria-hidden="true"></i> Submit Download Request</button>
+          </form>
+          {% endwith %}
+        </main>
+      </div>
+    </div>
+{% endblock base_content %}
 
 {% block extra_body %}
 <script>
