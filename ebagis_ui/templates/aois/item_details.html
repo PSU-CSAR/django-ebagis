@@ -1,0 +1,30 @@
+{% load ebagis_utils %}
+
+<h1>{{ obj.name }}</h1>
+{% if obj.comment == '' %}
+<p class="no-value">No description</p>
+{% else %}
+<p>{{ obj.comment }}</p>
+{% endif %}
+
+<p><strong>Created by:</strong> {{ obj.created_by.username }}</p>
+
+<p><strong>Created at:</strong> {{ obj.created_at }}</p>
+
+<p><strong>Last updated:</strong> 
+  {% if obj.modified_at and obj.modified_at != obj.created_at %}
+  {{ obj.modified_at }}
+  {% else %}
+  <span class="no-value">never</span>
+  {% endif %}
+</p>
+
+{% with obj|content_type as ctype %}
+<form method="post" action="{% url 'item_details' obj.classname obj.id %}">
+    {% csrf_token %}
+    <input name="object_id" value="{{ obj.id }}" hidden="true">
+    <input name="content_type" value="{{ ctype }}" hidden="true">
+    <input name="object_name" vlaue="{{ obj.name }}" hidden="true">
+    <button class="btn btn-primary" type="submit" name="action_download"><i class="fa fa-download" aria-hidden="true"></i> Submit Download Request</button>
+</form>
+{% endwith %}

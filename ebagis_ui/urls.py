@@ -33,6 +33,10 @@ urlpatterns = [
         views.AOIDetailsView.as_view(),
         name='aoi_details'),
 
+    url(r'^(?P<classname>[a-zA-Z0-9]+)/{}/$'.format(PK_QUERY),
+        views.ItemDetailsView.as_view(),
+        name='item_details'),
+
     url(r'^about/$',
         TemplateView.as_view(template_name='about.html'),
         name='ebagis_about'),

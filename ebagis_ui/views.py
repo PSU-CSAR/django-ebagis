@@ -4,11 +4,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template.loader import render_to_string
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
+from django.apps import apps
 
 from allauth.account.views import EmailView
 
@@ -45,11 +47,47 @@ class AOIDetailsView(LoginRequiredMixin, generic.DetailView):
             messages.add_message(
                 request,
                 messages.INFO,
-                mark_safe(('AOI download request submitted successfully. '
+                mark_safe(('Download request submitted successfully. '
                            '<a href="{}">View your download requests here.</a>'
                            .format(reverse('account_requests_download')))),
             )
             return HttpResponseRedirect(request.path)
+
+
+class ItemDetailsView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'aois/item_details.html'
+
+    def get(self, request, classname, pk, *args, **kwargs):
+        obj = apps.get_model('ebagis_data', classname).objects.get(id=pk)
+        html = render_to_string(self.template_name, {'obj': obj}, request=request)
+        return HttpResponse(html)
+
+    def post(self, request, *args, **kwargs):
+        if 'action_download' in request.POST:
+            return self._action_download(request)
+
+    def _action_download(self, request):
+        download = Download(
+            user=request.user,
+            content_type=ContentType.objects.get(
+                id=request.POST['content_type']
+            ),
+            object_id=request.POST['object_id'],
+            name=request.POST['object_name'],
+        )
+        download.save()
+        result = export_data.delay(str(download.pk))
+        download.task, created = \
+            TaskMeta.objects.get_or_create(task_id=result.task_id)
+        download.save()
+        messages.add_message(
+            request,
+            messages.INFO,
+            mark_safe(('Download request submitted successfully. '
+                       '<a href="{}">View your download requests here.</a>'
+                       .format(reverse('account_requests_download')))),
+        )
+        return HttpResponseRedirect(request.path)
 
 
 class DownloadRequestView(LoginRequiredMixin, generic.ListView):

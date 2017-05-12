@@ -90,6 +90,19 @@ class AOIDirectory(Directory):
     def zones(self):
         return self.subdirectories.get(classname='Zones').hruzones.all()
 
+    @property
+    def items(self):
+        return [
+            self.surfaces,
+            self.layers,
+            self.aoidb,
+            self.analysis,
+            self._prism,
+            self.maps,
+            self._zones,
+        ]
+
+
     def import_content(self, temp_aoi_path):
             # import aoi.gdb
             AOIdb.create(

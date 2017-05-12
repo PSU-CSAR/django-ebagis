@@ -19,3 +19,7 @@ def content_type(obj):
 @register.filter
 def multiply(value, arg):
     return value*arg
+
+@register.filter
+def add(value, arg):
+    return value+arg

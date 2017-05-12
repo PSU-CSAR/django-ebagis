@@ -26,6 +26,10 @@ class ABC(models.Model):
     path = None
 
     @property
+    def classname(self):
+        return self._classname
+
+    @property
     def _classname(self):
         return self.__class__.__name__.lower()
 

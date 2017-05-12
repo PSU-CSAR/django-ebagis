@@ -84,6 +84,18 @@ body {
   cursor: default;
 }
 
+#aoi-name {
+  cursor: pointer;     
+}
+
+#aoi-name h2{
+  margin-bottom: 0;
+}
+
+#aoi-name:hover {
+  background-color: rgba(0,0,0,0.15); 
+}
+
 @media (max-width: 992px) {
   .navbar .navbar-brand {
     font-size: 1.78em;
@@ -110,9 +122,10 @@ h1 {
  */
 
 .sidebar {
-  position: absolute;
+  position: fixed;
+  top: 49px;
+  bottom: 0px;
   z-index: 1000;
-  padding: 20px;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   border-right: 1px solid #eee;
