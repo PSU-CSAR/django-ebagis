@@ -7,7 +7,8 @@ from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
+from django.template import RequestContext
 
 from allauth.account.views import EmailView
 
@@ -95,3 +96,9 @@ class UserProfileView(LoginRequiredMixin, EmailView):
             return HttpResponseRedirect(self.success_url)
         else:
             return super(UserProfileView, self).post(request, *args, **kwargs)
+
+def handler404(request):
+    response = render_to_response('404.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
