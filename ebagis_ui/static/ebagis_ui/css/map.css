@@ -131,9 +131,7 @@ body {
 .pourpoint-header:focus, .pourpoint-header:hover {
   background: #DCDCDC;
 }
-.btn-hover {
-  background-color: orange;
-}
+
 .feature-row > a:first-of-type {
   text-decoration: none !important;
 }
