@@ -62,7 +62,7 @@ target/
 # ebagis stuff
 start_celery.bat
 project.conf
-aois/
+/aois/
 ebagis/settings/local_settings.py
 touch_this_file_to_update_cgi.txt
 
