@@ -6,6 +6,7 @@ from .download import DownloadViewSet
 from .misc import (
     validate_token,
     ObtainExpiringAuthToken,
+    delete_auth_token,
     get_settings,
     get_lyr,
     check_api_version,
@@ -22,4 +23,5 @@ from .users import (
     UserViewSet,
     GroupViewSet,
     PermissionViewSet,
+    UserDetailsView,
 )

@@ -8,6 +8,7 @@ from rest_framework.decorators import (
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework import status
 
 from ..models import ExpiringToken
 from ..authentication import ExpiringTokenAuthentication
@@ -36,14 +37,21 @@ def validate_token(request):
 class ObtainExpiringAuthToken(ObtainAuthToken):
     permission_classes = (AllowAny, )
 
-    def post(self, request):
+    def post(self, request, token_field="token"):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         token, created = ExpiringToken.objects.get_or_create(user=user)
         if not created and not token.is_valid:
             token.update()
-        return Response({"token": str(token), "created": created})
+        return Response({token_field: str(token), "created": created})
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def delete_auth_token(request):
+    request.user.token.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])

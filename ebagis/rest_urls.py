@@ -371,8 +371,23 @@ urlpatterns = [
     # API version test
     url(r"^api-version/$", views.check_api_version),
 
-    # rest framework auth
+    # rest framework auth and account urls
     url(r"^token/$", views.ObtainExpiringAuthToken.as_view()),
+
+    url(
+        r"^account/login$",
+        views.ObtainExpiringAuthToken.as_view(),
+        {"token_field": "key"},
+    ),
+    url(
+        r"^account/logout$",
+        views.delete_auth_token,
+    ),
+    url(
+        r"^account/user$",
+        views.UserDetailsView,
+    ),
+
     url(r"^api-auth/",
         include("rest_framework.urls", namespace="rest_framework")),
     # Swagger was upgraded from 0.3.5 to 2.0.4 and it broke; need to fix it

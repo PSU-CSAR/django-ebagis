@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 from rest_framework import viewsets
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 # model objects
 from django.contrib.auth import get_user_model
@@ -8,10 +10,19 @@ from django.contrib.auth.models import Group, Permission
 
 # serializers
 from ..serializers.user import (
-    UserSerializer, GroupSerializer, PermissionSerializer
+    UserSerializer, GroupSerializer, PermissionSerializer,
+    UserDetailSerializer,
 )
 
 from ..utils import user
+
+
+class UserDetailsView(RetrieveUpdateAPIView):
+    serializer_class = UserDetailSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_object(self):
+        return self.request.user
 
 
 class UserViewSet(viewsets.ModelViewSet):
