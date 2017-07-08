@@ -15,11 +15,21 @@ from ebagis.models.mixins import NameMixin
 
 
 class PourPoint(NameMixin):
+    SOURCE_REFERENCE = 1
+    SOURCE_AWDB = 2
+    SOURCE_AOI = 3
+    SOURCE_CHOICES = (
+        (SOURCE_REFERENCE, 'Reference Point'),
+        (SOURCE_AWDB, 'AWDB Point'),
+        (SOURCE_AOI, 'Imported AOI Point'),
+    )
+
     location = models.PointField(geography=True, srid=settings.GEO_WKID)
     boundary = models.MultiPolygonField(null=True,
                                         geography=True,
                                         srid=settings.GEO_WKID)
     awdb_id = models.CharField(max_length=30, null=True, blank=True)
+    source = models.PositiveSmallIntegerField(choices=SOURCE_CHOICES)
 
     @staticmethod
     def _add_boundary_if_null(pourpoint, aoi_boundary):
@@ -60,8 +70,11 @@ class PourPoint(NameMixin):
         # now we get any matches from the AWDB USGS stations
         awdb_pourpoints = query_AWDB(
             settings.AWDB_QUERY_URL,
-            gen_query_params_from_point(point, sr, dist=settings.AWDB_SEARCH_BUFFER)
+            gen_query_params_from_point(point,
+                                        sr,
+                                        dist=settings.AWDB_SEARCH_BUFFER)
         )
+        pp_source = cls.SOURCE_AWDB
 
         # we will take just the closes point, if any
         if awdb_pourpoints['features']:
@@ -98,6 +111,7 @@ class PourPoint(NameMixin):
             # pourpoint and we add it with the name of the AOI
             wkt = pointgeom.projectAs(SpatialReference(settings.GEO_WKID)).WKT
             name = aoi_name
+            pp_source = cls.SOURCE_AOI
 
         # we create the actual pourpoint record using the values
         # set in one of the two cases above and and return it
@@ -106,6 +120,7 @@ class PourPoint(NameMixin):
             name=name,
             awdb_id=awdb_id,
             boundary=aoi_boundary,
+            source=pp_source
         )
         pourpoint.save()
         return pourpoint
