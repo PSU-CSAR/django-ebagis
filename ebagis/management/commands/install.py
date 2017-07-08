@@ -300,7 +300,6 @@ class Install(object):
         )
 
         # install options
-        parser.set_defaults(install_options=['windows'])
         parser.add_argument(
             '-d',
             '--dev',
@@ -310,15 +309,6 @@ class Install(object):
             help=('Include development packages with installation. '
                   'Default is false, unless env is development, '
                   'in which case this option cannot be disabled.'),
-        )
-        parser.add_argument(
-            '--no-windows',
-            dest='install_options',
-            action=remove_const,
-            const='windows',
-            help=('Don\'t include Windows-specific packages '
-                  'with installation. Windows dependencies '
-                  'are included by default.'),
         )
 
     @classmethod

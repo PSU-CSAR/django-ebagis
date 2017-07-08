@@ -62,7 +62,6 @@ def main():
         ],
         extras_require={
             'CORS': ['django-cors-headers>=2.0.2'],
-            'WINDOWS': ['django-windows-tools>=0.1.1'],
             'DEV': [
                 'django-extensions>=1.4.9',
                 'django-debug-toolbar>=1.7',
