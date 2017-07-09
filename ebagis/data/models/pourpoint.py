@@ -4,7 +4,7 @@ from django.conf import settings
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance as DistanceTo
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 
 from arcpy import Geometry, SpatialReference, FromWKT
 
@@ -12,6 +12,9 @@ from ebagis.utils.webservices import query_AWDB, gen_query_params_from_point
 from ebagis.utils.gis import Distance
 
 from ebagis.models.mixins import NameMixin
+
+
+SIMPLIFY_TOLERANCE = 0.002  # degrees, as features are stored as geography
 
 
 class PourPoint(NameMixin):
@@ -28,8 +31,44 @@ class PourPoint(NameMixin):
     boundary = models.MultiPolygonField(null=True,
                                         geography=True,
                                         srid=settings.GEO_WKID)
+    boundary_simple = models.MultiPolygonField(null=True,
+                                               geography=True,
+                                               srid=settings.GEO_WKID)
     awdb_id = models.CharField(max_length=30, null=True, blank=True)
     source = models.PositiveSmallIntegerField(choices=SOURCE_CHOICES)
+
+    def update_boundary_simple(self,
+                               tolerance=SIMPLIFY_TOLERANCE,
+                               save=True):
+        """Regenerate the boundary_simple from the full-resolution
+        boundary. This should only be needed if the full-res boundary is
+        updated for some reason. If the boundary_simple is not set it will
+        be generated automatically on save, so calling this explicitly
+        is not necessary when setting the boundary."""
+        if not self.boundary:
+            return
+
+        simple_bound = self.boundary.simplify(
+            tolerance=tolerance,
+            preserve_topology=True,
+        )
+
+        # coerce to multipolygon if needed
+        if type(simple_bound) != MultiPolygon:
+            simple_bound = MultiPolygon(simple_bound)
+
+        self.boundary_simple = simple_bound
+
+        if save:
+            self.save()
+
+    def save(self, *args, **kwargs):
+        """Override save to generate simplified boundary from
+        a full-resolution boundary if the former is set and the
+        latter is not."""
+        if self.boundary and not self.boundary_simple:
+            self.update_boundary_simple(save=False)
+        return super(PourPoint, self).save(*args, **kwargs)
 
     @staticmethod
     def _add_boundary_if_null(pourpoint, aoi_boundary):

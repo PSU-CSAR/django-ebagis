@@ -5,10 +5,13 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+# this should match the number of files the pourpoint fixtures are store in
+NUMBER_OF_FILES = 5
 
 def load_pourpoints_from_fixture(apps, schema_editor):
     from django.core.management import call_command
-    call_command("loaddata", "pourpoints")
+    pp_files = ["pourpoints_{}".format(i) for i in xrange(1, NUMBER_OF_FILES+1)]
+    call_command("loaddata", *pp_files)
 
 
 class Migration(migrations.Migration):
@@ -19,4 +22,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(load_pourpoints_from_fixture),
+        migrations.RunSQL(
+            "UPDATE ebagis_data_pourpoint SET boundary_simple = ST_Multi(ST_SimplifyPreserveTopology(boundary::geometry, 0.002)) WHERE boundary_simple is NULL"
+        ),
     ]
