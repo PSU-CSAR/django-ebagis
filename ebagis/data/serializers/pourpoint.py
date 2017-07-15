@@ -14,8 +14,18 @@ class PourPointSerializer(GeoFeatureModelSerializer):
     aois = AOIListSerializer(read_only=True, many=True)
 
     def get_geometry(self, obj):
-        use_boundary = self.context['request'].GET.get('boundary', False)
-        return obj.boundary if use_boundary else obj.location
+        use_boundary = self.context['request'].query_params.get(
+            'boundary', False
+        )
+        use_simplified = self.context['request'].query_params.get(
+            'simplified', True
+        )
+        if use_boundary and use_simplified:
+            return obj.boundary_simple
+        elif use_boundary:
+            return obj.boundary
+        else:
+            return obj.location
 
     class Meta:
         model = PourPoint
@@ -25,6 +35,13 @@ class PourPointSerializer(GeoFeatureModelSerializer):
 
 class PourPointBoundarySerializer(GeoFeatureModelSerializer):
     aois = AOIListSerializer(read_only=True, many=True)
+    boundary = GeometrySerializerMethodField()
+
+    def get_boundary(self, obj):
+        use_simplified = self.context['request'].query_params.get(
+            'simplified', True
+        )
+        return obj.boundary_simple if use_simplified else obj.boundar
 
     class Meta:
         model = PourPoint

@@ -18,10 +18,16 @@ from ..serializers.aoi import AOIListSerializer
 
 @permission_classes((AllowAny, ))
 class PourPointViewSet(viewsets.ModelViewSet):
-    # we only want to show pourpoints with an associated AOI record
-    queryset = PourPoint.objects.filter(aois__isnull=False).distinct()
     serializer_class = PourPointSerializer
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
+
+    def get_queryset(self):
+        if self.request.query_params.get('all', False) or \
+                self.kwargs.get('pk', None):
+            return PourPoint.objects.all()
+        # unless explicitly specified, we only want to
+        # show pourpoints with an associated AOI record
+        return PourPoint.objects.filter(aois__isnull=False).distinct()
 
     def aois(self, request, *args, **kwargs):
         object = self.get_object()
@@ -35,10 +41,16 @@ class PourPointViewSet(viewsets.ModelViewSet):
 
 @permission_classes((AllowAny, ))
 class PourPointBoundaryViewSet(viewsets.ModelViewSet):
-    # we only want to show pourpoints with an associated AOI record
-    queryset = PourPoint.objects.filter(aois__isnull=False).distinct()
     serializer_class = PourPointBoundarySerializer
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer)
+
+    def get_queryset(self):
+        if self.request.query_params.get('all', False) or \
+                self.kwargs.get('pk', None):
+            return PourPoint.objects.all()
+        # unless explicitly specified, we only want to
+        # show pourpoints with an associated AOI record
+        return PourPoint.objects.filter(aois__isnull=False).distinct()
 
     def aois(self, request, *args, **kwargs):
         object = self.get_object()
