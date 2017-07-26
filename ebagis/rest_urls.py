@@ -360,10 +360,10 @@ pourpoint_boundary_patterns = [
 
 urlpatterns = [
     # rest framework docs
-    url(
-        r'^docs/',
-        include_docs_urls(title=API_TITLE, description=API_DESCRIPTION),
-    ),
+    #url(
+    #    r'^docs/',
+    #    include_docs_urls(title=API_TITLE, description=API_DESCRIPTION),
+    #),
 
     # API Root
     url(r"^$", views.APIRoot.as_view()),
@@ -375,16 +375,16 @@ urlpatterns = [
     url(r"^token/$", views.ObtainExpiringAuthToken.as_view()),
 
     url(
-        r"^account/login$",
+        r"^account/login/$",
         views.ObtainExpiringAuthToken.as_view(),
         {"token_field": "key"},
     ),
     url(
-        r"^account/logout$",
+        r"^account/logout/$",
         views.delete_auth_token,
     ),
     url(
-        r"^account/user$",
+        r"^account/user/$",
         views.UserDetailsView,
     ),
 
