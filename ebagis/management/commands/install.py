@@ -5,6 +5,7 @@ import sys
 import yaml
 import argparse
 import subprocess
+import warnings
 
 from getpass import getpass
 
@@ -337,7 +338,7 @@ class Install(object):
     def extract_settings_from_options(self, options):
         settings = {}
 
-        settings['ENV'] = get_default(options, 'env', utils.get_env_name())
+        settings['ENV'] = options.get('env') or utils.get_env_name()
 
         if not settings['ENV']:
             raise InstallError(
@@ -346,9 +347,9 @@ class Install(object):
 
         pyfile = settings['ENV'] + '.py'
         if not os.path.isfile(utils.get_settings_file(pyfile)):
-            raise Warning(
+            warnings.warn(
                 'Could not find settings file for env named {}'
-                .format(pyfile)
+                .format(pyfile),
             )
 
         settings['DEBUG'] = (
@@ -413,9 +414,6 @@ class Install(object):
             [],
         )
 
-        if 'windows' in options.get('install_options'):
-            settings['ADDITIONAL_SETTINGS_FILES'].append('windows.py')
-
         return settings
 
     def write_conf_file(self):
@@ -467,13 +465,13 @@ class Install(object):
 
         with open(pth_file, 'w') as f:
             f.writelines([
-                os.path.join(ARC_INSTALL_PREFIX+version, 'bin'),
-                os.path.join(ARC_INSTALL_PREFIX+version, 'ArcPy'),
+                os.path.join(ARC_INSTALL_PREFIX+version, 'bin'), "\n",
+                os.path.join(ARC_INSTALL_PREFIX+version, 'ArcPy'), "\n",
                 os.path.join(
                     ARC_INSTALL_PREFIX+version,
                     'ArcToolBox',
                     'Scripts',
-                ),
+                ), "\n",
             ])
 
         self.vprint(2, 'Wrote arcpy links to {}'.format(pth_file))

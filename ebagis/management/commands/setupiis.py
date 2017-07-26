@@ -33,8 +33,7 @@ import sys
 import re
 import subprocess
 
-from django.template.loader import get_template
-from django.template import Context
+from django.template import Template, Context
 from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
@@ -42,13 +41,11 @@ from django.contrib.staticfiles.management.commands import collectstatic
 
 from ..utils import get_project_root
 
-from . import celerytask
 
+MAX_CONTENT_LENGTH = 2**30
 
-__author__ = 'Antoine Martin <antoine@openance.com>'
-
-
-MAX_CONTENT_LENGTH = 2*30
+TOUCH_FILE = os.path.join(get_project_root(),
+                          'touch_this_file_to_update_cgi.txt')
 
 CONFIG_FILE_NAME = 'web.config'
 
@@ -66,18 +63,41 @@ STATIC_CONFIG_STRING = \
 </configuration>
 '''
 
+#     <security>
+#      <requestFiltering>
+#        <requestLimits maxAllowedContentLength="{{  }}"/>
+#      </requestFiltering>
+#    </security>
+
 WEB_CONFIG_STRING = \
-'''    <rewrite>
-      <rules>
-        <rule name="HTTP to HTTPS Redirect" enabled="true" stopProcessing="true">
-        <match url="(.*)" />
-        <conditions logicalGrouping="MatchAny">
-          <add input="{SERVER_PORT_SECURE}" pattern="^0$" />
-          </conditions>
-          <action type="Redirect" url="https://{HTTP_HOST}{REQUEST_URI}" redirectType="Permanent" />
-        </rule>
-      </rules>
-    </rewrite>'''
+'''<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <system.webServer>
+        <rewrite>
+            <rules>
+                <rule name="HTTP to HTTPS Redirect" enabled="true" stopProcessing="true">
+                    <match url="(.*)" />
+                    <conditions logicalGrouping="MatchAny">
+                        <add input="{SERVER_PORT_SECURE}" pattern="^0$" />
+                    </conditions>
+                    <action type="Redirect" url="https://{HTTP_HOST}{REQUEST_URI}" redirectType="Permanent" />
+                </rule>
+            </rules>
+       </rewrite>
+       <handlers>
+           <clear/>
+           <add name="FastCGI" path="*" verb="*" modules="FastCgiModule" scriptProcessor="{{ python_interpreter }}|{{ current_script }} winfcgi --pythonpath={{ project_dir }}" resourceType="Unspecified" requireAccess="Script" />
+       </handlers>
+    </system.webServer>
+</configuration>'''
+
+
+def library_bin_dir(python_exe):
+    return os.path.join(
+        os.path.dirname(python_exe),
+        "Library",
+        "bin",
+    )
 
 
 class Command(BaseCommand):
@@ -248,18 +268,13 @@ class Command(BaseCommand):
             '/commit:apphost',
         )
 
-    def update_web_config(self, delete=False):
+    def create_touch_file(self, delete=False):
         if delete:
-            os.remove(self.web_config)
+            os.remove(TOUCH_FILE)
             return
 
-        with open(self.web_config) as f:
-            content = [l for l in f]
-
-        content.insert(3, WEB_CONFIG_STRING)
-
-        with open(self.web_config, 'w') as f:
-            f.write(''.join(content))
+        with open(TOUCH_FILE, 'w') as f:
+            f.write('')
 
     def setup_static_assets(self, delete=False):
         if delete:
@@ -267,7 +282,7 @@ class Command(BaseCommand):
             return
 
         # get the static assets to setup proj and create static dir
-        management.call_command(collectstatic.Command())
+        management.call_command(collectstatic.Command(), verbosity=0)
         # place the IIS conf file in the static dir
         with open(STATIC_CONFIG, 'w') as f:
             f.write(STATIC_CONFIG_STRING)
@@ -275,6 +290,9 @@ class Command(BaseCommand):
     def set_project_permissions(self):
         # set permissions on the root project directory for the IIS site user
         cmd = ['ICACLS', get_project_root(), '/t', '/grant',
+               'IIS AppPool\{}:F'.format(settings.INSTANCE_NAME)]
+        subprocess.check_call(cmd)
+        cmd = ['ICACLS', library_bin_dir(sys.executable), '/t', '/grant',
                'IIS AppPool\{}:F'.format(settings.INSTANCE_NAME)]
         subprocess.check_call(cmd)
 
@@ -308,10 +326,9 @@ directory !''')
         # create web.config
         if not options['skip_config']:
             print("Creating web.config")
-            template = get_template('windows_tools/iis/web.config')
-            file = open(self.web_config, 'w')
-            file.write(template.render(Context(self.__dict__)))
-            file.close()
+            template = Template(WEB_CONFIG_STRING)
+            with open(self.web_config, 'w') as f:
+                f.write(template.render(Context(self.__dict__)))
 
         if options['monitorChangesTo'] == '':
             options['monitorChangesTo'] = os.path.join(
@@ -370,7 +387,7 @@ directory !''')
                      )
 
             maxContentLength = options['maxContentLength']
-            if not self.run_config_command('set', 'config', '/section:requestfiltering',
+            if not self.run_config_command('set', 'config', '%s' % site_name, '/section:requestfiltering',
                                            '/requestlimits.maxallowedcontentlength:' + str(maxContentLength)):
                 raise CommandError(
                     'Setting the maximum content length has failed with the following message :\n%s' % self.last_command_error
@@ -424,7 +441,7 @@ directory !''')
         self.web_config = os.path.join(self.install_dir, 'web.config')
 
         if options['site_name'] == '':
-            options['site_name'] = os.path.split(self.install_dir)[1]
+            options['site_name'] = settings.INSTANCE_NAME
 
         if not os.path.exists(self.appcmd):
             raise CommandError(
@@ -444,15 +461,10 @@ directory !''')
         else:
             self.install(args, options)
 
-        self.update_web_config(delete=options.get('delete'))
         self.set_project_permissions()
 
-        # call command celerytask
-        management.call_command(celerytask.Command(
-            delete=options.get('delete'))
-        )
-
-        print('''
+        if not options['delete']:
+            print('''
 PLEASE NOTE: This command is unable to set
 the certificate to use for the specified binding.
 Please use the IIS tool to edit the binding and
