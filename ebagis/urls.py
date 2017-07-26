@@ -1,10 +1,13 @@
 from __future__ import absolute_import
+
+import warnings
+
 from django.conf.urls import include, url
 from django.contrib.gis import admin
 
 import ebagis_ui.urls
 
-from .settings import REST_ROOT, DEBUG
+from .settings import REST_ROOT, DEBUG, INSTALLED_APPS
 from . import rest_urls
 
 # admin pages
@@ -21,7 +24,7 @@ urlpatterns = [
     url(r'^', include(ebagis_ui.urls.urlpatterns)),
 ]
 
-if DEBUG:
+if DEBUG and "debug_toolbar" in INSTALLED_APPS:
     import debug_toolbar
     urlpatterns = [
         url(r'^__debug__/', include(debug_toolbar.urls)),
