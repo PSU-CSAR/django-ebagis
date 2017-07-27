@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from rest_framework import viewsets
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 
 # model objects
@@ -17,7 +17,7 @@ from ..serializers.user import (
 from ..utils import user
 
 
-class UserDetailsView(RetrieveUpdateAPIView):
+class UserDetailsView(RetrieveAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = (IsAuthenticated, )
 
