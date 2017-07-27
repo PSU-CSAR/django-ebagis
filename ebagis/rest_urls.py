@@ -7,7 +7,6 @@ from .data import views as data_views
 from .data import models as data_models
 
 from . import views
-from . import models
 from . import constants
 
 
@@ -385,7 +384,7 @@ urlpatterns = [
     ),
     url(
         r"^account/user/$",
-        views.UserDetailsView,
+        views.UserDetailsView.as_view(),
     ),
 
     url(r"^api-auth/",
