@@ -20,6 +20,7 @@ from ..serializers.upload import UploadSerializer, UploadCreateSerializer
 from ..tasks import process_upload
 from ..utils.validation import generate_uuid
 from ..utils.queries import owner_or_admin
+from ..permissions import IsAdminOrStaffOrAuthenticated
 
 from .filters import (
     CreatedAtMixin, FilterSet, make_model_filter, filters
@@ -76,6 +77,7 @@ class UploadView(ChunkedUploadView):
     filter_class = make_model_filter(model,
                                      base=UploadFilterSet,
                                      exclude_fields=['file'])
+    permission_classes = (IsAdminOrStaffOrAuthenticated,)
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
