@@ -19,7 +19,7 @@ from ..serializers.upload import UploadSerializer, UploadCreateSerializer
 # other
 from ..tasks import process_upload
 from ..utils.validation import generate_uuid
-from ..utils.queries import admin_queryset_filter
+from ..utils.queries import owner_or_admin
 
 from .filters import (
     CreatedAtMixin, FilterSet, make_model_filter, filters
@@ -89,7 +89,7 @@ class UploadView(ChunkedUploadView):
         By default, user can only continue uploading his/her own uploads.
         """
         query = self.model.objects.all()
-        return admin_queryset_filter(query, self.request)
+        return owner_or_admin(query, self.request)
 
     def on_completion(self, upload, request):
         result = process_upload.delay(str(upload.id))
