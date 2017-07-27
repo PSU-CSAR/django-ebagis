@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-import warnings
-
 from django.conf.urls import include, url
 from django.contrib.gis import admin
 
