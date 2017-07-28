@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
 from ebagis import constants
@@ -72,7 +73,7 @@ class HRUZonesData(Directory):
         self.hru.export(output_dir, querydate)
         try:
             self.param.export(output_dir, querydate)
-        except AttributeError:
+        except ObjectDoesNotExist:
             pass
 
 
