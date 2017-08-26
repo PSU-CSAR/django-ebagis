@@ -531,14 +531,16 @@ class Install(object):
     def install(self, options):
         pip = self.get_pip()
 
+        install_options = options.get('install_options') or []
+
         if self.settings['ENV'] == 'development' and \
-                'dev' not in options.get('install_options'):
-            options['install_options'].append('dev')
+                'dev' not in install_options:
+            install_options.append('dev')
 
         install_options = \
             '[{}]'.format(','.join(
-                [opt for opt in options.get('install_options') if opt]
-            )) if options.get('install_options') else ''
+                [opt for opt in install_options if opt]
+            )) if install_options else ''
 
         cmd = [
             pip, 'install', '-e',
