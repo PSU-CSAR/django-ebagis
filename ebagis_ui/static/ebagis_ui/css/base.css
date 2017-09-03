@@ -142,6 +142,16 @@ input[type="radio"], input[type="checkbox"] {
   color: #B33A3A;
 }
 
+.btn-refresh {
+  padding: 0;
+}
+.fa-refresh {
+  color: #eee;
+}
+
+.fa-refresh:hover {
+  color: rgba(0,0,0,0.15)
+}
 /* Profile Page */
 .white-box {
   background-color: #fff;

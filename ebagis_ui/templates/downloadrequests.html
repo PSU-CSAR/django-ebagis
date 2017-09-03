@@ -4,7 +4,9 @@
 
 {% block base_content %}
 {% with request.user as user %}
-<h1>Download Requests</h1>
+<h1>Download Requests
+    <a class="btn btn-refresh" title="Refresh List" onClick="history.go(0)" role="button"><i class="fa fa-refresh fa-2x" aria-hidden="true"></i></a>
+</h1>
 
 <div class="requests">
 	<table class="table request-table table-striped">
