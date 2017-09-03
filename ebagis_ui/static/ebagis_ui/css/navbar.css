@@ -10,6 +10,10 @@
   padding-left: 1rem;
   padding-right: 1rem;
 }
+
+.dropdown-no-hover-color:hover {
+  background-color: transparent;
+}
 @media (max-width: 992px) {
   .navbar .navbar-brand {
     font-size: 1.78em;
