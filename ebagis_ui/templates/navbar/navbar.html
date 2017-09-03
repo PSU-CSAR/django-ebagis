@@ -33,13 +33,26 @@
       {% if user.is_authenticated %}
         <li class="nav-item nav-icon dropdown pull-sm-right">
           <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-tasks" aria-hidden="true"></i>
+             Your Requests
+          </a>
+          <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="{% url 'account_requests_upload' %}">
+              <i class="fa fa-upload" aria-hidden="true"></i>
+              Upload Requests
+            </a>
+            <a class="dropdown-item" href="{% url 'account_requests_download' %}">
+              <i class="fa fa-download" aria-hidden="true"></i>
+              Download Requests</a>
+          </div>
+        </li>
+        <li class="nav-item nav-icon dropdown pull-sm-right">
+          <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fa fa-user-circle" aria-hidden="true"></i>
             Hello {{ user.username }}
           </a>
           <div class="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="{% url 'account_profile' %}">Your Profile</a>
-            <a class="dropdown-item" href="{% url 'account_requests_upload' %}">Upload Requests</a>
-            <a class="dropdown-item" href="{% url 'account_requests_download' %}">Download Requests</a>
             {% if user.is_staff %}
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href={% url 'admin:index' %}>eBAGIS Admin</a>
