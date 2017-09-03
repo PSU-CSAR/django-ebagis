@@ -17,6 +17,11 @@ from ebagis.models.mixins import NameMixin
 SIMPLIFY_TOLERANCE = 0.002  # degrees, as features are stored as geography
 
 
+class PourPointManager(models.Manager):
+    def get_by_natural_key(self, awdb_id):
+        return self.get(awdb_id=awdb_id)
+
+
 class PourPoint(NameMixin):
     SOURCE_REFERENCE = 1
     SOURCE_AWDB = 2
@@ -26,6 +31,9 @@ class PourPoint(NameMixin):
         (SOURCE_AWDB, 'AWDB Point'),
         (SOURCE_AOI, 'Imported AOI Point'),
     )
+
+    # set manager to our custom manager to enable natural keys via awdb_id
+    objects = PourPointManager()
 
     location = models.PointField(geography=True, srid=settings.GEO_WKID)
     boundary = models.MultiPolygonField(null=True,
