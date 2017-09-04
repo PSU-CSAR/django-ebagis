@@ -36,6 +36,10 @@ class Geodatabase(Directory):
     _prefetch = ["rasters", "vectors", "tables"]
 
     @property
+    def _export_name(self):
+        return self.name + '_gdb'
+
+    @property
     def rasters(self):
         return self.files.filter(classname=Raster.__name__)
 
@@ -60,9 +64,19 @@ class Geodatabase(Directory):
         # copy tables and create table and table data objects
         import_tables(gdb, self, self.created_by)
 
-    def export(self, output_dir, querydate=timezone.now()):
+    def export(self, output_dir, querydate=timezone.now(),
+               create_heirarchy=False):
         self._validate_querydate(querydate)
+        import os
         from arcpy.management import CreateFileGDB
+
+        root = ''
+        if create_heirarchy:
+            root = os.path.join(output_dir, self._archive_name)
+            output_dir = os.path.join(root,
+                                      os.path.dirname(self.aoi_path))
+            os.makedirs(output_dir)
+
         result = CreateFileGDB(output_dir, self.name)
         outpath = result.getOutput(0)
         for raster in self.rasters:
@@ -71,7 +85,18 @@ class Geodatabase(Directory):
             vector.export(outpath, querydate=querydate)
         for table in self.tables:
             table.export(outpath, querydate=querydate)
-        return outpath
+        return root if root else outpath
+
+    def layer_export_create_gdb(self, output_dir):
+        import os
+        from arcpy.management import CreateFileGDB
+
+        output_dir = os.path.join(output_dir,
+                                  os.path.dirname(self.aoi_path))
+        os.makedirs(output_dir)
+
+        result = CreateFileGDB(output_dir, self.name)
+        return result.getOutput(0)
 
 
 class Geodatabase_IndividualArchive(Geodatabase):

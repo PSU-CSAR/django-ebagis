@@ -58,10 +58,36 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     def update(self):
         raise NotImplementedError
 
-    def export(self, output_dir, querydate=timezone.now()):
+    # TODO: this is not handling the file ext correctly
+    # probably need to add another property to the class
+    # for the file extension and add that to the string
+    @property
+    def _export_name(self):
+        return self.name
+
+    @property
+    def _archive_name(self):
+        return "{}-{}".format(self.aoi.name, self._export_name)
+
+    @property
+    def aoi_path(self):
+        return os.path.join(self.parent_object.aoi_path, self._export_name)
+
+    def export(self, output_dir, querydate=timezone.now(),
+               create_heirarchy=False):
         self._validate_querydate(querydate)
         query = self.versions.filter(created_at__lte=querydate)
-        return query.latest("created_at").export(output_dir, self.name)
+        return_path = output_dir
+
+        if create_heirarchy:
+            return_path = os.path.join(output_dir, self._archive_name)
+            output_dir = os.path.join(return_path,
+                                      os.path.dirname(self.aoi_path))
+            os.makedirs(output_dir)
+
+        query.latest("created_at").export(output_dir, self.name)
+
+        return return_path
 
     def is_new_version(self, file_path):
         sha = hash_file(file_path)
@@ -90,6 +116,21 @@ class Layer(File):
                                                         file_obj,
                                                         user)
         return file_obj
+
+    def export(self, output_dir, querydate=timezone.now(),
+               create_heirarchy=False):
+        self._validate_querydate(querydate)
+        query = self.versions.filter(created_at__lte=querydate)
+        return_path = None
+
+        if create_heirarchy:
+            return_path = os.path.join(output_dir, self._archive_name)
+            output_dir = \
+                self.parent_object.layer_export_create_gdb(return_path)
+
+        query.latest('created_at').export(output_dir, self.name)
+
+        return return_path
 
 
 class Vector(Layer):

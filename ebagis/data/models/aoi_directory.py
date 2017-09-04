@@ -51,6 +51,24 @@ class AOIDirectory(Directory):
         return str(self.id)
 
     @property
+    def _archive_name(self):
+        """Again we override per a special case of the AOIDirectory
+        class, in that the archive of this directory should just be the
+        name of the parent AOI.
+        """
+        return self.aoi.name
+
+    @property
+    def aoi_path(self):
+        """The aoi_path property is used to construct paths to resources
+        relative to the parent AOI's directory. The AOIDirectory has a
+        special case, in that it should represent the root of the AOI,
+        and should have the name of the AOI. Thus we override here and
+        grab the name of the parent AOI per its aoi_path method.
+        """
+        return self.aoi.aoi_path
+
+    @property
     def parent_object(self):
         return self.aoi
 

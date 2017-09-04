@@ -24,7 +24,8 @@ def export_data(self, download_id):
                        do_not_remove=settings.DEBUG) as tempdir:
         temp_aoi_dir = download.content_object.export(
             tempdir,
-            querydate=download.querydate
+            querydate=download.querydate,
+            create_heirarchy=True,
         )
 
         zip_dir = os.path.join(out_dir,

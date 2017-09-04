@@ -123,11 +123,17 @@ class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
     def update(self):
         raise NotImplementedError
 
-    def export(self, output_dir, querydate=timezone.now(), outname=None):
-        outname = outname if outname else self.shortname
+    @property
+    def aoi_path(self):
+        """Override as this is the root of the AOI, which has its own name.
+        """
+        return self.name
+
+    def export(self, output_dir, querydate=timezone.now(),
+               create_heirarchy=True):
         return self.contents.export(output_dir,
                                     querydate=querydate,
-                                    outname=outname)
+                                    create_heirarchy=create_heirarchy)
 
     def get_url(self, request):
         view = self._classname + "-base:detail"

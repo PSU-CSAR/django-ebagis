@@ -226,18 +226,37 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
         each one.'''
         raise NotImplementedError
 
-    def export(self, output_dir, querydate=timezone.now(), outname=None):
-        self._validate_querydate(querydate)
+    @property
+    def _export_name(self):
+        return self.name
 
-        # create the output dir for this object
-        if self._CREATE_DIRECTORY_ON_EXPORT:
-            outname = outname if outname else self.name
-            output_dir = os.path.join(output_dir, outname)
+    @property
+    def _archive_name(self):
+        return "{}-{}".format(self.aoi.name, self._export_name)
+
+    @property
+    def aoi_path(self):
+        if not self._CREATE_DIRECTORY_ON_EXPORT:
+            return self.parent_object.aoi_path
+        return os.path.join(self.parent_object.aoi_path, self._export_name)
+
+    def export(self, output_dir, querydate=timezone.now(),
+               create_heirarchy=False):
+        self._validate_querydate(querydate)
+        return_path = output_dir
+
+        if create_heirarchy:
+            return_path = os.path.join(output_dir, self._archive_name)
+            output_dir = os.path.join(return_path, self.aoi_path)
+            os.makedirs(output_dir)
+        elif self._CREATE_DIRECTORY_ON_EXPORT:
+            output_dir = os.path.join(output_dir, self._export_name)
+            return_path = output_dir
             os.mkdir(output_dir)
 
         self.export_content(output_dir, querydate=querydate)
 
-        return output_dir
+        return return_path
 
     def export_content(self, output_dir, querydate=timezone.now()):
         # export all of this object's content into the output dir
