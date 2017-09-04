@@ -41,7 +41,7 @@ class Download(DateMixin, NameMixin, models.Model):
 
     @property
     def filename(self):
-        return self.content_object.name
+        return self.content_object._archive_name
 
     @property
     def expires_at(self):

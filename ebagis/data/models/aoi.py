@@ -124,6 +124,13 @@ class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
         raise NotImplementedError
 
     @property
+    def _archive_name(self):
+        """Override as this is the root of the AOI,
+        and its archive name is its own.
+        """
+        return self.name
+
+    @property
     def aoi_path(self):
         """Override as this is the root of the AOI, which has its own name.
         """
