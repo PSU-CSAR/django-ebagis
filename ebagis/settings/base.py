@@ -12,6 +12,8 @@ from __future__ import absolute_import
 import os
 from django.contrib.messages import constants as messages
 
+import arcserver
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
