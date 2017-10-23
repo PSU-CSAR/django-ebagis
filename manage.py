@@ -3,7 +3,15 @@ from __future__ import absolute_import, print_function
 
 import os
 import sys
+import logging
+import datetime
+import logging.handlers
 
+
+logger = logging.getLogger(__name__)
+LOG_SIZE = 50 * (10**6)  # about 50 MB
+LOG_COUNT = 5
+LOG_FILE = os.path.join(os.path.dirname(__file__), 'manage.log')
 
 CONF_FILE = os.path.join(os.path.dirname(__file__), 'project.conf')
 
@@ -63,6 +71,10 @@ def default_django_command():
     try:
         import ebagis.settings
     except ImportError:
+        logger.debug(
+            'ebagis.settings couldn\'t be imported; '
+            'looks like the correct env is not activated'
+        )
         print(activate_help())
         return 1
 
@@ -77,28 +89,60 @@ def default_django_command():
     if len(sys.argv) > 1 and \
             sys.argv[1] == 'runserver' and \
             not ('--help' in sys.argv or '-h' in sys.argv):
+        logger.debug(
+            'rewritting sys.argv[0] from {} to {}'.format(
+                sys.argv[0],
+                __file__,
+            )
+        )
         sys.argv[0] = __file__
 
-    #if os.path.basename(sys.argv[0]) == 'ebagis':
-    #    sys.argv[0] = 'ebagis'
     from django.core.management import execute_from_command_line
-    execute_from_command_line(sys.argv)
+    logger.debug(
+        'executing from the command line with sys.argv: {}'.format(sys.argv)
+    )
+    return execute_from_command_line(sys.argv)
 
 
 def main():
+    manage_log = logging.handlers.RotatingFileHandler(
+        filename=LOG_FILE,
+        maxBytes=LOG_SIZE,
+        backupCount=(LOG_COUNT - 1),
+    )
+    formatter = logging.Formatter(
+        '%(asctime)s %(name)s [%(levelname)-5s] %(message)s'
+    )
+    manage_log.setFormatter(formatter)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(manage_log)
+    #logging.basicConfig(
+    #    filename=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'manage_%s_%d.log' %(datetime.datetime.now().strftime('%y%m%d_%H%M%S'), os.getpid())),
+    #    filemode='w',
+    #    format='%(asctime)s [%(levelname)-5s] %(message)s',
+    #    level=logging.DEBUG,
+    #)
+
     if len(sys.argv) > 1 and sys.argv[1] == 'install':
+        logger.debug('install command run')
         return install()
     if len(sys.argv) > 1 and \
             os.path.basename(sys.argv[0]) == 'manage.py' and \
             sys.argv[1] == 'help' and \
             sys.argv[2] == 'install':
+        logger.debug('install help run')
         return install(help=True)
     elif not os.path.isfile(CONF_FILE):
+        logger.error('config file could not be loaded: {}'.format(CONF_FILE))
         print('ERROR: Could not find configuration file {}.'.format(CONF_FILE))
         print('Has this instance been installed? '
               'Try running `python manage.py install`.')
     else:
-        return default_django_command()
+        try:
+            return default_django_command()
+        except Exception as e:
+            logger.exception(e)
+            return -1
 
 
 if __name__ == "__main__":
