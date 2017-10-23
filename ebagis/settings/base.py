@@ -12,6 +12,10 @@ from __future__ import absolute_import
 import os
 from django.contrib.messages import constants as messages
 
+# this is a ridiculous workaround for some seemingly
+# license-related issue with arcpy running behind IIS
+# without this import everything runs fine,
+# except when IIS is calling the winfcgi process
 import arcserver
 
 
