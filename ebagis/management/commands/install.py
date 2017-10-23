@@ -653,10 +653,16 @@ class Install(object):
             ('\nNext, activate the new conda env for the project:\n\n'
              '`activate {}`\n\n'
              '(`source` is required in a sh-like shell).\n\n'
-             'Then, configure the project:\n\n:'
-             '`ebagis configure [options]`\n\n'
-             'If you are not sure what options you require, try:\n\n'
-             '`ebagis help configure`'
+             'Then, setup any required services for this instance:\n\n:'
+             '`ebagis createdb [options]  # creates a postgres DB`\n'
+             '`ebagis setupqueue [options]  # sets up RabbitMQ for celery`\n'
+             '`ebagis setupiis [options]  # creates a site in IIS`\n\n'
+             'Once the services are configured, '
+             'you can run a webserver or celery:\n\n'
+             '`ebagis webserver [options]'
+             '`ebagis runcelery [options]\n\n'
+             'To learn what options apply to each command, try:\n\n'
+             '`ebagis help <command>`'
              ).format(self.settings['INSTANCE_NAME'])
         )
 
