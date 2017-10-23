@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 from getpass import getpass
 
@@ -115,3 +115,9 @@ class Command(BaseCommand):
         cur.execute('GRANT ALL PRIVILEGES ON DATABASE {} TO {};'.format(dbname, dbuser))
         cur.close()
         con.close()
+
+        print((
+            '\nDatabase {} created. '
+            'Be sure to run the data migrations:\n\n'
+            '`ebagis migrate [options]`'
+        ).format(settings.INSTANCE_NAME))
