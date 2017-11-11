@@ -56,7 +56,7 @@ def delete_auth_token(request):
 
 @api_view(['GET'])
 @permission_classes((AllowAny, ))
-def get_settings(request):
+def get_settings(request, module='bagis'):
     # load the desktop settings yaml file;
     # to increase performance, the could be placed outside
     # the function, so the file would only be loaded once,
@@ -65,7 +65,7 @@ def get_settings(request):
     # with a rathwe significant drawback
     with open(DESKTOP_SETTINGS, 'r') as fstream:
         desktop_settings = yaml.safe_load(fstream)
-    return Response(desktop_settings)
+    return Response(desktop_settings[module])
 
 
 @api_view(['GET'])

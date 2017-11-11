@@ -412,6 +412,8 @@ urlpatterns = [
 
     # desktop stuff
     url(r"^desktop/settings/$", views.get_settings),
+    url(r"^desktop/settings/(?P<module>bagis|bagis-p|bagis-h)/$",
+        views.get_settings),
     url(r"^desktop/lyr/$", views.get_lyr),
 
     # upload URLs
