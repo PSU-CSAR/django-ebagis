@@ -62,7 +62,7 @@ def get_settings(request, module='bagis'):
     # the function, so the file would only be loaded once,
     # but then changes would require restarting the process
     # I think that would constitute premature optimization
-    # with a rathwe significant drawback
+    # with a rather significant drawback
     with open(DESKTOP_SETTINGS, 'r') as fstream:
         desktop_settings = yaml.safe_load(fstream)
     return Response(desktop_settings[module])
