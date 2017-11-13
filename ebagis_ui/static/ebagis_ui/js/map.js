@@ -270,12 +270,16 @@ var pourpoints = L.geoJson(null, {
 getPourpoints(function(data) {
   pourpoints.addData(data);
   map.addLayer(pourpointLayer);
-  map.fitBounds(pourpoints.getBounds(), {"animate":true});
+  try {
+    map.fitBounds(pourpoints.getBounds(), {"animate":true});
+  }
+  catch (e) {
+  }
 });
 
 map = L.map("map", {
-  //zoom: 10,
-  //center: [40.702222, -73.979378],
+  zoom: 4,
+  center: [39.8283, -98.5795],
   layers: [cartoLight, markerClusters, highlight],
   zoomControl: false,
   attributionControl: false
