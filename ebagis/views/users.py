@@ -14,6 +14,8 @@ from ..serializers.user import (
     UserDetailSerializer,
 )
 
+from ..permissions import IsAdminOrNwccReadOnly
+
 from ..utils import user
 
 
@@ -32,22 +34,25 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.filter(is_active=True)
     serializer_class = UserSerializer
     search_fields = ("username", "email")
+    permission_classes = (IsAdminOrNwccReadOnly, )
 
     def perform_destroy(self, instance):
         user.deactivate(instance)
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows groups to be viewed.
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    permission_classes = (IsAdminOrNwccReadOnly, )
 
 
-class PermissionViewSet(viewsets.ModelViewSet):
+class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows groups to be viewed.
     """
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
+    permission_classes = (IsAdminOrNwccReadOnly, )

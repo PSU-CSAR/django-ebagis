@@ -42,24 +42,16 @@ user_detail = views.UserViewSet.as_view({
 
 group_list = views.GroupViewSet.as_view({
     "get": "list",
-    "post": "create",
 })
 group_detail = views.GroupViewSet.as_view({
     "get": "retrieve",
-    "put": "update",
-    "patch": "partial_update",
-    "delete": "destroy",
 })
 
 permission_list = views.PermissionViewSet.as_view({
     "get": "list",
-    "post": "create",
 })
 permission_detail = views.PermissionViewSet.as_view({
     "get": "retrieve",
-    "put": "update",
-    "patch": "partial_update",
-    "delete": "destroy",
 })
 
 aoi_list = data_views.AOIViewSet.as_view({

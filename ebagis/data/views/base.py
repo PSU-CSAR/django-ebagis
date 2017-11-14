@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 
 from rest_framework import viewsets
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import AllowAny
 
 from ...views.filters import make_model_filter
 
@@ -14,7 +12,6 @@ from ...views.filters import make_model_filter
 # via the super function.
 
 
-@permission_classes((AllowAny, ))
 class BaseViewSet(viewsets.ModelViewSet):
     _filter_args = {}
     _prefetch_related_fields = None

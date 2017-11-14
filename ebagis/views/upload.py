@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 
 from drf_chunked_upload.views import ChunkedUploadView
@@ -18,9 +18,9 @@ from ..serializers.upload import UploadSerializer, UploadCreateSerializer
 
 # other
 from ..tasks import process_upload
+from ..permissions import IsNwccWrite, IsOwnerOrAdmin
 from ..utils.validation import generate_uuid
-from ..utils.queries import owner_or_admin
-from ..permissions import IsAdminOrStaffOrAuthenticated
+from ..utils.queries import owner_or_admin, get_object_owner_or_admin
 
 from .filters import (
     CreatedAtMixin, FilterSet, make_model_filter, filters
@@ -43,17 +43,21 @@ class UploadFilterSet(CreatedAtMixin, CreatedByMixin, FilterSet):
         abstract = True
 
 
+# TODO: make into detail_route on UploadView
+# but have to rework drf-chunked-upload to make
+# ChunkedUploadView a viewset, not a class-based view
 @api_view(['POST'])
+@permission_classes((IsOwnerOrAdmin,))
 def cancel_upload(request, pk):
+    query = {'pk': pk}
+    if not (request.user.groups.filter(name='NWCC_ADMIN').exists() or
+            request.user.is_superuser):
+        # non-admin users can only get their own uploads
+        query['user'] = request.user
 
     try:
-        if request.user.is_superuser:
-            # allow admin users to get any user's upload
-            upload = Upload.objects.get(pk=pk)
-        else:
-            # normal users can only get their own uploads
-            upload = Upload.objects.get(pk=pk, user=request.user)
-    except upload.DoesNotExist:
+        upload = Upload.objects.get(**query)
+    except Upload.DoesNotExist:
         # per queries above, this could be thrown even
         # if an upload exists such as when a user tries
         # to call this on an upload that is not theirs
@@ -77,13 +81,16 @@ class UploadView(ChunkedUploadView):
     filter_class = make_model_filter(model,
                                      base=UploadFilterSet,
                                      exclude_fields=['file'])
-    permission_classes = (IsAdminOrStaffOrAuthenticated,)
+    permission_classes = (IsNwccWrite,)
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request is None or self.request.method not in ['PUT', 'POST']:
             serializer_class = UploadCreateSerializer
         return serializer_class
+
+    def get_object(self):
+        return get_object_owner_or_admin(self)
 
     def get_queryset(self):
         """

@@ -15,8 +15,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.DjangoModelPermissions',
-        'rest_framework.permissions.IsAdminUser',
+        'ebagis.permissions.CheckAdminStaffAuthOrAnon',
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        #'rest_framework.permissions.IsAdminUser',
         ),
     'PAGINATE_BY': 100,
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',

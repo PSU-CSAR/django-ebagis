@@ -53,7 +53,6 @@ class UpdateMixin(object):
     updated, passing in that object's id so the
     upload knows that this is an update, not a create.
     """
-    @detail_route
     def update(self, request, *args, **kwargs):
         object = self.get_object()
         return UploadView.new_upload(self.queryset.model,
