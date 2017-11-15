@@ -404,7 +404,7 @@ urlpatterns = [
 
     # desktop stuff
     url(r"^desktop/settings/$", views.get_settings),
-    url(r"^desktop/settings/(?P<module>bagis|bagis-p|bagis-h)/$",
+    url(r"^desktop/settings/(?P<module>.*)/$",
         views.get_settings),
     url(r"^desktop/lyr/$", views.get_lyr),
 

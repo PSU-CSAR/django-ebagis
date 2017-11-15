@@ -65,7 +65,10 @@ def get_settings(request, module='bagis'):
     # with a rather significant drawback
     with open(DESKTOP_SETTINGS, 'r') as fstream:
         desktop_settings = yaml.safe_load(fstream)
-    return Response(desktop_settings[module])
+    try:
+        return Response(desktop_settings[module])
+    except KeyError:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
