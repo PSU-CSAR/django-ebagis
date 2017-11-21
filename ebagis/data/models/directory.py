@@ -6,7 +6,7 @@ import glob
 import errno
 import logging
 
-from itertools import chain
+from ebagis.utils.itertools import chain
 
 from django.contrib.gis.db import models
 from django.utils import timezone
@@ -14,26 +14,20 @@ from django.utils import timezone
 from ebagis import constants
 
 from ebagis.models.mixins import (
-    ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, CreatedByMixin
+    NameMixin, AOIRelationMixin, CreatedByMixin
 )
 
 from ebagis.utils import transaction
 
 from .base import ABC
 from .file import File
+from .mixins import SDDateProxyMixin
 
 
 logger = logging.getLogger(__name__)
 
 
-class DirectoryManager(models.Manager):
-    """Model manager class used by the Directory Class"""
-    def get_queryset(self):
-        return super(DirectoryManager, self).get_queryset(
-            ).select_related()#.prefetch_related(*self.model._prefetch)
-
-
-class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
+class Directory(SDDateProxyMixin, NameMixin, CreatedByMixin,
                 AOIRelationMixin, ABC):
     _CREATE_DIRECTORY_ON_EXPORT = True
     _prefetch = []
@@ -48,13 +42,13 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
                                       editable=False)
     _parent_directory = models.CharField(max_length=1000)
     _parent_object = models.ForeignKey('self',
-                                       related_name='subdirectories',
+                                       related_name='_subdirectories',
                                        null=True,
                                        blank=True,
                                        on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ("_parent_object", "name")
+        unique_together = ("_parent_object", "name", "_active")
 
     @property
     def parent_object(self):
@@ -67,6 +61,18 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
     @property
     def subdirectory_of(self):
         return self._parent_object.path
+
+    @property
+    def files(self):
+        return self._files.current()
+
+    @property
+    def subdirectories(self):
+        return self._subdirectories.current()
+
+    @property
+    def _children(self):
+        return list(chain(self._files.all(), self._subdirectories.all()))
 
     @property
     def _metadata_path(self):
@@ -113,20 +119,16 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
             self.path
         return super(Directory, self).save(*args, **kwargs)
 
-    def delete(self, delete_file=True, *args, **kwargs):
-        """Overrides the default delete method adding the following:
-
-         - removes the directory at the path from the file system"""
-        if delete_file:
-            import shutil
-            try:
+    def cleanup(self):
+        import shutil
+        try:
+            if self.path is not None:
                 shutil.rmtree(self.path)
-            except (IOError, OSError) as e:
-                # check to see if the error was
-                # that the dir is already gone
-                if e.errno != errno.ENOENT:
-                    raise e
-        return super(Directory, self).delete(*args, **kwargs)
+        except (IOError, OSError) as e:
+            # check to see if the error was
+            # that the dir is already gone
+            if e.errno != errno.ENOENT:
+                raise e
 
     @property
     def path(self):
@@ -134,6 +136,9 @@ class Directory(ProxyMixin, DateMixin, NameMixin, CreatedByMixin,
         returning the path of the created directory. If already
         set, returns the directory path from the parent_directory
         and the object's name."""
+
+        if not self.active:
+            return None
 
         # check to see if path property is set
         if not getattr(self, '_parent_directory', None):

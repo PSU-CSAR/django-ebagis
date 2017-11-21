@@ -6,6 +6,8 @@ from django.utils import timezone
 
 from ebagis import constants
 from ebagis.utils import transaction
+from ebagis.utils.itertools import chain
+
 
 from .directory import Directory
 from .geodatabase import Surfaces, Layers, AOIdb, Analysis
@@ -94,7 +96,7 @@ class AOIDirectory(Directory):
 
     @property
     def prism(self):
-        return self.subdirectories.get(classname='PrismDir').versions.all()
+        return self._prism.versions.current()
 
     @property
     def maps(self):
@@ -106,11 +108,11 @@ class AOIDirectory(Directory):
 
     @property
     def zones(self):
-        return self.subdirectories.get(classname='Zones').hruzones.all()
+        return self._zones.hruzones.current()
 
     @property
     def items(self):
-        return [
+        return list(chain([
             self.surfaces,
             self.layers,
             self.aoidb,
@@ -118,8 +120,60 @@ class AOIDirectory(Directory):
             self._prism,
             self.maps,
             self._zones,
-        ]
+        ]))
 
+    # the _all versions don't filter inactive/removed records
+    @property
+    def surfaces_all(self):
+        return self._subdirectories.get(classname='Surfaces')
+
+    @property
+    def layers_all(self):
+        return self._subdirectories.get(classname='Layers')
+
+    @property
+    def aoidb_all(self):
+        return self._subdirectories.get(classname='AOIdb')
+
+    @property
+    def analysis_all(self):
+        return self._subdirectories.get(classname='Analysis')
+
+    @property
+    def _prism_all(self):
+        return self._subdirectories.get(classname='PrismDir')
+
+    @property
+    def prism_all(self):
+        return self._prism_all.versions.all()
+
+    @property
+    def maps_all(self):
+        return self._subdirectories.get(classname='Maps')
+
+    @property
+    def _zones_all(self):
+        return self._subdirectories.get(classname='Zones')
+
+    @property
+    def zones_all(self):
+        return self._zones_all.hruzones.all()
+
+    @property
+    def items_all(self):
+        return list(chain([
+            self.surfaces_all,
+            self.layers_all,
+            self.aoidb_all,
+            self.analysis_all,
+            self._prism_all,
+            self.maps_all,
+            self._zones_all,
+        ]))
+
+    @property
+    def _children(self):
+        return self.items_all
 
     def import_content(self, temp_aoi_path):
             # import aoi.gdb

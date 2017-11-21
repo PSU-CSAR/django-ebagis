@@ -31,7 +31,7 @@ class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
     """
     API endpoint that allows AOIs to be viewed or edited.
     """
-    queryset = AOI.objects.all()
+    queryset = AOI.objects.current()
     serializers = {
         "default": AOISerializer,
         "list": AOIListSerializer,
@@ -56,20 +56,28 @@ class AOIViewSet(UpdateMixin, DownloadMixin, MultiSerializerMixin,
                 ContentType.objects.get_for_model(AOI).pk
         return UploadView.new_upload(self.queryset.model, request)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        if request.accepted_renderer.format == 'geojson':
-            serializer = AOIGeoListSerializer(queryset, many=True,
-                                              context={'request': request})
-        else:
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+#    def list(self, request, *args, **kwargs):
+#        queryset = self.filter_queryset(self.get_queryset())
+#
+#        _serializer = self.get_serializer
+#        if request.accepted_renderer.format == 'geojson':
+#            _serializer = AOIGeoListSerializer
+#
+#        page = self.paginate_queryset(queryset)
+#        if page is not None:
+#            serializer = _serializer(
+#                page,
+#                many=True,
+#                context={'request': request},
+#            )
+#            return self.get_paginated_response(serializer.data)
+#
+#        serializer = _serializer(
+#            queryset,
+#            many=True,
+#            context={'request': request},
+#        )
+#        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

@@ -10,18 +10,20 @@ from ebagis.utils.validation import hash_file
 
 from .base import ABC
 from ebagis.models.mixins import (
-    ProxyMixin, DateMixin, NameMixin, AOIRelationMixin, CreatedByMixin
+    NameMixin, AOIRelationMixin, CreatedByMixin
 )
+
+from .mixins import SDDateProxyMixin
 
 from .file_data import (
     FileData, LAYER_DATA_CLASSES
 )
 
 
-class File(ProxyMixin, CreatedByMixin, DateMixin,
+class File(SDDateProxyMixin, CreatedByMixin,
            NameMixin, AOIRelationMixin, ABC):
     _parent_object = models.ForeignKey('Directory',
-                                       related_name='files',
+                                       related_name='_files',
                                        on_delete=models.CASCADE)
     _prefetch = ["versions"]
 
@@ -29,7 +31,7 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
                        "writable": ["name", "comment"]}
 
     class Meta:
-        unique_together = ("_parent_object", "name")
+        unique_together = ("_parent_object", "name", "_active")
 
     @property
     def parent_object(self):
@@ -38,6 +40,14 @@ class File(ProxyMixin, CreatedByMixin, DateMixin,
     @property
     def parent_directory(self):
         return self._parent_object.path
+
+    @property
+    def versions(self):
+        return self._versions.current()
+
+    @property
+    def _children(self):
+        return self._versions.all()
 
     @classmethod
     @transaction.atomic

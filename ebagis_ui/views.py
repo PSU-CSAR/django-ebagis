@@ -24,7 +24,7 @@ from ebagis.tasks import export_data
 
 class AOIDetailsView(LoginRequiredMixin, generic.DetailView):
     template_name = 'aois/details.html'
-    queryset = AOI.objects.all()
+    queryset = AOI.objects.current()
 
     def post(self, request, *args, **kwargs):
         if 'action_download' in request.POST:

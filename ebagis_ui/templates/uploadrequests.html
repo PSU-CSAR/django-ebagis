@@ -51,7 +51,7 @@
                 </td>
                 {% endif %}
                 <td class="align-middle">
-                    {% if upload.nstatus == 'COMPLETED' %}
+                    {% if upload.nstatus == 'COMPLETED' and upload.get_objects_aoi_id %}
                     <a class="btn btn-sm btn-success" href="{% url 'aoi_details' upload.get_objects_aoi_id %}" role="button"><i class="fa fa-eye" aria-hidden="true"></i> View AOI</a>
                     
                     {% elif upload.nstatus == 'QUEUED' or upload.nstatus == 'PROCESSING' or upload.nstatus == 'INCOMPLETE' %}

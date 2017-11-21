@@ -2,29 +2,31 @@ from __future__ import absolute_import
 import os
 import shutil
 import logging
+import errno
 
 from django.contrib.gis.db import models
 
 from ebagis import constants
 
 from ebagis.models.mixins import (
-    ProxyMixin, DateMixin, CreatedByMixin, AOIRelationMixin,
+    CreatedByMixin, AOIRelationMixin,
 )
 
 from ebagis.utils import transaction
 from ebagis.utils.validation import hash_file, generate_uuid, sanitize_uuid
 
 from .base import ABC
+from .mixins import SDDateProxyMixin
 
 
 logger = logging.getLogger(__name__)
 
 
-class FileData(ProxyMixin, DateMixin, CreatedByMixin,
+class FileData(SDDateProxyMixin, CreatedByMixin,
                AOIRelationMixin, ABC):
     encoding = models.CharField(max_length=20, null=True, blank=True)
     _parent_object = models.ForeignKey('File',
-                                       related_name='versions',
+                                       related_name='_versions',
                                        on_delete=models.CASCADE)
 
     # we are using sha256 for file hashes; others would suffice,
@@ -59,11 +61,23 @@ class FileData(ProxyMixin, DateMixin, CreatedByMixin,
 
     @property
     def path(self):
+        if not self.active:
+            return None
         return os.path.join(self.directory, self._path_name)
 
     @property
     def name(self):
         return self._parent_object.name
+
+    def cleanup(self):
+        try:
+            if self.path is not None:
+                os.remove(self.path)
+        except (IOError, OSError) as e:
+            # check to see if the error was
+            # that the file is already gone
+            if e.errno != errno.ENOENT:
+                raise e
 
     def save(self, src=None, *args, **kwargs):
         to_update = False

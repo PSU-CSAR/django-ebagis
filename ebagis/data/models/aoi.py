@@ -11,7 +11,7 @@ from ebagis import constants
 
 from ebagis.exceptions import AOIError
 
-from ebagis.models.mixins import CreatedByMixin, DateMixin, UniqueNameMixin
+from ebagis.models.mixins import CreatedByMixin, NameMixin
 
 from ebagis.utils.validation import validate_aoi, generate_uuid
 from ebagis.utils.misc import make_short_name
@@ -20,13 +20,14 @@ from ebagis.utils import gis, transaction
 from .base import ABC
 from .aoi_directory import AOIDirectory
 from .pourpoint import PourPoint
+from .mixins import SDDateMixin
 
 
-class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
+class AOI(CreatedByMixin, SDDateMixin, NameMixin, ABC):
     shortname = models.CharField(max_length=25)
     boundary = models.MultiPolygonField(geography=True, srid=settings.GEO_WKID)
     pourpoint = models.ForeignKey(PourPoint,
-                                  related_name="aois",
+                                  related_name="_aois",
                                   on_delete=models.PROTECT)
 
     # allow recursive parent-child relations
@@ -38,13 +39,22 @@ class AOI(CreatedByMixin, DateMixin, UniqueNameMixin, ABC):
                                    db_constraint=False,
                                    on_delete=models.SET_NULL)
 
+    class Meta:
+        unique_together = ("name", "_active")
+
     @property
     def parent_object(self):
         return self.parent_aoi
 
     @property
     def contents(self):
-        return self.directory.get(classname='AOIDirectory')
+        # we only want "current" (not removed and/or inactive) records
+        return self.directory.current().get(classname='AOIDirectory')
+
+    @property
+    def _children(self):
+        # we need to get all related records--inactive or otherwise
+        return [self.directory.get(classname='AOIDirectory')]
 
     @classmethod
     def create_from_upload(cls, upload, temp_aoi_path):

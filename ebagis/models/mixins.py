@@ -4,10 +4,6 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models
 
-from ..utils.misc import get_subclasses
-
-from .metaclass import InheritanceMetaclass
-
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -23,9 +19,9 @@ class AOIRelationMixin(models.Model):
 
 
 class DateMixin(models.Model):
-    """Generic mixin to provide a created and removed datetime tracking
-    to a model. Also implements a a querydate validation function for
-    date-related export functions."""
+    """Generic mixin to provide a created, modified, and removed
+    datetime tracking. The mixin also implements a querydate
+    validation function for date-related export functions."""
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(null=True, blank=True, default=None)
     removed_at = models.DateTimeField(null=True, blank=True)
@@ -53,8 +49,7 @@ class DateMixin(models.Model):
         """Overrides the default save method to always update
         the modified date unless explicitly specified otherwise
         """
-        if not getattr(self, "created_at", None) == None:
-            if set_modified:
+        if not getattr(self, "created_at", None) == None and set_modified:
                 self.modified_at = timezone.now()
         return super(DateMixin, self).save(*args, **kwargs)
 
@@ -97,66 +92,3 @@ class UniqueNameMixin(models.Model):
 
     class Meta:
         abstract = True
-
-
-class ProxyManager(models.Manager):
-    """Model manager class used by the ProxyMixin"""
-    def get_queryset(self):
-        # build a list of all the subclasses of the class,
-        # including itself
-        classes = [cls.__name__ for cls in get_subclasses(self.model,
-                                                          [self.model])]
-        queryset = super(ProxyManager, self).get_queryset()
-        return queryset.filter(
-            classname__in=classes
-        )#.select_related()#.prefetch_related(*self.model._prefetch)
-
-
-class ProxyMixin(models.Model):
-    """Generic Mixin to provide full support to proxy classes
-    for returning and saving objects of subclasses to the base
-    class.
-
-    NOTE: Using the proxy mixin requires that it be the first
-    class inherited from in any subclasses. Failing to follow
-    this requirement will likely break the custom manager class
-    such that the correct class types will not be returned."""
-    __metaclass__ = InheritanceMetaclass
-    classname = models.CharField(max_length=40)
-    _prefetch = []
-    objects = ProxyManager()
-
-    class Meta:
-        abstract = True
-
-    def save(self, *args, **kwargs):
-        """Overrides the default save method to do the following:
-
-         - automatically assign the classname of the instance
-           to be that of the class of which it is an
-           instance. In other words, a Maps instance
-           will be saved with the classname 'Maps'"""
-        if not self.classname:
-            self.classname = self.__class__.__name__
-        return super(ProxyMixin, self).save(*args, **kwargs)
-
-    @classmethod
-    def get_subclasses(cls):
-        """Finds all subclasses of the current object's class.
-        Used in the get_object method to return object as a
-        specific subclass object, if nessesary."""
-        return dict([(subclass.__name__, subclass)
-                     for subclass in get_subclasses(cls)])
-
-    def get_object(self):
-        """Ensures when getting an object, it will be of
-        the same type as it was created, e.g., the type
-        of directory as indicated by its name."""
-        subclasses = self.get_subclasses()
-        # check to see if the class name in the db is
-        # a subclass of the current class; if yes,
-        # change the class of the returned object to
-        # the subclass else return the current class
-        if self.classname in subclasses:
-            self.__class__ = subclasses[self.classname]
-        return self

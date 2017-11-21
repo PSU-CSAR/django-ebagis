@@ -54,4 +54,7 @@ class EbagisConfig(AppConfig):
         try:
             create_or_update_nwcc_user_groups()
         except Error:
-            print 'Warning: DB does not exist, is not initialized, or otherwise has errors.'
+            print ('Warning: DB does not exist, is not initialized, '
+                   'or otherwise has errors.')
+
+        import ebagis.signals

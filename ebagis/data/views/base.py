@@ -32,7 +32,7 @@ class BaseViewSet(viewsets.ModelViewSet):
 
     @property
     def queryset(self):
-        return self._query_class.objects.all()
+        return self._query_class.objects.current()
 
     def get_queryset(self):
         return super(BaseViewSet, self).get_queryset().filter(

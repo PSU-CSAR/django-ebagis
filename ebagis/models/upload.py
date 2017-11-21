@@ -39,9 +39,9 @@ class Upload(ChunkedUpload):
 
     @property
     def nstatus(self):
-        if self.status == self.COMPLETE and self.task.status  == states.SUCCESS:
+        if self.status == self.COMPLETE and self.task.status == states.SUCCESS:
             status = 'COMPLETED'
-        elif self.status == self.COMPLETE and self.task.status  == states.PENDING:
+        elif self.status == self.COMPLETE and self.task.status == states.PENDING:
             status = 'QUEUED'
         elif self.status == self.COMPLETE and self.task.status in [states.RETRY, states.STARTED]:
             status = 'PROCESSING'
@@ -84,10 +84,15 @@ class Upload(ChunkedUpload):
             return None
 
     def get_objects_aoi_id(self):
+        aoi_id = None
         if self.content_type == ContentType.objects.get_for_model(AOI):
-            return self.object_id
+            aoi_id = self.object_id
         else:
             try:
-                return self.content_object.aoi.id
+                aoi_id = self.content_object.aoi.id
             except AttributeError:
-                return None
+                pass
+        if aoi_id and not AOI.objects.get(id=aoi_id).current:
+            # we don't want any removed AOIs
+            aoi_id = None
+        return aoi_id

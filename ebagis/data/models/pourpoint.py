@@ -45,6 +45,10 @@ class PourPoint(NameMixin):
     awdb_id = models.CharField(max_length=30, null=True, blank=True)
     source = models.PositiveSmallIntegerField(choices=SOURCE_CHOICES)
 
+    @property
+    def aois(self):
+        return self._aois.current()
+
     def update_boundary_simple(self,
                                tolerance=SIMPLIFY_TOLERANCE,
                                save=True):
