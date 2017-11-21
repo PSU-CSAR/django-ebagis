@@ -68,6 +68,11 @@ def default_django_command():
 
     # check to make sure we can import the settings
     # otherwise, we suspect the env has not been activated
+    #
+    # TODO: this check is almost pointless, as the wrong env could be
+    # activated and this would not prevent execution. I should
+    # do some sort of more advanced check of the settings to verify that
+    # they match the current project.
     try:
         import ebagis.settings
     except ImportError:
@@ -142,6 +147,8 @@ def main():
             return default_django_command()
         except Exception as e:
             logger.exception(e)
+            raise
+            # before I was returning -1, but I don't know why anymore
             return -1
 
 
