@@ -156,3 +156,9 @@ class AOI(CreatedByMixin, SDDateMixin, NameMixin, ABC):
         view = self._classname + "-base:detail"
         kwargs = {"pk": str(self.pk)}
         return reverse(view, kwargs=kwargs, request=request)
+
+    @classmethod
+    def validate(cls, data):
+        if not data['is_update']:
+            name = os.path.splitext(data['filename'])[0]
+            cls(name=name).validate_unique()

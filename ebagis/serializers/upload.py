@@ -1,11 +1,10 @@
 from __future__ import absolute_import
 
-from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 
 from rest_framework import serializers
 
 from ..models.upload import Upload
-from ..utils.validation import validate_path
 
 from .task import TaskSerializer
 from .fields import FriendlyChoiceField
@@ -18,25 +17,16 @@ class UploadSerializer(serializers.ModelSerializer):
     task = TaskSerializer(read_only=True)
     status = FriendlyChoiceField(choices=Upload.STATUS_CHOICES, required=False)
 
-# TODO: move the validation to the model classes, and call the necessary methods here
-#    def validate(self, data):
-#        if not data.is_update:
-#            if data.parent_object_id:
-#                parent_class = ContentType.model_class(data.parent_content_type)
-#                parent_object = parent_class.objects.get(pk=data.parent_object_id)
-#
-#            name = os.path.splitext(value)[0]
-#            validate_path(name, allow_whitespace=True)
-#            upload_class = ContentType.model_class(data.content_type)
-#
-#            try:
-#                upload_class.objects.get(name)
-#            except upload_class.DoesNotExist:
-#                pass
-#            else:
-#                raise serializers.ValidationError("An object of the same name and type already exists.")
-#
-#        return data
+    def validate(self, data):
+        model = data['content_type'].model_class()
+
+        if hasattr(model, 'validate'):
+            try:
+                model.validate(data)
+            except ValidationError as e:
+                raise serializers.ValidationError(e[0])
+
+        return data
 
     class Meta:
         model = Upload
