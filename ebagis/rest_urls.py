@@ -408,6 +408,9 @@ urlpatterns = [
         views.get_settings),
     url(r"^desktop/lyr/$", views.get_lyr),
 
+    # PRISM Stats
+    url(r"^prism/stats/$", views.PRISMStatsView),
+
     # upload URLs
     url(r"^uploads/$", views.UploadView.as_view(), name="upload-list"),
     url(r"^uploads/{}/$".format(PK_QUERY),

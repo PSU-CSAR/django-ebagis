@@ -12,6 +12,8 @@ from .misc import (
     check_api_version,
 )
 
+from .prism import PRISMStatsView
+
 from .root import APIRoot
 
 from .upload import (
