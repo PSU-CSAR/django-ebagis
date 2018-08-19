@@ -49,6 +49,7 @@ coverage.xml
 
 # Django stuff
 *.log
+/log/
 /static/
 *web.config
 media/

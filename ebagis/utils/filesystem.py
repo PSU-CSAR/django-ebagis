@@ -2,6 +2,26 @@ from __future__ import absolute_import
 from contextlib import contextmanager
 
 
+def makedirs(path, *args, **kwargs):
+    import os
+    import errno
+    try:
+        os.makedirs(path, *args, **kwargs)  # exist_ok only in Python>3.2
+    except TypeError as e:
+        try:
+            exist_ok = kwargs.pop('exist_ok')
+        except KeyError:
+            # looks like the TypeError wasn't the exist_ok...
+            raise e
+        try:
+            os.makedirs(path, *args, **kwargs)
+        except OSError as e:
+            if exist_ok and e.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+
 def generate_postfix(iteration, sequential=False):
     """used to generate the postfixes for the
     make_unique_directory function"""
