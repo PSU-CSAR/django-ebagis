@@ -4,9 +4,7 @@
 {% block head_title %}AOI Browser{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
 <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
 <link rel="stylesheet" href="{% static 'ebagis_ui/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}"/>
 <link rel="stylesheet" href="{% static 'ebagis_ui/css/map.css' %}">
@@ -206,7 +204,7 @@
       <div class="modal-header">
         <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">
-          Developed by Aida Keifer
+          Developed by <a href='https://www.pdx.edu/geography/center-for-spatial-analysis-research-csar'>PSU CSAR</a>
         </h4>
       </div>
       <div class="modal-body">
@@ -223,14 +221,15 @@
 {% endblock base_content %}
 
 {% block js %}
-<script type="text/javascript"> 
+<script type="text/javascript">
    var POURPOINT_URL = "{% url 'pourpoint-boundary-base:list' %}";
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.0.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
 <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
 <script src="{% static 'ebagis_ui/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}"></script>
+<!--script src="{% static 'ebagis_ui/js/Leaflet.VectorGrid.bundled.js' %}"></script-->
 <script src="{% static 'ebagis_ui/js/map.js' %}"></script>
 {% endblock %}
