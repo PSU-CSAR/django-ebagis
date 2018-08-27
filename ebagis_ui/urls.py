@@ -19,7 +19,7 @@ PK_QUERY = ID_QUERY.format(id="pk")
 
 urlpatterns = [
     url(r'^$',
-        TemplateView.as_view(template_name='map/map.html'),
+        TemplateView.as_view(template_name='aois/map.html'),
         name='ebagis_home'),
 
     # we have to have this seemingly useless route to
