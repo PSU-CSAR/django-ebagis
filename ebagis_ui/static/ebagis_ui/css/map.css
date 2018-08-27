@@ -135,7 +135,11 @@ body {
 .feature-row > a:first-of-type {
   text-decoration: none !important;
 }
-
+/* border around leaflet tile bounds
+.leaflet-tile {
+  border: solid black 5px;
+}
+*/
 .leaflet-control-layers {
   overflow: auto;
 }
