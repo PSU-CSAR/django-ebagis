@@ -22,6 +22,10 @@ urlpatterns = [
         TemplateView.as_view(template_name='aois/map.html'),
         name='ebagis_home'),
 
+    url(r'^snodas/$',
+        TemplateView.as_view(template_name='snodas/map.html'),
+        name='snodas_map'),
+
     # we have to have this seemingly useless route to
     # the aoi_root_url because we have to reverse it in
     # the AOI modal on the map, and provide an id for

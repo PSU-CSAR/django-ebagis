@@ -7,22 +7,16 @@
   <a class="navbar-brand" href={{ url_home }}><i class="fa fa-globe" aria-hidden="true"></i> NWCC eBagis</a>
   <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
+
       <li class="nav-item nav-icon {% if request.get_full_path == url_home or request.get_full_path == url_aois %}active{% endif %}">
         <a class="nav-link" href={{ url_home }}><i class="fa fa-map" aria-hidden="true"></i> AOI Browser</a>
       </li>
-      <li class="nav-item nav-icon">
-        <div class="dropdown">
-          <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-bar-chart" aria-hidden="true"></i>
-            PRISM Statistics
-          </a>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <div class="dropdown-item dropdown-no-hover-color">
-              <i class="fa fa-wrench" aria-hidden="true"></i> Under Construction
-            </div>
-          </div>
-        </div>
+
+      {% url 'snodas_map' as url_snodas %}
+      <li class="nav-item nav-icon {% if request.get_full_path == url_snodas %}active{% endif %}">
+        <a class="nav-link" href={{ url_snodas }}><i class="fa fa-map" aria-hidden="true"></i> SNODAS Tools</a>
       </li>
+
       {% url 'ebagis_about' as url_about %}
       <li class="nav-item nav-icon {% if request.get_full_path == url_about %}active{% endif %}">
         <a class="nav-link" href={{ url_about }}><i class="fa fa-question-circle" aria-hidden="true"></i> About</a> {# url 'ebagis_about' #}
