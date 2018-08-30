@@ -385,7 +385,7 @@ class UploadTestCase(TestCase):
 
         if upload.status == upload.ABORTED:
             status = '<span class="badge badge-warning">Cancelled</span>'
-            action = '<span class="badge badge-default">N/A</span>'
+            action = '<span class="badge badge-dark">N/A</span>'
         elif upload.status == upload.UPLOADING:
             status = '<span class="badge badge-info">Incomplete</span>'
             action = '<button class="btn btn-sm btn-warning"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>'
@@ -394,7 +394,7 @@ class UploadTestCase(TestCase):
             action = '<button class="btn btn-sm btn-success"><i class="fa fa-eye" aria-hidden="true"></i> View Result</button>'
         elif upload.task.status in ['REVOKED', 'ABORTED']:
             status = '<span class="badge badge-warning">Cancelled</span>'
-            action = '<span class="badge badge-default">N/A</span>'
+            action = '<span class="badge badge-dark">N/A</span>'
         elif upload.task.status in ['PENDING', 'RETRY', 'STARTED']:
             status = '<span class="badge badge-primary">Processing</span>'
             action = '<button class="btn btn-sm btn-warning"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>'

@@ -25,17 +25,18 @@
         </div>-->
         <h4 class="card-title">
           Pour Points
-          <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
+          <button type="button" class="btn btn-sm float-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
         </h4>
       </div>
-      <div class="card-block">
+      <div class="card-body">
           <div class="card-text">
             <div class="input-group">
               <input id="filter" type="text" class="form-control search" placeholder="Filter">
-              <span class="input-group-btn">
-                <a  id="clear-btn" href="#" class="btn btn-secondary btn-md" role="button" aria-disabled="true"><i class="fa fa-times" aria-hidden="true" value="Reset"></i></a>
-                <!--<button class="btn btn-secondary btn-sm disabled" type="button"><i class="fa fa-times" aria-hidden="true"></i></button>-->
-              </span>
+              <div class="input-group-append">
+                <button id="clear-btn" class="btn btn-outline-secondary disabled" type="button">
+               <i class="fa fa-times" aria-hidden="true" value="Reset"></i></button>
+                <!-- <a   href="#" class="btn btn-md" role="button" aria-disabled="true"><button class="btn btn-secondary btn-sm disabled" type="button"><i class="fa fa-times" aria-hidden="true"></i></button>-->
+              </div>
             </div>
           </div>
           <!--<div class="col-sm-4 col-md-4">
@@ -49,7 +50,7 @@
     </div>
   </div>
 </div>
-<button type="button" class="btn btn-xs btn-default pull-left hidden" id="sidebar-show-btn"><i class="fa fa-chevron-right"></i></button>
+<button type="button" class="btn btn-sm float-left hidden" id="sidebar-show-btn"><i class="fa fa-chevron-right"></i></button>
 <div id="map">
   <div id="loading">
     <div class="loader"></div>

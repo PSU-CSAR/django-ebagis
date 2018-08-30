@@ -18,11 +18,11 @@ body {
   border: 0px;
   border-radius: 0rem;
 }
-.card-block {
+.card-body {
   padding: .75rem;
   border-bottom: 1px solid rgba(0,0,0,.125);
 }
-.feature-row .card-block {
+.feature-row .card-body {
   padding:0px;
 }
 .card-header {
@@ -57,7 +57,7 @@ body {
   text-overflow: ellipsis;
 }
 
-#file-list .card-block {
+#file-list .card-body {
   padding: 0px;
   border: 0px;
 }

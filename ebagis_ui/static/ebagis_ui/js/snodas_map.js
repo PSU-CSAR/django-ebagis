@@ -1,6 +1,6 @@
 // get the pourpoint points for reference
 function getPourpoints(callback) {
-    jQuery.ajax({
+    $.ajax({
         'type': 'GET',
         'url': 'http://snodas.whyiseverythingalreadytaken.com/pourpoints/',
         'datatype': 'json',
@@ -10,7 +10,120 @@ function getPourpoints(callback) {
     });
 }
 
-var map, featureList;
+
+// get the snodas dates
+function getSNODASdates(callback) {
+    $.ajax({
+        'type': 'GET',
+        'url': 'http://snodas.whyiseverythingalreadytaken.com/tiles/',
+        'datatype': 'json',
+        'success': function(result) {
+            var years = {};
+            for (var i = 0; i < result.length; i++) {
+                var split = result[i].split('-');
+                var year = parseInt(split[0]), month = parseInt(split[1]), day = parseInt(split[2]);
+                if (!years[year]) {
+                    years[year] = {};
+                }
+                if (years[year][month]) {
+                    years[year][month].push(day);
+                } else {
+                    years[year][month] = [day];
+                }
+            }
+            callback(years);
+        }
+    });
+}
+
+/*function getSNODASparams(callback) {
+    $.ajax({
+        'type': 'GET',
+        'url': 'http://snodas.whyiseverythingalreadytaken.com/tiles/date-params',
+        'datatype': 'json',
+        'success': function(result) {
+            callback(result);
+        }
+    });
+}*/
+
+
+var map, featureList, snodas_dates;
+
+/*getSNODASparams(function(params) {
+    $('#snodas-tile-date input').datepicker({
+        format: "yyyy-mm-dd",
+        startDate: params.start_date,
+        endDate: params.end_date,
+        startView: 0,
+        todayBtn: true,
+        datesDisabled: params.missing,
+        defaultViewDate: {
+            year: params.start_date.slice(0, 4),
+            month: params.start_date.slice(5, 7),
+            day: params.start_date.slice(8, 10)
+        },
+        todayHighlight: true,
+        assumeNearbyYear: true
+    });
+});*/
+
+
+var map, featureList, snodas_dates, mostRecent;
+
+
+getSNODASdates(function(dates) {
+    snodas_dates = dates;
+    var max_year = Math.max(...Object.keys(snodas_dates));
+    var max_month = Math.max(...Object.keys(snodas_dates[max_year]));
+    var max_day = Math.max(...snodas_dates[max_year][max_month]);
+    var min_year = Math.min(...Object.keys(snodas_dates));
+    var min_month = Math.min(...Object.keys(snodas_dates[min_year]));
+    var min_day = Math.min(...snodas_dates[min_year][min_month]);
+    var min_date = min_year + (min_month > 9 ? '-' : '-0') + min_month + (min_day > 9 ? '-' : '-0') + min_day;
+    var max_date = max_year + (max_month > 9 ? '-' : '-0') + max_month + (max_day > 9 ? '-' : '-0') + max_day;
+    mostRecent = max_year + (max_month > 9 ? '' : '0') + max_month + (max_day > 9 ? '' : '0') + max_day;
+
+    $('#snodas-tile-date input').datepicker({
+        format: "yyyy-mm-dd",
+        startDate: min_date,
+        endDate: max_date,
+        startView: 0,
+        todayBtn: true,
+        todayHighlight: true,
+        assumeNearbyYear: true,
+        maxViewMode: 2,
+        beforeShowDay: function(date) {
+            var months = snodas_dates[date.getFullYear()];
+            if (months) {
+                var days = months[date.getMonth()+1];
+                if (days && days.indexOf(date.getDate()) != -1) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        beforeShowMonth: function(date) {
+            var months = snodas_dates[date.getFullYear()];
+            if (months && months[date.getMonth()+1]) {
+                return true;
+            }
+            return false;
+        },
+        beforeShowYear: function(date){
+            if (snodas_dates[date.getFullYear()]) {
+                return true;
+            }
+            return false;
+        }
+    });
+    $('#snodas-tile-date input').datepicker('update', max_date);
+    $("#snodas-refresh").click();
+});
+
+$("#calendar-btn").click(function() {
+    $('#snodas-tile-date input').datepicker('show');
+});
 
 //
 function sizeLayerControl() {
@@ -57,6 +170,12 @@ function animateSidebar() {
     );
 }
 
+function fmtDate(date) {
+    var day = date.getDate(), month = date.getMonth() + 1;
+    return date.getFullYear() +
+        (month > 9 ? '' : '0') + month +
+        (day > 9 ? '' : '0') + day;
+}
 
 // Basemap Layers
 var cartoLight = L.tileLayer(
@@ -66,26 +185,69 @@ var cartoLight = L.tileLayer(
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
     }
 );
-var usgsImagery = L.layerGroup(
-    [
-        L.tileLayer(
-            "http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
-            {maxZoom: 15}
-        ),
-        L.tileLayer.wms(
-            "http://raster.nationalmap.gov/arcgis/services/Orthoimagery/USGS_EROS_Ortho_SCALE/ImageServer/WMSServer?",
-            {
-                minZoom: 16,
-                maxZoom: 19,
-                layers: "0",
-                format: 'image/jpeg',
-                transparent: true,
-                attribution: "Aerial Imagery courtesy USGS"
-            }
-        )
-    ]
+var usgsImagery = L.tileLayer(
+    "http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
+    {
+        maxZoom: 15,
+        attribution: "Aerial Imagery courtesy USGS",
+    }
 );
 
+// snodas tile layer
+var snodasURL = 'http://{s}.snodas.whyiseverythingalreadytaken.com/tiles/{date}/{z}/{x}/{y}.png'
+var snodasTiles = L.tileLayer(
+    '',
+    {
+        subdomains: "abcd",
+        tms: true,
+        maxNativeZoom: 15,
+        bounds: [[52.8754, -124.7337], [24.9504, -66.9421]],
+    },
+);
+
+snodasTiles.setDate = function(date) {
+    console.log("in setDate");
+    if (!this._date || this._date !== date) {
+        console.log("setting url");
+        snodasTiles._date = date;
+        snodasTiles.setUrl(
+            L.Util.template(
+                snodasURL,
+                {
+                    date: fmtDate(date),
+                    s: '{s}',
+                    z: '{z}',
+                    x: '{x}',
+                    y: '{y}',
+                },
+            ),
+        );
+    }
+}
+
+snodasTiles.update = function () {
+    var date = $('#snodas-tile-date input').datepicker('getDate');
+    snodasTiles.setDate(date)
+    console.log(!map.hasLayer(snodasTiles));
+    console.log($("#snodas-on").prop("checked"));
+    if (!map.hasLayer(snodasTiles) && $("#snodas-on").prop("checked")) {
+        console.log("adding layer");
+        map.addLayer(snodasTiles);
+    } else if (map.hasLayer(snodasTiles) && !$("#snodas-on").prop("checked")) {
+        console.log("removing layer");
+        map.removeLayer(snodasTiles);
+    }
+}
+
+$("#snodas-refresh").click(function(e) {
+    console.log("refresh");
+    snodasTiles.update();
+});
+
+$("#snodas-on").change(function(e) {
+    console.log("toggle");
+    snodasTiles.update();
+});
 
 // watershed tile layer
 var polygonOptions = {
@@ -448,14 +610,6 @@ var layerControl = L.control.groupedLayers(
 $(document).one("ajaxStop", function () {
     $("#loading").hide();
     sizeLayerControl();
-    featureList = new List(
-        "features",
-        {valueNames: ["feature-name"]}
-    );
-    featureList.sort(
-        "feature-name",
-        {order: "asc"}
-    );
 });
 
 // Leaflet patch to make layer control scrollable on touch browsers

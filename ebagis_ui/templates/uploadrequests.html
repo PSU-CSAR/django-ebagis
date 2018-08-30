@@ -35,7 +35,7 @@
                 {% elif upload.nstatus == 'CANCELLED' %}
                 <td class="align-middle"><span class="badge badge-warning">Cancelled</span></td>
                 {% else %}
-                <td class="align-middle"><span class="badge badge-default">Unknown</span></td>
+                <td class="align-middle"><span class="badge badge-dark">Unknown</span></td>
                 {% endif %}
 
                 <td class="align-middle">{{ upload.filename }}</td>
@@ -65,7 +65,7 @@
                     <button class="btn btn-sm btn-danger task-error-button" data-upload-filename="{{ upload.filename }}" data-upload-traceback="{{ upload.task.traceback|linebreaks }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> View Error</button>
                     
                     {% else %}
-                    <span class="badge badge-default">N/A</span>
+                    <span class="badge badge-dark">N/A</span>
                     {% endif %}
                 </td>
             </tr>
