@@ -212,7 +212,6 @@ var polygonSelectedOptions = {
     weight: 5,
     color: '#223399',
     opacity: 1,
-    strokeAlignment: 'inside'
 }
 var vTileOptions = {
     subdomains: "abcd",
@@ -359,6 +358,7 @@ var AOIboundaries = L.geoJson(null, {
 // create the map, initializing zoom, center, and layers
 map = L.map("map", {
     zoom: 4,
+    minZoom: 3,
     center: [39.8283, -98.5795],
     layers: [cartoLight, highlight, watersheds],
     zoomControl: false,
