@@ -1,3 +1,8 @@
+let HIGHLIGHT_LAYERNAME = 'highlight';
+let CLICKED_LAYERNAME = 'click_highlight';
+
+
+
 // get the pourpoint points for reference
 function getPourpoints(callback) {
     $.ajax({
@@ -36,41 +41,57 @@ function getSNODASdates(callback) {
     });
 }
 
-/*function getSNODASparams(callback) {
-    $.ajax({
-        'type': 'GET',
-        'url': 'http://snodas.whyiseverythingalreadytaken.com/tiles/date-params',
-        'datatype': 'json',
-        'success': function(result) {
-            callback(result);
-        }
-    });
-}*/
-
-
 var map, featureList, snodas_dates;
 
-/*getSNODASparams(function(params) {
-    $('#snodas-tile-date input').datepicker({
-        format: "yyyy-mm-dd",
-        startDate: params.start_date,
-        endDate: params.end_date,
-        startView: 0,
-        todayBtn: true,
-        datesDisabled: params.missing,
-        defaultViewDate: {
-            year: params.start_date.slice(0, 4),
-            month: params.start_date.slice(5, 7),
-            day: params.start_date.slice(8, 10)
-        },
-        todayHighlight: true,
-        assumeNearbyYear: true
-    });
-});*/
+function fmtDate(date, sep) {
+    if (!sep) {
+        sep = ''
+    }
+    var day = date.getDate(), month = date.getMonth() + 1;
+    return date.getFullYear() +
+        sep +
+        (month > 9 ? '' : '0') + month +
+        sep +
+        (day > 9 ? '' : '0') + day;
+}
 
+function updateQueryBtn() {
+    var queryBtn = document.getElementById('snodas-query-btn');
+    var pourpointTable = document.getElementById('snodas-pourpoint-table');
+    var queryPoint = document.getElementById('snodas-query-point');
+    
+    var hasDates = false;
+    if ($('#snodas-query-date').data("datepicker").pickers[0].getDate() &&
+        $('#snodas-query-date').data("datepicker").pickers[1].getDate() &&
+        ((!pourpointTable.hidden && pourpointTable.getAttribute('pourpoint_id')) ||
+         (!queryPoint.hidden && 
+          editHandler._pointMarker))) {
+        queryBtn.disabled = false;
+        return true;
+    }
+    queryBtn.disabled = true;
+    return false;
+}
 
-var map, featureList, snodas_dates, mostRecent;
+function setPourpointName(properties) {
+    var table = document.getElementById('snodas-pourpoint-table');
+    table.setAttribute('pourpoint_id', properties.pourpoint_id);
+    table.setAttribute('is_polygon', properties.is_polygon);
+    document.getElementById('snodas-pourpoint-awdb-id').innerText = properties.awdb_id;
+    document.getElementById('snodas-pourpoint-name').innerText = properties.name;
+    document.getElementById('snodas-pourpoint-type').innerText = properties.is_polygon ? 'Polygon' : 'Point';
+    updateQueryBtn();
+}
 
+function clearPourpointName() {
+    var table = document.getElementById('snodas-pourpoint-table');
+    table.removeAttribute('pourpoint_id');
+    table.removeAttribute('is_polygon');
+    document.getElementById('snodas-pourpoint-awdb-id').innerText = '';
+    document.getElementById('snodas-pourpoint-name').innerText = '';
+    document.getElementById('snodas-pourpoint-type').innerText = '';
+    updateQueryBtn();
+}
 
 getSNODASdates(function(dates) {
     snodas_dates = dates;
@@ -82,7 +103,6 @@ getSNODASdates(function(dates) {
     var min_day = Math.min(...snodas_dates[min_year][min_month]);
     var min_date = min_year + (min_month > 9 ? '-' : '-0') + min_month + (min_day > 9 ? '-' : '-0') + min_day;
     var max_date = max_year + (max_month > 9 ? '-' : '-0') + max_month + (max_day > 9 ? '-' : '-0') + max_day;
-    mostRecent = max_year + (max_month > 9 ? '' : '0') + max_month + (max_day > 9 ? '' : '0') + max_day;
 
     $('#snodas-tile-date input').datepicker({
         format: "yyyy-mm-dd",
@@ -93,6 +113,7 @@ getSNODASdates(function(dates) {
         todayHighlight: true,
         assumeNearbyYear: true,
         maxViewMode: 2,
+        zIndexOffset: 1000,
         beforeShowDay: function(date) {
             var months = snodas_dates[date.getFullYear()];
             if (months) {
@@ -119,10 +140,34 @@ getSNODASdates(function(dates) {
     });
     $('#snodas-tile-date input').datepicker('update', max_date);
     $("#snodas-refresh").click();
+    $('#snodas-query-date').datepicker({
+        format: "yyyy-mm-dd",
+        startDate: min_date,
+        endDate: max_date,
+        startView: 0,
+        todayBtn: true,
+        todayHighlight: true,
+        assumeNearbyYear: true,
+        maxViewMode: 2,
+        zIndexOffset: 1000,
+    });
+    var start_date = new Date(max_date);
+    start_date.setDate(start_date.getDate() - 6);
+    $("#snodas-query-date").data("datepicker").pickers[1].setDate(max_date);
+    $("#snodas-query-date").data("datepicker").pickers[0].setDate(start_date);
+    updateQueryBtn();
 });
 
 $("#calendar-btn").click(function() {
     $('#snodas-tile-date input').datepicker('show');
+});
+
+$("#snodas-query-start").on('change', function(e) {
+    updateQueryBtn();
+});
+
+$("#snodas-query-end").on('change', function(e) {
+    updateQueryBtn();
 });
 
 //
@@ -170,13 +215,6 @@ function animateSidebar() {
     );
 }
 
-function fmtDate(date) {
-    var day = date.getDate(), month = date.getMonth() + 1;
-    return date.getFullYear() +
-        (month > 9 ? '' : '0') + month +
-        (day > 9 ? '' : '0') + day;
-}
-
 // Basemap Layers
 var cartoLight = L.tileLayer(
     "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
@@ -206,9 +244,7 @@ var snodasTiles = L.tileLayer(
 );
 
 snodasTiles.setDate = function(date) {
-    console.log("in setDate");
     if (!this._date || this._date !== date) {
-        console.log("setting url");
         snodasTiles._date = date;
         snodasTiles.setUrl(
             L.Util.template(
@@ -225,43 +261,50 @@ snodasTiles.setDate = function(date) {
     }
 }
 
-snodasTiles.update = function () {
+snodasTiles.update = function() {
     var date = $('#snodas-tile-date input').datepicker('getDate');
     snodasTiles.setDate(date)
-    console.log(!map.hasLayer(snodasTiles));
-    console.log($("#snodas-on").prop("checked"));
     if (!map.hasLayer(snodasTiles) && $("#snodas-on").prop("checked")) {
-        console.log("adding layer");
         map.addLayer(snodasTiles);
     } else if (map.hasLayer(snodasTiles) && !$("#snodas-on").prop("checked")) {
-        console.log("removing layer");
         map.removeLayer(snodasTiles);
     }
 }
 
 $("#snodas-refresh").click(function(e) {
-    console.log("refresh");
+    //console.log("snodas refresh clicked");
     snodasTiles.update();
 });
 
 $("#snodas-on").change(function(e) {
-    console.log("toggle");
+    //console.log("snodas toggle clicked");
     snodasTiles.update();
 });
 
 // watershed tile layer
 var polygonOptions = {
     fill: false,
-    weight: 1.5,
+    weight: 1,
     color: '#4455FF',
     opacity: 1
 }
 var polygonSelectedOptions = {
     fill: false,
-    weight: 5,
+    weight: 2,
     color: '#223399',
     opacity: 1,
-    strokeAlignment: 'inside'
+}
+var polygonClickedOptions = {
+    fill: false,
+    weight: 4,
+    color: '#BB2244',
+    opacity: 1,
+}
+var polygonClickedSelectedOptions = {
+    fill: false,
+    weight: 5,
+    color: '#BB2244',
+    opacity: 1,
 }
 var vTileOptions = {
     subdomains: "abcd",
@@ -281,13 +324,20 @@ var watersheds = L.vectorGrid.protobuf(
     vTileOptions
 );
 
-watersheds.clearHighlight = function () {
-    for (var tileKey in watersheds._vectorTiles) {
-        var tile = watersheds._vectorTiles[tileKey];
+watersheds._highlight = null;
+watersheds._clicked = null;
+
+watersheds._makeCopyID = function(id, layerName) {
+    return layerName + '_' + id;
+}
+
+watersheds._clearHighlight = function(layerName) {
+    for (var tileKey in this._vectorTiles) {
+        var tile = this._vectorTiles[tileKey];
         var features = tile._features;
         for (var fid in features) {
             var data = features[fid];
-            if (data && data.layerName === 'highlight') {
+            if (data && data.layerName === layerName) {
                 tile._removePath(data.feature);
                 delete features[fid];
             }
@@ -295,12 +345,22 @@ watersheds.clearHighlight = function () {
     }
 }
 
-watersheds.copyFeature = function (original) {
+watersheds.clearHighlight = function() {
+    this._clearHighlight(HIGHLIGHT_LAYERNAME);
+    this._highlight = null;
+}
+
+watersheds.clearClickedHighlight = function() {
+    this._clearHighlight(CLICKED_LAYERNAME);
+    this._clicked = null;
+}
+
+watersheds._copyFeature = function(original, layerName) {
     var copy = Object.create(original);
     copy._parts = JSON.parse(JSON.stringify(original._parts));
     copy.properties = JSON.parse(JSON.stringify(original.properties));
     copy.options = JSON.parse(JSON.stringify(original.options));
-    copy.properties.pourpoint_id = 'cpy_' + copy.properties.pourpoint_id;
+    copy.properties.pourpoint_id = this._makeCopyID(copy.properties.pourpoint_id, layerName);
     copy._renderer = original._renderer;
     copy._eventParents = original._eventParents;
     copy.initHooksCalled = true;
@@ -309,15 +369,14 @@ watersheds.copyFeature = function (original) {
     return copy;
 }
 
-watersheds.addHighlight = function (id) {
-    watersheds.clearHighlight();
-    var styleOptions = polygonSelectedOptions;
-    for (var tileKey in watersheds._vectorTiles) {
-        var tile = watersheds._vectorTiles[tileKey];
+watersheds._addHighlight = function(id, layerName, styleOptions) {
+    this._clearHighlight(layerName);
+    for (var tileKey in this._vectorTiles) {
+        var tile = this._vectorTiles[tileKey];
         var data = tile._features[id];
         if (data) {
             // copy the watershed feature so we can add one with "highlight"
-            var feat = watersheds.copyFeature(data.feature);
+            var feat = this._copyFeature(data.feature, layerName);
 
             // resolve the style to be applied
             styleOptions = (styleOptions instanceof Function) ?
@@ -346,17 +405,58 @@ watersheds.addHighlight = function (id) {
             // add the feature to the tile's list
             // so we can find it again later
             tile._features[feat.properties.pourpoint_id] = {
-                layerName: "highlight",
+                layerName: layerName,
                 feature: feat
             };
         }
     }
 }
 
+watersheds.addHighlight = function(id) {
+    var styleOptions = polygonSelectedOptions;
+    if (this._clicked && this._clicked === id) {
+        styleOptions = polygonClickedSelectedOptions;
+    }
+    this._addHighlight(id, HIGHLIGHT_LAYERNAME, styleOptions);
+    this._highlight = id;
+}
+
+watersheds.addClickedSelectedHighlight = function(id) {
+    this._addHighlight(id, CLICKED_LAYERNAME, polygonClickedSelectedOptions);
+    this._clicked = id;
+}
+
+watersheds.addClickedHighlight = function(id) {
+    this._addHighlight(id, CLICKED_LAYERNAME, polygonClickedOptions);
+    this._clicked = id;
+}
+
+watersheds.refresh = function() {
+    if (this._highlight) {
+        watersheds.addHighlight(this._highlight);
+    }
+    if (this._clicked && this._clicked !== this._highlight) {
+        watersheds.addClickedHighlight(this._clicked);
+    } else if (this._clicked) {
+        watersheds.addClickedSelectedHighlight(this._clicked);
+    }
+}
+
+watersheds.hasFeature = function(id) {
+    for (var tileKey in watersheds._vectorTiles) {
+        var tile = watersheds._vectorTiles[tileKey];
+        var data = tile._features[id];
+        if (data) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // create the map, initializing zoom, center, and layers
 map = L.map("map", {
     zoom: 4,
+    minZoom: 3,
     center: [39.8283, -98.5795],
     layers: [cartoLight, watersheds],
     zoomControl: false,
@@ -386,6 +486,14 @@ var pointSelectedOptions = {
     color: '#223399',
     fillColor: '#223399'
 }
+var pointClickedOptions = {
+    radius: 8,
+    fill: true,
+    fillOpacity: 100,
+    weight: 1,
+    color: '#BB2244',
+    fillColor: '#BB2244'
+}
 
 var pourpoints = L.geoJson(null, {
     style: pointOptions,
@@ -394,11 +502,18 @@ var pourpoints = L.geoJson(null, {
     },
     onEachFeature: function (feature, layer) {
         if (feature.properties) {
-            layer.bindPopup(
-                feature.properties.awdb_id + ' ' +
-                feature.properties.name
-            );
             layer.on({
+                click: function(e) {
+                    var properties = feature.properties;
+                    properties['is_polygon'] = false;
+                    //watersheds.hasFeature(
+                    //    feature.properties.pourpoint_id
+                    //);
+                    setPourpointName(properties);
+                    pourpoints.addClickedHighlight(layer);
+                    watersheds.addClickedSelectedHighlight(feature.properties.pourpoint_id);
+                    L.DomEvent.stop(e);
+                },
                 mouseover: function (e) {
                     pourpoints.addHighlight(layer);
                     watersheds.addHighlight(feature.properties.pourpoint_id);
@@ -415,40 +530,79 @@ var pourpoints = L.geoJson(null, {
 });
 
 pourpoints._highlight = null;
+pourpoints._clicked = null;
 
-pourpoints.addHighlight = function (layer) {
-    if (this._map) {
-        this.clearHighlight();
-        layer.setStyle(pointSelectedOptions).bringToFront();
+pourpoints.getLayerByID = function(id) {
+    var lyr;
+    this.eachLayer(function(layer) {
+        if (layer.feature.properties.pourpoint_id == id) {
+            lyr = layer;
+            return;
+        }
+    });
+    return lyr;
+}
+
+pourpoints._addHighlight = function(layer, styleOptions) {
+    if (layer) {
+        layer.setStyle(styleOptions).bringToFront();
+    }
+}
+
+pourpoints._clearHighlight = function(layer) {
+    if (layer) {
+        layer.setStyle(pointOptions(layer));
+    }
+}
+
+pourpoints.addHighlight = function(layer) {
+    if (!layer) { return; }
+    this._clearHighlight(this._highlight)
+
+    var styleOptions = pointSelectedOptions;
+    if (layer === this._clicked) {
+        styleOptions = pointClickedOptions;
+    } else {
         this._highlight = layer;
     }
+    this._addHighlight(layer, styleOptions);
 }
 
-pourpoints.addHighlightByID = function (id) {
-    if (this._map) {
-        var layer;
-        this.eachLayer(function(lyr) {
-            if (lyr.feature.properties.pourpoint_id == id) {
-                layer = lyr;
-                return;
-            }
-        });
-        this.addHighlight(layer);
-    }
-}
-
-pourpoints.clearHighlight = function () {
-    if (this._map && this._highlight) {
-        this._highlight.setStyle(pointOptions(this._highlight));
+pourpoints.addClickedHighlight = function(layer) {
+    if (!layer) { return; }
+    this._clearHighlight(this._clicked);
+    this._clicked = layer;
+    this._addHighlight(layer, pointClickedOptions);
+    if (this._highlight === this._clicked) {
         this._highlight = null;
     }
 }
 
-pourpoints.refresh = function () {
-    if (this._map) {
+pourpoints.clearHighlight = function() {
+    if (this._highlight && this._highlight !== this._clicked) {
+        this._clearHighlight(this._highlight);
+        this._highlight = null;
+    }
+}
+
+pourpoints.clearClickedHighlight = function() {
+    if (this._clicked) {
+        this._clearHighlight(this._clicked);
+        this._clicked = null;
+    }
+}
+
+pourpoints.refresh = function() {
+    if (map.hasLayer(this)) {
         this.eachLayer(function(lyr) {
-            lyr.setStyle(pointOptions(this._highlight));
+            lyr.setStyle(pointOptions(lyr));
         });
+        if (this._highlight) {
+            this._addHighlight(this._highlight, pointSelectedOptions);
+        }
+        if (this._clicked) {
+            this._addHighlight(this._clicked, pointClickedOptions);
+        }
     }
 }
 
@@ -459,36 +613,390 @@ getPourpoints(function(data) {
 
 watersheds.on('click', function(e) {
     //console.log("click " + e.layer.properties.pourpoint_id + " " + e.layer.properties.name);
-    L.popup()
-        .setContent(
-            e.layer.properties.awdb_id + ' ' +
-            e.layer.properties.name
-        )
-        .setLatLng(e.latlng)
-        .openOn(map);
+    var properties = e.layer.properties;
+    properties['is_polygon'] = true;
+    setPourpointName(properties);
+    pourpoints.addClickedHighlight(pourpoints.getLayerByID(e.layer.properties.pourpoint_id));
+    this.addClickedSelectedHighlight(properties.pourpoint_id);
+    this._clicked = e.layer.properties.pourpoint_id;
     L.DomEvent.stop(e);
 });
 
 
-watersheds.on('mouseover', function (e) {
+watersheds.on('mouseover', function(e) {
     //console.log("mouseover " + e.layer.properties.pourpoint_id + " " + e.layer.properties.name)
-    pourpoints.addHighlightByID(e.layer.properties.pourpoint_id);
-    watersheds.addHighlight(e.layer.properties.pourpoint_id);
+    pourpoints.addHighlight(pourpoints.getLayerByID(e.layer.properties.pourpoint_id));
+    this.addHighlight(e.layer.properties.pourpoint_id);
 });
 
-watersheds.on('mouseout', function (e) {
+watersheds.on('mouseout', function(e) {
     //console.log("mouseout " + e.layer.properties.pourpoint_id + " " + e.layer.properties.name)
     pourpoints.clearHighlight();
-    watersheds.clearHighlight();
+    this.clearHighlight();
+    if (this._clicked && this._clicked === e.layer.properties.pourpoint_id) {
+        this.addClickedHighlight(e.layer.properties.pourpoint_id);
+    }
 });
 
+watersheds.on("load", function(e) {
+    watersheds.refresh();
+});
 
-map.on("zoomend", function(){
+L.EditMarker = L.Handler.extend({
+    includes: L.Evented.prototype,
+    options: {
+        icon: new L.Icon.Default(),
+        repeatMode: false,
+        zIndexOffset: 2000 // This should be > than the highest z-index any markers
+    },
+
+    initialize: function (map, options) {
+        this._map = map;
+        this._container = map._container;
+        this._overlayPane = map._panes.overlayPane;
+        this._popupPane = map._panes.popupPane;
+        this._pointMarker = null;
+
+        if (options) {
+            // TODO: pretty much all this crap should be events
+            // this listens to enable/disable
+            this._editButtonId = options.editButtonId;
+            // this listens for dragend
+            this._dragend = options.dragend;
+            // this listens for create
+            this._onCreate = options.onCreate;
+            // this listens for delete
+            this._onDelete = options.onDelete;
+            // this is the only actual option
+            this._validBounds = options.validBounds;
+        }
+        L.setOptions(this, options);
+    },
+
+    _bboxToPolyPoints: function(bbox) {
+        return [
+            [bbox.getNorth(), bbox.getWest()],
+            [bbox.getNorth(), bbox.getEast()],
+            [bbox.getSouth(), bbox.getEast()],
+            [bbox.getSouth(), bbox.getWest()],
+        ]
+    },
+
+    deleteMarker: function() {
+        if (this._map && this._pointMarker) {
+            this._map.removeLayer(this._pointMarker);
+            this._pointMarker = null;
+            this._onDelete();
+        }
+    },
+
+    _enableEditButton: function() {
+        if (this._editButtonId) {
+            var btn = document.getElementById(this._editButtonId);
+            if (!L.DomUtil.hasClass(btn, 'active')) {
+                L.DomUtil.addClass(btn, 'active');
+                btn.setAttribute('aria-pressed', true);
+            }
+        }
+    },
+
+    _disableEditButton: function() {
+        if (this._editButtonId) {
+            var btn = document.getElementById(this._editButtonId);
+            if (L.DomUtil.hasClass(btn, 'active')) {
+                L.DomUtil.removeClass(btn, 'active');
+                btn.setAttribute('aria-pressed', false);
+            }
+        }
+    },
+
+    enable: function () {
+        if (this._enabled) { return; }
+        this.fire('enabled', { handler: this.type });
+        this._map.fire('draw:drawstart', { layerType: this.type });
+        L.Handler.prototype.enable.call(this);
+        this._enableEditButton();
+    },
+
+    disable: function () {
+        if (!this._enabled) { return; }
+        L.Handler.prototype.disable.call(this);
+        this._map.fire('draw:drawstop', { layerType: this.type });
+        this.fire('disabled', { handler: this.type });
+        this._disableEditButton();
+    },
+
+    toggle: function() {
+        if (this._enabled) {
+            this.disable()
+        }
+        this.enable()
+    },
+
+    setOptions: function (options) {
+        L.setOptions(this, options);
+    },
+
+    // Cancel drawing when the escape key is pressed
+    _cancelDrawing: function (e) {
+        if (e.keyCode === 27) {
+            this.disable();
+        }
+    },
+
+    addHooks: function () {
+        if (this._map) {
+            L.DomUtil.disableTextSelection();
+            this._map.getContainer().focus();
+            L.DomEvent.on(this._container, 'keyup', this._cancelDrawing, this);
+
+            if (!this._mouseMarker) {
+                this._mouseMarker = L.marker(this._map.getCenter(), {
+                    icon: L.divIcon({
+                        className: 'leaflet-mouse-marker',
+                        iconAnchor: [20, 20],
+                        iconSize: [40, 40]
+                    }),
+                    opacity: 0,
+                    zIndexOffset: this.options.zIndexOffset
+                });
+            }
+
+            if (this._validBounds && !this._validBoundsOverlay) {
+                this._validBoundsOverlay = L.polygon(
+                    [
+                        [[90, -180],
+                         [90, 180],
+                         [-90, 180],
+                         [-90, -180]], //outer ring
+                        this._bboxToPolyPoints(this._validBounds) // cutout
+                    ],
+                    {
+                        fillcolor: '#000000',
+                        opacity: 0.4,
+                        weight: 0,
+                    }
+                );
+            }
+
+            this._validBoundsOverlay.addTo(this._map)
+
+            this._mouseMarker
+                .on('click', this._onClick, this)
+                .addTo(this._map);
+
+            this._map.on('mousemove', this._onMouseMove, this);
+        }
+    },
+
+    removeHooks: function () {
+        if (this._map) {
+            L.DomUtil.enableTextSelection();
+            L.DomEvent.off(this._container, 'keyup', this._cancelDrawing, this);
+
+            if (this._marker) {
+                this._marker.off('click', this._onClick, this);
+                this._map
+                    .off('click', this._onClick, this)
+                    .removeLayer(this._marker);
+                delete this._marker;
+            }
+
+            if (this._validBoundsOverlay) {
+                this._map.removeLayer(this._validBoundsOverlay);
+                delete this._validBoundsOverlay;
+            }
+
+            this._mouseMarker.off('click', this._onClick, this);
+            this._map.removeLayer(this._mouseMarker);
+            delete this._mouseMarker;
+
+            this._map.off('mousemove', this._onMouseMove, this);
+        }
+    },
+    _onMouseMove: function (e) {
+        var latlng = e.latlng;
+
+        //this._tooltip.updatePosition(latlng);
+        this._mouseMarker.setLatLng(latlng);
+
+        if (!this._marker) {
+            this._marker = new L.Marker(latlng, {
+                icon: this.options.icon,
+                zIndexOffset: this.options.zIndexOffset
+            });
+            // Bind to both marker and map to make sure we get the click event.
+            this._marker.on('click', this._onClick, this);
+            this._map
+                .on('click', this._onClick, this)
+                .addLayer(this._marker);
+        }
+        else {
+            latlng = this._mouseMarker.getLatLng();
+            this._marker.setLatLng(latlng);
+        }
+    },
+
+    moveMarker: function(latlng) {
+        if (!latlng instanceof L.latLng) {
+            latlng = L.latLng(latlng);
+        }
+        if (!this._validPoint(latlng)) { return false; }
+        if (this._pointMarker && this._pointMarker.getLatLng() == latlng) {
+            return false;
+        } else if (this._pointMarker) {
+            this._map.removeLayer(this._pointMarker);
+        }
+
+        this._pointMarker = new L.Marker(
+            latlng,
+            {
+                draggable: true,
+                icon: this.options.icon,
+            }
+        )
+            .on('dragend', this._dragend)
+            .addTo(this._map);
+
+        if (this._onCreate) {
+            this._onCreate(this._pointMarker);
+        }
+        return true;
+    },
+
+    _validPoint: function(latlng) {
+        if (!latlng || (this._validBounds && !this._validBounds.contains(latlng))) {
+            return false;
+        }
+        return true
+    },
+
+    _onClick: function () {
+        if (!this.moveMarker(this._marker.getLatLng())) {
+            return;
+        }
+        this.disable();
+        if (this.options.repeatMode) {
+            this.enable();
+        }
+    },
+});
+
+function getLatLng() {
+    var lat = document.getElementById('snodas-query-point-lat');
+    var lng = document.getElementById('snodas-query-point-lng');
+    return { lat: lat, lng: lng }
+}
+
+function updateLatLng (marker) {
+    if (!marker) {
+        var latlng = { lat: '', lng: ''}
+    } else {
+        try {
+            var latlng = marker.getLatLng();
+        } catch(err) {
+            var latlng = marker.target.getLatLng();
+        }
+    }
+    var latlngInput = getLatLng();
+    if (latlngInput.lat.value !== latlng.lat || latlngInput.lng.value !== latlng.lng) {
+        latlngInput.lat.value = latlng.lat;
+        latlngInput.lng.value = latlng.lng;
+        document.getElementById(
+                marker ? 'hidden-stuff' : 'snodas-query-point-btn'
+            ).appendChild(
+                document.getElementById('snodas-query-point-pick')
+            );
+        document.getElementById(
+                marker ? 'snodas-query-point-btn' : 'hidden-stuff'
+            ).appendChild(
+                document.getElementById('snodas-query-point-clear')
+            );
+        updateQueryBtn();
+    }
+}
+
+$('#snodas-query-point-clear').on('click', function(e) {
+    editHandler.deleteMarker();
+    var latlng = getLatLng();
+    toggleValid(latlng.lat);
+    toggleValid(latlng.lng);
+})
+
+var editHandler = new L.EditMarker(
+    map,
+    {
+        editButtonId: 'snodas-query-point-pick',
+        dragend: updateLatLng,
+        onCreate: updateLatLng,
+        onDelete: updateLatLng,
+        validBounds: L.latLngBounds([24.9504, -124.7337], [52.8754, -66.9421]),
+    }
+);
+
+document.body.addEventListener('click', function(e) {
+    var btn = document.getElementById('snodas-query-point-pick');
+    if (L.DomUtil.hasClass(btn, 'active') &&
+        editHandler._enabled &&
+        !$(e.target).closest('#map').length &&
+        !$(e.target).closest('#snodas-query-point-pick').length) {
+        editHandler.disable();
+    }
+});
+
+$('#snodas-query-point-pick').on('click', function(e) {
+    if (!L.DomUtil.hasClass(e.currentTarget, 'active')) {
+        editHandler.enable();
+    } else {
+        editHandler.disable();
+    }
+});
+
+function toggleValid(ele, isValid) {
+    if (isValid === undefined) {
+        L.DomUtil.removeClass(ele, 'is-invalid');
+        L.DomUtil.removeClass(ele, 'is-valid');
+    } else {
+        L.DomUtil.removeClass(ele, isValid ? 'is-invalid' : 'is-valid');
+        L.DomUtil.addClass(ele, isValid ? 'is-valid' : 'is-invalid');
+    }
+}
+
+$('#snodas-query-point :input').on('change input', function(e) {
+    var latlng = getLatLng();
+    var latValid = latlng.lat.checkValidity(), lngValid = latlng.lng.checkValidity();
+    toggleValid(latlng.lat, latValid);
+    toggleValid(latlng.lng, lngValid);
+    if (latValid && lngValid) {
+        console.log("move");
+        editHandler.moveMarker(L.latLng([latlng.lat.value, latlng.lng.value]));
+    }
+    updateQueryBtn();
+});
+
+$('#snodas-query-type :input').on('change', function() {
+    var pourpoint_table = document.getElementById('snodas-pourpoint-table');
+    var query_point = document.getElementById('snodas-query-point');
+    pourpoint_table.hidden = query_point.hidden;
+    query_point.hidden = !query_point.hidden;
+    updateQueryBtn();
+});
+
+map.on('zoomend', function(e){
     pourpoints.refresh();
+    watersheds.refresh();
 });
 
 // Clear feature highlight when map is clicked
-map.on("click", function(e) {
+map.on('click', function(e) {
+    pourpoints.clearClickedHighlight();
+    watersheds.clearClickedHighlight();
+    clearPourpointName();
+});
+
+map.on('baselayerchange', function(e) {
+    snodasTiles.bringToFront()
+    watersheds.bringToFront()
 });
 
 // Attribution control
@@ -497,21 +1005,21 @@ function updateAttribution(e) {
         if (layer.getAttribution) {
             var attrib = layer.getAttribution();
             if (attrib) {
-                $("#attribution").html(attrib);
+                $('#attribution').html(attrib);
             }
         }
     });
 }
-map.on("layeradd", updateAttribution);
-map.on("layerremove", updateAttribution);
+map.on('layeradd', updateAttribution);
+map.on('layerremove', updateAttribution);
 
 var attributionControl = L.control({
-    position: "bottomright"
+    position: 'bottomright',
 });
-attributionControl.onAdd = function (map) {
+attributionControl.onAdd = function(map) {
     var div = L.DomUtil.create(
-        "div",
-        "leaflet-control-attribution"
+        'div',
+        'leaflet-control-attribution',
     );
     // TODO: this should be templated externally, perhaps handlebars
     div.innerHTML = "<span class='hidden-xs'>Developed by <a href='https://www.pdx.edu/geography/center-for-spatial-analysis-research-csar'>PSU CSAR</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
@@ -522,64 +1030,7 @@ map.addControl(attributionControl);
 
 // zoom in and out buttons
 var zoomControl = L.control.zoom({
-  position: "bottomright"
-}).addTo(map);
-
-
-// zoom to AOI data extent button
-L.Control.ZoomToExtent = L.Control.extend({
-    options: {
-        position: 'topleft',
-        text: '<i class="fa fa-arrows-alt" aria-hidden="true"></i>',
-        title: 'Zoom to Data Extent',
-        className: 'leaflet-control-zoomtoextent',
-        layer: ''
-    },
-    onAdd: function (map) {
-        this._map = map;
-        return this._initLayout();
-    },
-    _initLayout: function () {
-        var container = L.DomUtil.create('div', 'leaflet-bar ' +
-        this.options.className);
-        this._container = container;
-        this._fullExtentButton = this._createExtentButton(container);
-        L.DomEvent.disableClickPropagation(container);
-        return this._container;
-    },
-    _createExtentButton: function () {
-        var link = L.DomUtil.create(
-            'a',
-            this.options.className + '-toggle',
-            this._container
-        );
-        link.href = '#';
-        link.innerHTML = this.options.text;
-        link.title = this.options.title;
-        L.DomEvent
-            .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
-            .on(link, 'click', L.DomEvent.stop)
-            .on(link, 'click', this._zoomToDefault, this);
-        return link;
-    },
-    _zoomToDefault: function () {
-        this._map.fitBounds(this.options.layer.getBounds());
-    }
-});
-
-L.Map.addInitHook(function () {
-    if (this.options.zoomToExtentControl) {
-        this.addControl(new L.Control.ZoomToExtent());
-    }
-});
-
-L.control.zoomToExtent = function (options) {
-    return new L.Control.ZoomToExtent(options);
-};
-
-var zoomToExtentControl = L.control.zoomToExtent({
-    position: "bottomright",
-    layer: pourpoints,
+  position: 'bottomright',
 }).addTo(map);
 
 
@@ -607,7 +1058,7 @@ var layerControl = L.control.groupedLayers(
 //   - hide the loading spinner
 //   - put the layer control where it needs to be
 //   - populate the featureList var for the sidebar
-$(document).one("ajaxStop", function () {
+$(document).one("ajaxStop", function() {
     $("#loading").hide();
     sizeLayerControl();
 });
