@@ -5,12 +5,12 @@
 {% block base_content %}
 {% with request.user as user %}
 <h1>Upload Requests
-    <a class="btn btn-refresh" title="Refresh List" onClick="history.go(0)" role="button"><i class="fa fa-refresh fa-2x" aria-hidden="true"></i></a>
+    <a class="btn btn-refresh" title="Refresh List" onClick="history.go(0)" role="button"><i class="fas fa-sync-alt fa-2x refresh-icon" aria-hidden="true"></i></a>
 </h1>
 
 <div class="requests">
     <table class="table request-table table-striped">
-      	<thead class="thead-inverse">
+        <thead class="thead-dark">
             <tr>
                 <th>Status</th>
                 <th>File Name</th>
@@ -33,7 +33,7 @@
                 {% elif upload.nstatus == 'FAILED' %}
                 <td class="align-middle"><span class="badge badge-danger">Failed</span></td>
                 {% elif upload.nstatus == 'CANCELLED' %}
-                <td class="align-middle"><span class="badge badge-warning">Cancelled</span></td>
+                <td class="align-middle"><span class="badge badge-warning">Canceled</span></td>
                 {% else %}
                 <td class="align-middle"><span class="badge badge-dark">Unknown</span></td>
                 {% endif %}

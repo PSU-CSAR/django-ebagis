@@ -66,9 +66,9 @@ input[type="radio"], input[type="checkbox"] {
   top: 49px; 
   left: 0px; 
   width: 100%;
-  z-index:9999; 
-  border-radius:0px;
-  margin-top: 49px;
+  z-index: 9999;
+  border-radius: 0px;
+  margin-top: 0px;
 }
 .no-value {
   font-style: italic;
@@ -145,12 +145,12 @@ input[type="radio"], input[type="checkbox"] {
 .btn-refresh {
   padding: 0;
 }
-.fa-refresh {
-  color: #eee;
+.refresh-icon {
+  color: #ddd;
 }
 
-.fa-refresh:hover {
-  color: rgba(0,0,0,0.15)
+.refresh-icon:hover {
+  color: #aaa;
 }
 /* Profile Page */
 .white-box {

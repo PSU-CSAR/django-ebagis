@@ -3,6 +3,9 @@
   font-size: 1.78em;
   color: #FFFFFF;
 }
+.bg-dark {
+  background-color: #212529!important;
+}
 .navbar-collapse.in {
   overflow-y: hidden;
 }

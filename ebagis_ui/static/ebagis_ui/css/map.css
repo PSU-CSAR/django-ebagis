@@ -118,7 +118,7 @@ body {
   cursor: pointer;
 }
 .feature-row {
-  width: 250px;
+  width: 100%;
 }
 .sidebar-wrapper {
   width: 100%;
@@ -128,7 +128,7 @@ body {
 .sidebar-table {
   position: absolute;
   width: 100%;
-  top: 101px;
+  top: 103px;
   bottom: 0px;
   overflow-y: auto;
   overflow-x: hidden;

@@ -26,13 +26,13 @@
         </div>
         <button id="user-save-btn" title="Save Changes" class="btn btn-primary btn-md primaryAction" type="submit" name="action_update" disabled>Save Changes</button>
         <button id="user-cancel-btn" title="Cancel Changes" type="button" class="btn btn-primary btn-md primaryAction" onclick="resetForm()" disabled>Cancel</button>
-        <a class="btn btn-primary btn-md primaryAction pull-right" href="{% url 'account_change_password' %}" role="button" title="Change Password">Change Password</a>
+        <a class="btn btn-primary btn-md primaryAction float-right" href="{% url 'account_change_password' %}" role="button" title="Change Password">Change Password</a>
     </form>
 </div>
 <div class="gray-box">
     <div class="white-box emails">
         <table class="table">
-            <thead class="thead-inverse">
+            <thead class="thead-dark">
                 <tr>
                     <th>Your Email Addresses</th>
                     <th class='text-right'>Actions</th>
@@ -51,22 +51,22 @@
                         <td class='text-right'>
                             <div class="email-btn-group btn-group" role="group" aria-label="">
                                 {% if emailaddress.verified %}
-                                <button title="Verified" class="btn btn-secondary btn-md secondaryAction verified" disabled><i class="fa fa-check verified" aria-hidden="true"></i></button>
+                                <button title="Verified" class="btn btn-light border btn-md secondaryAction verified" disabled><i class="fas fa-check verified" aria-hidden="true"></i></button>
                                 {% else %}
-                                <button title="Send Verification" class="btn btn-secondary btn-md secondaryAction unverified" type="submit" name="action_send">
-                                  <i class="fa fa-paper-plane-o unverified" aria-hidden="true"></i>
+                                <button title="Send Verification" class="btn btn-light border btn-md secondaryAction unverified" type="submit" name="action_send">
+                                  <i class="far fa-paper-plane unverified" aria-hidden="true"></i>
                                 </button>
                                 {% endif %}
                                 
                                 {% if emailaddress.primary %}
-                                <button title="Primary" class="btn btn-secondary btn-md secondaryAction primary" disabled><i class="fa fa-star primary" aria-hidden="true"></i></button>
-                                <button title="Remove Email" class="btn btn-danger btn-md primaryAction"  disabled type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <button title="Primary" class="btn btn-light border btn-md secondaryAction primary" disabled><i class="fas fa-star primary" aria-hidden="true"></i></button>
+                                <button title="Remove Email" class="btn btn-danger btn-md primaryAction"  disabled type="submit"><i class="far fa-trash-alt" aria-hidden="true"></i></button>
                                 {% elif not emailaddress.verified %}
-                                <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" disabled><i class="fa fa-star-o" aria-hidden="true"></i></button>
-                                <button title="Remove Email" class="btn btn-danger btn-md primaryAction action-remove" type="submit" name="action_remove"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <button title="Make Primary" class="btn btn-light border btn-md secondaryAction" disabled><i class="fas fa-star" aria-hidden="true"></i></button>
+                                <button title="Remove Email" class="btn btn-danger btn-md primaryAction action-remove" type="submit" name="action_remove"><i class="far fa-trash-alt" aria-hidden="true"></i></button>
                                 {% else %}
-                                <button title="Make Primary" class="btn btn-secondary btn-md secondaryAction" type="submit" name="action_primary"><i class="fa fa-star-o" aria-hidden="true"></i></button>
-                                <button title="Remove Email" class="btn btn-danger btn-md primaryAction action-remove" type="submit" name="action_remove"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <button title="Make Primary" class="btn btn-light border btn-md secondaryAction" type="submit" name="action_primary"><i class="fas fa-star" aria-hidden="true"></i></button>
+                                <button title="Remove Email" class="btn btn-danger btn-md primaryAction action-remove" type="submit" name="action_remove"><i class="far fa-trash-alt" aria-hidden="true"></i></button>
                                 {% endif %}
                             </div>
                         </td>
@@ -76,7 +76,7 @@
                 {% else %}
                 <tr>     
                     <td colspan="2">
-                        <p><strong>Warning:</strong> You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p>
+                        <p><strong>Warning:</strong> You currently do not have any e-mail addresses set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.</p>
                     </td>
                 </tr>
                 {% endif %}
@@ -86,9 +86,9 @@
                             {% csrf_token %}
                             <div class="input-group"> 
                                 <input class="textinput textInput form-control" id="id_email" name="email" placeholder="Add new E-mail address" type="email" required>
-                                <span class="input-group-btn">
+                                <div class="input-group-append">
                                     <button class="btn btn-primary" name="action_add" type="submit">Add</button>
-                                </span>  
+                                </div>
                             </div>
                         </form>
                     </td>
