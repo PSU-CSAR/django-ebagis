@@ -44,9 +44,14 @@ function getSNODASdates(callback) {
 var map, featureList, snodas_dates;
 
 function fmtDate(date, sep) {
+    if (!date) {
+        return null;
+    }
+
     if (!sep) {
         sep = ''
     }
+
     var day = date.getDate(), month = date.getMonth() + 1;
     return date.getFullYear() +
         sep +
@@ -60,16 +65,44 @@ function updateQueryBtn() {
     var pourpointTable = document.getElementById('snodas-pourpoint-table');
     var queryPoint = document.getElementById('snodas-query-point');
     
-    var hasDates = false;
-    if ($('#snodas-query-date').data("datepicker").pickers[0].getDate() &&
-        $('#snodas-query-date').data("datepicker").pickers[1].getDate() &&
-        ((!pourpointTable.hidden && pourpointTable.getAttribute('pourpoint_id')) ||
-         (!queryPoint.hidden && 
-          editHandler._pointMarker))) {
-        queryBtn.disabled = false;
+    var urlParams = {};
+
+    urlParams['startDate'] = fmtDate($('#snodas-query-date').data("datepicker").pickers[0].getDate());
+    urlParams['endDate'] = fmtDate($('#snodas-query-date').data("datepicker").pickers[1].getDate());
+    urlParams['pourpoint_id'] = pourpointTable.getAttribute('pourpoint_id');
+    urlParams['query_type'] = pourpointTable.getAttribute('is_polygon') === 'true' ? 'polygon' : 'point';
+
+    var latlng = getLatLng();
+    urlParams['lat'] = latlng.lat.value;
+    urlParams['lng'] = latlng.lng.value;
+
+    var linkEnd = null;
+    if (!pourpointTable.hidden && urlParams.startDate && urlParams.query_type === 'polygon'
+            && urlParams.endDate && urlParams.pourpoint_id) {
+        linkEnd = 'pourpoint/'
+            + urlParams.query_type + '/'
+            + urlParams.pourpoint_id + '/'
+            + urlParams.startDate + '/'
+            + urlParams.endDate + '/';
+    } else if (!queryPoint.hidden && urlParams.startDate
+            && urlParams.endDate && urlParams.lat && urlParams.lng) {
+        linkEnd = 'feature/'
+            + urlParams.lat + '/'
+            + urlParams.lng + '/'
+            + urlParams.startDate + '/'
+            + urlParams.endDate + '/';
+    }
+
+    if (linkEnd) {
+        queryBtn.setAttribute('href', queryBtn.getAttribute('url') + linkEnd);
+        L.DomUtil.removeClass(queryBtn, 'disabled');
+        queryBtn.setAttribute('aria-disabled', false);
         return true;
     }
-    queryBtn.disabled = true;
+
+    queryBtn.removeAttribute('href');
+    L.DomUtil.addClass(queryBtn, 'disabled');
+    queryBtn.setAttribute('aria-disabled', true);
     return false;
 }
 
@@ -131,7 +164,7 @@ getSNODASdates(function(dates) {
             }
             return false;
         },
-        beforeShowYear: function(date){
+        beforeShowYear: function(date) {
             if (snodas_dates[date.getFullYear()]) {
                 return true;
             }
@@ -505,10 +538,12 @@ var pourpoints = L.geoJson(null, {
             layer.on({
                 click: function(e) {
                     var properties = feature.properties;
-                    properties['is_polygon'] = false;
-                    //watersheds.hasFeature(
-                    //    feature.properties.pourpoint_id
-                    //);
+                    // TODO: right now we want to always do polygon queries where possible
+                    // as the point queries are not yet supported
+                    //properties['is_polygon'] = false;
+                    properties['is_polygon'] = watersheds.hasFeature(
+                        feature.properties.pourpoint_id
+                    );
                     setPourpointName(properties);
                     pourpoints.addClickedHighlight(layer);
                     watersheds.addClickedSelectedHighlight(feature.properties.pourpoint_id);

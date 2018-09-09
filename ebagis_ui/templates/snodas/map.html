@@ -26,7 +26,7 @@
       <form id="snodas-tiles">
         <div class="form-group form-check">
           <input type="checkbox" class="form-check-input mb-3" id="snodas-on" checked>
-          <label class="form-check-label" for="snodas-on">Show SNODAS</label>
+          <label class="form-check-label" for="snodas-on">Show SNODAS SWE</label>
           <div class="input-group date mb-3" id="snodas-tile-date">
             <div class="input-group-prepend">
               <button id="calendar-btn" class="btn btn-primary" type="button">
@@ -49,9 +49,9 @@
             <label class="btn btn-primary active">
               <input type="radio" name="query-type" id="snodas-query-type-pourpoint" autocomplete="off" checked>Use Pourpoint
             </label>
-            <label class="btn btn-primary">
+            <!--label class="btn btn-primary">
               <input type="radio" name="query-type" id="snodas-query-type-point" autocomplete="off">Use Lat/Long
-            </label>
+            </label-->
           </div>
           <table class="table table-borderless mb-3 border" id="snodas-pourpoint-table">
             <tbody>
@@ -86,7 +86,9 @@
             </div>
             <input type="text" class="input-sm form-control" id='snodas-query-end' name="end">
           </div>
-          <button type="button" class="btn btn-success" id="snodas-query-btn" disabled>Query SNODAS</button>
+          <a url="http://snodas.whyiseverythingalreadytaken.com/query/" role="button" class="btn btn-success disabled" id="snodas-query-btn" aria-disabled="true">
+            Query SNODAS
+          </a>
         </form>
       </div>
     </div>
