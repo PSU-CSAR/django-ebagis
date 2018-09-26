@@ -7,7 +7,7 @@ let CLICKED_LAYERNAME = 'click_highlight';
 function getPourpoints(callback) {
     $.ajax({
         'type': 'GET',
-        'url': 'http://snodas.whyiseverythingalreadytaken.com/pourpoints/',
+        'url': 'https://api.snodas.geog.pdx.edu/pourpoints/',
         'datatype': 'json',
         'success': function(result) {
             callback(result);
@@ -20,7 +20,7 @@ function getPourpoints(callback) {
 function getSNODASdates(callback) {
     $.ajax({
         'type': 'GET',
-        'url': 'http://snodas.whyiseverythingalreadytaken.com/tiles/',
+        'url': 'https://api.snodas.geog.pdx.edu/tiles/',
         'datatype': 'json',
         'success': function(result) {
             var years = {};
@@ -265,11 +265,11 @@ var usgsImagery = L.tileLayer(
 );
 
 // snodas tile layer
-var snodasURL = 'http://{s}.snodas.whyiseverythingalreadytaken.com/tiles/{date}/{z}/{x}/{y}.png'
+var snodasURL = 'https://{s}.snodas.geog.pdx.edu/tiles/{date}/{z}/{x}/{y}.png'
 var snodasTiles = L.tileLayer(
     '',
     {
-        subdomains: "abcd",
+        subdomains: "fghij",
         tms: true,
         maxNativeZoom: 15,
         bounds: [[52.8754, -124.7337], [24.9504, -66.9421]],
@@ -340,7 +340,7 @@ var polygonClickedSelectedOptions = {
     opacity: 1,
 }
 var vTileOptions = {
-    subdomains: "abcd",
+    subdomains: "abcde",
     rendererFactory: L.canvas.tile,
     tms: true,
     vectorTileLayerStyles: {
@@ -353,7 +353,7 @@ var vTileOptions = {
     interactive: true
 };
 var watersheds = L.vectorGrid.protobuf(
-    'http://{s}.snodas.whyiseverythingalreadytaken.com/pourpoints/{z}/{x}/{y}.mvt',
+    'https://{s}.snodas.geog.pdx.edu/pourpoints/{z}/{x}/{y}.mvt',
     vTileOptions
 );
 

@@ -23,7 +23,7 @@ function getAOIboundaries(callback) {
 function getPourpoints(callback) {
     jQuery.ajax({
         'type': 'GET',
-        'url': 'http://snodas.whyiseverythingalreadytaken.com/pourpoints/',
+        'url': 'https://snodas.geog.pdx.edu/pourpoints/',
         'datatype': 'json',
         'success': function(result) {
             callback(result);
@@ -214,7 +214,7 @@ var polygonSelectedOptions = {
     opacity: 1,
 }
 var vTileOptions = {
-    subdomains: "abcd",
+    subdomains: "abcde",
     rendererFactory: L.canvas.tile,
     tms: true,
     vectorTileLayerStyles: {
@@ -227,7 +227,7 @@ var vTileOptions = {
     interactive: true
 };
 var watersheds = L.vectorGrid.protobuf(
-    'http://{s}.snodas.whyiseverythingalreadytaken.com/pourpoints/{z}/{x}/{y}.mvt',
+    'https://{s}.snodas.geog.pdx.edu/pourpoints/{z}/{x}/{y}.mvt',
     vTileOptions
 );
 
