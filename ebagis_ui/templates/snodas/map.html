@@ -43,52 +43,7 @@
         </div>
       </form>
       <div id="query-container">
-        <label class="form-label" for="snodas-query">SNODAS Statistics Query</label>
         <form id="snodas-query">
-          <div class="btn-group btn-group-toggle mb-3" id="snodas-query-type" data-toggle="buttons">
-            <label class="btn btn-primary active">
-              <input type="radio" name="query-type" id="snodas-query-type-pourpoint" autocomplete="off" checked>Use Pourpoint
-            </label>
-            <!--label class="btn btn-primary">
-              <input type="radio" name="query-type" id="snodas-query-type-point" autocomplete="off">Use Lat/Long
-            </label-->
-          </div>
-          <table class="table table-borderless mb-3 border" id="snodas-pourpoint-table">
-            <tbody>
-              <tr>
-                <th scope="row">AWDB ID</th>
-                <td id="snodas-pourpoint-awdb-id"></td>
-              </tr>
-              <tr>
-                <th scope="row">Name</th>
-                <td id="snodas-pourpoint-name"></td>
-              </tr>
-              <tr>
-                <th scope="row">Query Type</th>
-                <td id="snodas-pourpoint-type"></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="input-group mb-3" id="snodas-query-point" hidden>
-            <input type="number" class="form-control" id="snodas-query-point-lat" placeholder="latitude" min="24.9504" max="52.8754" step="any" required>
-            <input type="number" class="form-control" id="snodas-query-point-lng" placeholder="longitude" min="-124.7337" max="-66.9421" step="any" required>
-            <div class="input-group-append" id="snodas-query-point-btn">
-              <button class="btn btn-primary" id="snodas-query-point-pick" type="button" aria-pressed="false" autocomplete="off">
-                <i class="fas fa-crosshairs"></i>
-              </button>
-            </div>
-          </div>
-          <label class="form-label" for="snodas-query-date">Query Date Range</label>
-          <div class="input-group input-daterange mb-3" id="snodas-query-date">
-            <input type="text" class="input-sm form-control" id='snodas-query-start' name="start">
-            <div class="input-group-prepend input-group-append">
-              <div class="input-group-text">to</div>
-            </div>
-            <input type="text" class="input-sm form-control" id='snodas-query-end' name="end">
-          </div>
-          <a url="https://api.snodas.geog.pdx.edu/query/" role="button" class="btn btn-success disabled" id="snodas-query-btn" aria-disabled="true">
-            Query SNODAS
-          </a>
         </form>
       </div>
     </div>

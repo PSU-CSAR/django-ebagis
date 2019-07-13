@@ -2,6 +2,12 @@ let HIGHLIGHT_LAYERNAME = 'highlight';
 let CLICKED_LAYERNAME = 'click_highlight';
 
 
+function zfill(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
 
 // get the pourpoint points for reference
 function getPourpoints(callback) {
@@ -14,7 +20,6 @@ function getPourpoints(callback) {
         }
     });
 }
-
 
 // get the snodas dates
 function getSNODASdates(callback) {
@@ -37,11 +42,12 @@ function getSNODASdates(callback) {
                 }
             }
             callback(years);
-        }
+        },
     });
 }
 
-var map, featureList, snodas_dates;
+var map, featureList, snodas_dates, selected_properties;
+var date_range_low, date_range_high, doy_start, doy_end, doy_date;
 
 function fmtDate(date, sep) {
     if (!date) {
@@ -60,80 +66,374 @@ function fmtDate(date, sep) {
         (day > 9 ? '' : '0') + day;
 }
 
-function updateQueryBtn() {
-    var queryBtn = document.getElementById('snodas-query-btn');
-    var pourpointTable = document.getElementById('snodas-pourpoint-table');
-    var queryPoint = document.getElementById('snodas-query-point');
-    
-    var urlParams = {};
-
-    urlParams['startDate'] = fmtDate($('#snodas-query-date').data("datepicker").pickers[0].getDate());
-    urlParams['endDate'] = fmtDate($('#snodas-query-date').data("datepicker").pickers[1].getDate());
-    urlParams['pourpoint_id'] = pourpointTable.getAttribute('pourpoint_id');
-    urlParams['query_type'] = pourpointTable.getAttribute('is_polygon') === 'true' ? 'polygon' : 'point';
-
-    var latlng = getLatLng();
-    urlParams['lat'] = latlng.lat.value;
-    urlParams['lng'] = latlng.lng.value;
-
-    var linkEnd = null;
-    if (!pourpointTable.hidden && urlParams.startDate && urlParams.query_type === 'polygon'
-            && urlParams.endDate && urlParams.pourpoint_id) {
-        linkEnd = 'pourpoint/'
-            + urlParams.query_type + '/'
-            + urlParams.pourpoint_id + '/'
-            + urlParams.startDate + '/'
-            + urlParams.endDate + '/';
-    } else if (!queryPoint.hidden && urlParams.startDate
-            && urlParams.endDate && urlParams.lat && urlParams.lng) {
-        linkEnd = 'feature/'
-            + urlParams.lat + '/'
-            + urlParams.lng + '/'
-            + urlParams.startDate + '/'
-            + urlParams.endDate + '/';
-    }
-
-    if (linkEnd) {
-        queryBtn.setAttribute('href', queryBtn.getAttribute('url') + linkEnd);
-        L.DomUtil.removeClass(queryBtn, 'disabled');
-        queryBtn.setAttribute('aria-disabled', false);
-        return true;
-    }
-
-    queryBtn.removeAttribute('href');
-    L.DomUtil.addClass(queryBtn, 'disabled');
-    queryBtn.setAttribute('aria-disabled', true);
-    return false;
+function month_name_to_num(name) {
+    return {
+        'JANUARY': 1,
+        'FEBRUARY': 2,
+        'MARCH': 3,
+        'APRIL': 4,
+        'MAY': 5,
+        'JUNE': 6,
+        'JULY': 7,
+        'AUGUST': 8,
+        'SEPTEMBER': 9,
+        'OCTOBER': 10,
+        'NOVEMBER': 11,
+        'DECEMBER': 12
+    }[name.toUpperCase()]
 }
 
+
+//---------------------------------------
+
+
+class SnodasQuerySelector {
+    constructor() {
+        this.selected_query = null;
+        this.queries = []
+        this.menu_id = 'query-selector-menu';
+        this.label_id = 'query-label';
+        this.form_id = 'snodas-query';
+
+        var parent_id = 'query-container';
+
+        // seems a little silly to build DOM like this?
+        var parent = document.getElementById(parent_id);
+
+        var dropdown = document.createElement('DIV');
+        dropdown.classList.add('dropdown');
+        dropdown.id = 'query-selector';
+        var button = document.createElement('BUTTON');
+        button.classList.add('btn');
+        button.classList.add('btn-primary');
+        button.classList.add('dropdown-toggle');
+        button.setAttribute('type', 'button');
+        button.id = 'query-selector-label';
+        button.setAttribute('data-toggle', 'dropdown');
+        button.setAttribute('aria-haspopup', 'true');
+        button.setAttribute('aria-expanded', 'false');
+        button.innerText = 'SNODAS Statistics Query';
+        var dropdown_menu = document.createElement('DIV');
+        dropdown_menu.classList.add('dropdown-menu');
+        dropdown_menu.id = this.menu_id;
+        dropdown_menu.setAttribute('aria-labelledby', 'query-selector-label')
+        dropdown.appendChild(button);
+        dropdown.appendChild(dropdown_menu);
+
+        var label = document.createElement('LABEL');
+        label.classList.add('form-label');
+        label.setAttribute('for', this.form_id);
+        label.id = this.label_id;
+
+        parent.insertBefore(label, parent.childNodes[0]);
+        parent.insertBefore(dropdown, parent.childNodes[0]);
+
+        this.clear_selection();
+    }
+
+    get_menu_element() {
+        return document.getElementById(this.menu_id);
+    }
+
+    add_query(label, html, initiator, validator, requestor) {
+        var query = new SnodasQuery(label, html, initiator, validator, requestor, this);
+        this.get_menu_element().appendChild(query.element);
+        this.queries.push(query);
+    }
+
+    set_label() {
+        var label_txt = 'Choose Query Type';
+        if (this.selected_query !== null) {
+            label_txt = this.selected_query.label;
+        }
+        document.getElementById(this.label_id).innerText = label_txt;
+    }
+
+    set_form() {
+        var form_html = null;
+        if (this.selected_query !== null) {
+            form_html = this.selected_query.html;
+        }
+        document.getElementById(this.form_id).innerHTML = form_html;
+    }
+
+    clear_selection() {
+        this.selected_query = null;
+        this.set_label();
+        this.set_form();
+    }
+
+    validate() {
+        if (this.selected_query !== null) {
+            this.selected_query.validate();
+        }
+    }
+
+    request() {
+        if (this.selected_query !== null) {
+            this.selected_query.request();
+        }
+    }
+
+    select_query_by_element(query_element) {
+        for (var i = 0; i < this.queries.length; i++) {
+            if (query_element === this.queries[i].element) {
+                if (this.selected_query === this.queries[i]) {
+                    return;
+                }
+                this.selected_query = this.queries[i];
+                break;
+            }
+        }
+
+        if (this.selected_query !== null) {
+            this.set_label();
+            this.set_form();
+            this.selected_query.initiate();
+        } else {
+            console.log("no match");
+        }
+    }
+}
+
+class SnodasQuery {
+    constructor(label, html, initiator, validator, requestor, query_selector) {
+        this.label = label;
+        this.html = html;
+        this.initiator = initiator;
+        this.validator = validator;
+        this.requestor = requestor;
+
+        this.element = document.createElement('BUTTON');
+        this.element.innerText = this.label;
+        this.element.setAttribute('type', 'button');
+        this.element.classList.add('dropdown-item');
+        this.element.onclick = query_selector.onclick;
+    }
+
+    initiate() {
+        this.initiator();
+        this.validator();
+    }
+
+    validate() {
+        this.validator();
+    }
+
+    request() {
+        this.requestor();
+    }
+}
+
+query_selector = new SnodasQuerySelector();
+query_selector.onclick = function(event) {
+    query_selector.select_query_by_element(event.target);
+}
+
+var pp_table_html = '<table class="table table-borderless mb-3 border" id="snodas-pourpoint-table"><tbody><tr><th scope="row">AWDB ID</th><td id="snodas-pourpoint-awdb-id"></td></tr><tr><th scope="row">Name</th><td id="snodas-pourpoint-name"></td></tr></tbody></table>';
+var date_html = 'Query Date Range<div class="input-group input-daterange mb-3" id="snodas-range-query-date"><input type="text" class="input-sm form-control" id="snodas-range-query-start" name="start"><div class="input-group-prepend input-group-append"><div class="input-group-text">to</div></div><input type="text" class="input-sm form-control" id="snodas-range-query-end" name="end"></div>';
+var doy_html = 'Query Date<div id="snodas-doy-query"><div class="input-group input-daterange mb-3" id="snodas-doy-query-doy"><input type="text" class="input-sm form-control" id="snodas-doy-query-doy1" name="start"></div><select class="form-control" id="snodas-doy-query-years-start"></select>to<select class="form-control" id="snodas-doy-query-years-end"></select></div>';
+var variables_html = 'SNODAS Variable:<select class="form-control" id="snodas-query-variable"><option value="depth">Snow Depth</option><option value="swe" selected>Snow Water Equivalent</option><option value="runoff">Runoff</option><option value="sublimation">Sublimation</option><option value="sublimation_blowing">Sublimation (Blowing)</option><option value="precipitation_solid">Precipitation (Solid)</option><option value="precipitation_liquid">Precipitation (Liquid)</option><option value="average_temp">Average Temperature</option></select>';
+var regression = 'Forecast period:<select class="form-control" id="snodas-query-month-start"><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4" selected>April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select>to<select class="form-control" id="snodas-query-month-end"><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7" selected>July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select>';
+var submit = '<a url="https://api.snodas.geog.pdx.edu/" role="button" class="btn btn-success disabled" id="snodas-query-btn" aria-disabled="true">Submit Query</a>';
+
+function pp_table_init() {
+    if (selected_properties) {
+        setPourpointName(selected_properties);
+    }
+}
+
+query_selector.add_query(
+    'SNODAS Values - Date Range',
+    pp_table_html + date_html + submit,
+    function() {
+        pp_table_init();
+        date_range_init();
+    },
+    function() {
+        var queryBtn = document.getElementById('snodas-query-btn');
+        var pourpointTable = document.getElementById('snodas-pourpoint-table');
+        var urlParams = {};
+
+        urlParams['startDate'] = fmtDate($('#snodas-range-query-date').data("datepicker").pickers[0].getDate());
+        urlParams['endDate'] = fmtDate($('#snodas-range-query-date').data("datepicker").pickers[1].getDate());
+        urlParams['pourpoint_id'] = pourpointTable.getAttribute('pourpoint_id');
+
+        var linkEnd = null;
+        if (urlParams.startDate && urlParams.endDate && urlParams.pourpoint_id) {
+            linkEnd = 'query/pourpoint/'
+                + 'polygon' + '/'
+                + urlParams.pourpoint_id + '/'
+                + urlParams.startDate + '/'
+                + urlParams.endDate + '/';
+        }
+
+        if (linkEnd) {
+            queryBtn.setAttribute('href', queryBtn.getAttribute('url') + linkEnd);
+            L.DomUtil.removeClass(queryBtn, 'disabled');
+            queryBtn.setAttribute('aria-disabled', false);
+            return true;
+        }
+
+        queryBtn.removeAttribute('href');
+        L.DomUtil.addClass(queryBtn, 'disabled');
+        queryBtn.setAttribute('aria-disabled', true);
+        return false;
+    },
+);
+
+query_selector.add_query(
+    'SNODAS Values - Doy Range',
+    pp_table_html + doy_html + submit,
+    function() {
+        // init
+        pp_table_init();
+        doy_init();
+    },
+    function() {
+        // validate
+        var queryBtn = document.getElementById('snodas-query-btn');
+        var pourpointTable = document.getElementById('snodas-pourpoint-table');
+        var urlParams = {};
+
+        doy = document.getElementById('snodas-doy-query-doy1').value.split(' ');
+        urlParams['day'] = doy[0]
+        urlParams['month'] = month_name_to_num(doy[1])
+        urlParams['startyear'] = document.getElementById('snodas-doy-query-years-start').value;
+        urlParams['endyear'] = document.getElementById('snodas-doy-query-years-end').value;
+        urlParams['pourpoint_id'] = pourpointTable.getAttribute('pourpoint_id');
+
+        var linkEnd = null;
+        if (urlParams.day && urlParams.month && urlParams.startyear && urlParams.endyear && urlParams.pourpoint_id) {
+            linkEnd = 'query/pourpoint/'
+                + 'polygon' + '/'
+                + urlParams.pourpoint_id + '/'
+                + zfill(urlParams.month, 2) + '-' + zfill(urlParams.day, 2) + '/'
+                + urlParams.startyear + '/'
+                + urlParams.endyear + '/';
+        }
+
+        if (linkEnd) {
+            queryBtn.setAttribute('href', queryBtn.getAttribute('url') + linkEnd);
+            L.DomUtil.removeClass(queryBtn, 'disabled');
+            queryBtn.setAttribute('aria-disabled', false);
+            return true;
+        }
+
+        queryBtn.removeAttribute('href');
+        L.DomUtil.addClass(queryBtn, 'disabled');
+        queryBtn.setAttribute('aria-disabled', true);
+        return false;
+    },
+);
+
+//no netcdf support yet
+/*query_selector.add_query(
+    'Export NetCDF - Date Range',
+    pp_table_html + variables_html + date_html,
+);
+
+query_selector.add_query(
+    'Export NetCDF - Date Range',
+    pp_table_html + variables_html + doy_html,
+);*/
+
+query_selector.add_query(
+    'SNODAS Stremflow Regression Tool',
+    regression + variables_html + doy_html + submit,
+    function() {
+        // init
+        doy_init();
+    },
+    function() {
+        // validate
+        var queryBtn = document.getElementById('snodas-query-btn');
+        var urlParams = {};
+
+        doy = document.getElementById('snodas-doy-query-doy1').value.split(' ');
+        urlParams['day'] = doy[0]
+        urlParams['month'] = month_name_to_num(doy[1])
+        urlParams['startyear'] = document.getElementById('snodas-doy-query-years-start').value;
+        urlParams['endyear'] = document.getElementById('snodas-doy-query-years-end').value;
+        urlParams['forecaststart'] = document.getElementById('snodas-query-month-start').value;
+        urlParams['forecastend'] = document.getElementById('snodas-query-month-end').value;
+        urlParams['variable'] = document.getElementById('snodas-query-variable').value;
+
+
+        var linkEnd = null;
+        if (urlParams.day && urlParams.month && urlParams.startyear && urlParams.endyear 
+            && urlParams.forecaststart && urlParams.forecastend && urlParams.variable) {
+            linkEnd = 'analysis/streamflow/'
+                + urlParams.variable + '/'
+                + zfill(urlParams.forecaststart, 2) + '/'
+                + zfill(urlParams.forecastend, 2) + '/'
+                + zfill(urlParams.month, 2) + '-' + zfill(urlParams.day, 2) + '/'
+                + urlParams.startyear + '/'
+                + urlParams.endyear + '/';
+        }
+
+        if (linkEnd) {
+            queryBtn.setAttribute('href', queryBtn.getAttribute('url') + linkEnd);
+            L.DomUtil.removeClass(queryBtn, 'disabled');
+            queryBtn.setAttribute('aria-disabled', false);
+            return true;
+        }
+
+        queryBtn.removeAttribute('href');
+        L.DomUtil.addClass(queryBtn, 'disabled');
+        queryBtn.setAttribute('aria-disabled', true);
+        return false;
+    },
+);
+
+
 function setPourpointName(properties) {
+    selected_properties = properties;
     var table = document.getElementById('snodas-pourpoint-table');
-    table.setAttribute('pourpoint_id', properties.pourpoint_id);
-    table.setAttribute('is_polygon', properties.is_polygon);
-    document.getElementById('snodas-pourpoint-awdb-id').innerText = properties.awdb_id;
-    document.getElementById('snodas-pourpoint-name').innerText = properties.name;
-    document.getElementById('snodas-pourpoint-type').innerText = properties.is_polygon ? 'Polygon' : 'Point';
-    updateQueryBtn();
+    if (table) {
+        table.setAttribute('pourpoint_id', properties.pourpoint_id);
+        table.setAttribute('is_polygon', properties.is_polygon);
+        document.getElementById('snodas-pourpoint-awdb-id').innerText = properties.awdb_id;
+        document.getElementById('snodas-pourpoint-name').innerText = properties.name;
+        try {
+            query_selector.validate();
+        } catch {}
+    }
 }
 
 function clearPourpointName() {
+    selected_properties = null;
     var table = document.getElementById('snodas-pourpoint-table');
-    table.removeAttribute('pourpoint_id');
-    table.removeAttribute('is_polygon');
-    document.getElementById('snodas-pourpoint-awdb-id').innerText = '';
-    document.getElementById('snodas-pourpoint-name').innerText = '';
-    document.getElementById('snodas-pourpoint-type').innerText = '';
-    updateQueryBtn();
+    if (table) {
+        table.removeAttribute('pourpoint_id');
+        table.removeAttribute('is_polygon');
+        document.getElementById('snodas-pourpoint-awdb-id').innerText = '';
+        document.getElementById('snodas-pourpoint-name').innerText = '';
+        try {
+            query_selector.validate();
+        } catch {}
+    }
 }
 
 getSNODASdates(function(dates) {
     snodas_dates = dates;
-    var max_year = Math.max(...Object.keys(snodas_dates));
-    var max_month = Math.max(...Object.keys(snodas_dates[max_year]));
-    var max_day = Math.max(...snodas_dates[max_year][max_month]);
-    var min_year = Math.min(...Object.keys(snodas_dates));
-    var min_month = Math.min(...Object.keys(snodas_dates[min_year]));
-    var min_day = Math.min(...snodas_dates[min_year][min_month]);
+    snodas_tile_date_init();
+    try {
+        date_range_init();
+    } catch(err) {}
+    try {
+        doy_init();
+    } catch(err) {}
+});
+
+function snodas_tile_date_init() {
+    var dates = snodas_dates;
+    var max_year = Math.max(...Object.keys(dates));
+    var max_month = Math.max(...Object.keys(dates[max_year]));
+    var max_day = Math.max(...dates[max_year][max_month]);
+    var min_year = Math.min(...Object.keys(dates));
+    var min_month = Math.min(...Object.keys(dates[min_year]));
+    var min_day = Math.min(...dates[min_year][min_month]);
     var min_date = min_year + (min_month > 9 ? '-' : '-0') + min_month + (min_day > 9 ? '-' : '-0') + min_day;
     var max_date = max_year + (max_month > 9 ? '-' : '-0') + max_month + (max_day > 9 ? '-' : '-0') + max_day;
 
@@ -148,7 +448,7 @@ getSNODASdates(function(dates) {
         maxViewMode: 2,
         zIndexOffset: 1000,
         beforeShowDay: function(date) {
-            var months = snodas_dates[date.getFullYear()];
+            var months = dates[date.getFullYear()];
             if (months) {
                 var days = months[date.getMonth()+1];
                 if (days && days.indexOf(date.getDate()) != -1) {
@@ -158,14 +458,14 @@ getSNODASdates(function(dates) {
             return false;
         },
         beforeShowMonth: function(date) {
-            var months = snodas_dates[date.getFullYear()];
+            var months = dates[date.getFullYear()];
             if (months && months[date.getMonth()+1]) {
                 return true;
             }
             return false;
         },
         beforeShowYear: function(date) {
-            if (snodas_dates[date.getFullYear()]) {
+            if (dates[date.getFullYear()]) {
                 return true;
             }
             return false;
@@ -173,7 +473,20 @@ getSNODASdates(function(dates) {
     });
     $('#snodas-tile-date input').datepicker('update', max_date);
     $("#snodas-refresh").click();
-    $('#snodas-query-date').datepicker({
+}
+
+function date_range_init() {
+    var dates = snodas_dates;
+    var max_year = Math.max(...Object.keys(dates));
+    var max_month = Math.max(...Object.keys(dates[max_year]));
+    var max_day = Math.max(...dates[max_year][max_month]);
+    var min_year = Math.min(...Object.keys(dates));
+    var min_month = Math.min(...Object.keys(dates[min_year]));
+    var min_day = Math.min(...dates[min_year][min_month]);
+    var min_date = min_year + (min_month > 9 ? '-' : '-0') + min_month + (min_day > 9 ? '-' : '-0') + min_day;
+    var max_date = max_year + (max_month > 9 ? '-' : '-0') + max_month + (max_day > 9 ? '-' : '-0') + max_day;
+
+    $('#snodas-range-query-date').datepicker({
         format: "yyyy-mm-dd",
         startDate: min_date,
         endDate: max_date,
@@ -184,23 +497,92 @@ getSNODASdates(function(dates) {
         maxViewMode: 2,
         zIndexOffset: 1000,
     });
-    var start_date = new Date(max_date);
-    start_date.setDate(start_date.getDate() - 6);
-    $("#snodas-query-date").data("datepicker").pickers[1].setDate(max_date);
-    $("#snodas-query-date").data("datepicker").pickers[0].setDate(start_date);
-    updateQueryBtn();
-});
+
+    if (!date_range_low) {
+        date_range_low = new Date(max_date);
+        date_range_low.setDate(date_range_low.getDate() - 6);
+    }
+
+    if (!date_range_high) {
+        date_range_high = max_date;
+    }
+    
+    $("#snodas-range-query-date").data("datepicker").pickers[1].setDate(date_range_high);
+    $("#snodas-range-query-date").data("datepicker").pickers[0].setDate(date_range_low);
+
+    $("#snodas-range-query-date").datepicker().on('changeDate', function(event) {
+        date_range_low = document.getElementById('snodas-range-query-start').value;
+        date_range_high = document.getElementById('snodas-range-query-end').value;
+        query_selector.validate();
+    });
+}
+
+function doy_init() {
+    var dates = snodas_dates;
+    var max_year = Math.max(...Object.keys(dates));
+    var max_month = Math.max(...Object.keys(dates[max_year]));
+    var max_day = Math.max(...dates[max_year][max_month]);
+    var min_year = Math.min(...Object.keys(dates));
+    var min_month = Math.min(...Object.keys(dates[min_year]));
+    var min_day = Math.min(...dates[min_year][min_month]);
+    var min_date = min_year + (min_month > 9 ? '-' : '-0') + min_month + (min_day > 9 ? '-' : '-0') + min_day;
+    var max_date = max_year + (max_month > 9 ? '-' : '-0') + max_month + (max_day > 9 ? '-' : '-0') + max_day;
+
+    $('#snodas-doy-query-doy').datepicker({
+        format: "dd MM",
+        assumeNearbyYear: true,
+        showWeekDays: false,
+        maxViewMode: 1,
+        zIndexOffset: 1000,
+    });
+
+    if (!doy_date) {
+        doy_date = max_date;
+    }
+
+    $("#snodas-doy-query-doy").data("datepicker").pickers[0].setDate(doy_date);
+
+    $("#snodas-doy-query-doy").datepicker().on('changeDate', function(event) {
+        doy_date = $("#snodas-doy-query-doy").data("datepicker").pickers[0].getDate();
+        query_selector.validate();
+    });
+
+    var doy_query_years_start = document.getElementById('snodas-doy-query-years-start');
+    var doy_query_years_end = document.getElementById('snodas-doy-query-years-end');
+
+    for (var year = min_year; year <= max_year; year++) {
+        var option = document.createElement("option");
+        option.text = year;
+        doy_query_years_start.add(option);
+
+        var option = document.createElement("option");
+        option.text = year;
+        doy_query_years_end.add(option);
+    }
+
+    if (!doy_start) {
+        doy_start = min_year;
+    }
+
+    if (!doy_end) {
+        doy_end = max_year;
+    }
+
+    doy_query_years_start.addEventListener('change', function(event) {
+        doy_start = doy_query_years_start.value;
+        query_selector.validate();
+    });
+    doy_query_years_end.addEventListener('change', function(event) {
+        doy_end = doy_query_years_end.value;
+        query_selector.validate();
+    });
+
+    doy_query_years_start.value = doy_start;
+    doy_query_years_end.value = doy_end;
+}
 
 $("#calendar-btn").click(function() {
     $('#snodas-tile-date input').datepicker('show');
-});
-
-$("#snodas-query-start").on('change', function(e) {
-    updateQueryBtn();
-});
-
-$("#snodas-query-end").on('change', function(e) {
-    updateQueryBtn();
 });
 
 //
@@ -677,315 +1059,6 @@ watersheds.on("load", function(e) {
     watersheds.refresh();
 });
 
-L.EditMarker = L.Handler.extend({
-    includes: L.Evented.prototype,
-    options: {
-        icon: new L.Icon.Default(),
-        repeatMode: false,
-        zIndexOffset: 2000 // This should be > than the highest z-index any markers
-    },
-
-    initialize: function (map, options) {
-        this._map = map;
-        this._container = map._container;
-        this._overlayPane = map._panes.overlayPane;
-        this._popupPane = map._panes.popupPane;
-        this._pointMarker = null;
-
-        if (options) {
-            // TODO: pretty much all this crap should be events
-            // this listens to enable/disable
-            this._editButtonId = options.editButtonId;
-            // this listens for dragend
-            this._dragend = options.dragend;
-            // this listens for create
-            this._onCreate = options.onCreate;
-            // this listens for delete
-            this._onDelete = options.onDelete;
-            // this is the only actual option
-            this._validBounds = options.validBounds;
-        }
-        L.setOptions(this, options);
-    },
-
-    _bboxToPolyPoints: function(bbox) {
-        return [
-            [bbox.getNorth(), bbox.getWest()],
-            [bbox.getNorth(), bbox.getEast()],
-            [bbox.getSouth(), bbox.getEast()],
-            [bbox.getSouth(), bbox.getWest()],
-        ]
-    },
-
-    deleteMarker: function() {
-        if (this._map && this._pointMarker) {
-            this._map.removeLayer(this._pointMarker);
-            this._pointMarker = null;
-            this._onDelete();
-        }
-    },
-
-    _enableEditButton: function() {
-        if (this._editButtonId) {
-            var btn = document.getElementById(this._editButtonId);
-            if (!L.DomUtil.hasClass(btn, 'active')) {
-                L.DomUtil.addClass(btn, 'active');
-                btn.setAttribute('aria-pressed', true);
-            }
-        }
-    },
-
-    _disableEditButton: function() {
-        if (this._editButtonId) {
-            var btn = document.getElementById(this._editButtonId);
-            if (L.DomUtil.hasClass(btn, 'active')) {
-                L.DomUtil.removeClass(btn, 'active');
-                btn.setAttribute('aria-pressed', false);
-            }
-        }
-    },
-
-    enable: function () {
-        if (this._enabled) { return; }
-        this.fire('enabled', { handler: this.type });
-        this._map.fire('draw:drawstart', { layerType: this.type });
-        L.Handler.prototype.enable.call(this);
-        this._enableEditButton();
-    },
-
-    disable: function () {
-        if (!this._enabled) { return; }
-        L.Handler.prototype.disable.call(this);
-        this._map.fire('draw:drawstop', { layerType: this.type });
-        this.fire('disabled', { handler: this.type });
-        this._disableEditButton();
-    },
-
-    toggle: function() {
-        if (this._enabled) {
-            this.disable()
-        }
-        this.enable()
-    },
-
-    setOptions: function (options) {
-        L.setOptions(this, options);
-    },
-
-    // Cancel drawing when the escape key is pressed
-    _cancelDrawing: function (e) {
-        if (e.keyCode === 27) {
-            this.disable();
-        }
-    },
-
-    addHooks: function () {
-        if (this._map) {
-            L.DomUtil.disableTextSelection();
-            this._map.getContainer().focus();
-            L.DomEvent.on(this._container, 'keyup', this._cancelDrawing, this);
-
-            if (!this._mouseMarker) {
-                this._mouseMarker = L.marker(this._map.getCenter(), {
-                    icon: L.divIcon({
-                        className: 'leaflet-mouse-marker',
-                        iconAnchor: [20, 20],
-                        iconSize: [40, 40]
-                    }),
-                    opacity: 0,
-                    zIndexOffset: this.options.zIndexOffset
-                });
-            }
-
-            if (this._validBounds && !this._validBoundsOverlay) {
-                this._validBoundsOverlay = L.polygon(
-                    [
-                        [[90, -180],
-                         [90, 180],
-                         [-90, 180],
-                         [-90, -180]], //outer ring
-                        this._bboxToPolyPoints(this._validBounds) // cutout
-                    ],
-                    {
-                        fillcolor: '#000000',
-                        opacity: 0.4,
-                        weight: 0,
-                    }
-                );
-            }
-
-            this._validBoundsOverlay.addTo(this._map)
-
-            this._mouseMarker
-                .on('click', this._onClick, this)
-                .addTo(this._map);
-
-            this._map.on('mousemove', this._onMouseMove, this);
-        }
-    },
-
-    removeHooks: function () {
-        if (this._map) {
-            L.DomUtil.enableTextSelection();
-            L.DomEvent.off(this._container, 'keyup', this._cancelDrawing, this);
-
-            if (this._marker) {
-                this._marker.off('click', this._onClick, this);
-                this._map
-                    .off('click', this._onClick, this)
-                    .removeLayer(this._marker);
-                delete this._marker;
-            }
-
-            if (this._validBoundsOverlay) {
-                this._map.removeLayer(this._validBoundsOverlay);
-                delete this._validBoundsOverlay;
-            }
-
-            this._mouseMarker.off('click', this._onClick, this);
-            this._map.removeLayer(this._mouseMarker);
-            delete this._mouseMarker;
-
-            this._map.off('mousemove', this._onMouseMove, this);
-        }
-    },
-    _onMouseMove: function (e) {
-        var latlng = e.latlng;
-
-        //this._tooltip.updatePosition(latlng);
-        this._mouseMarker.setLatLng(latlng);
-
-        if (!this._marker) {
-            this._marker = new L.Marker(latlng, {
-                icon: this.options.icon,
-                zIndexOffset: this.options.zIndexOffset
-            });
-            // Bind to both marker and map to make sure we get the click event.
-            this._marker.on('click', this._onClick, this);
-            this._map
-                .on('click', this._onClick, this)
-                .addLayer(this._marker);
-        }
-        else {
-            latlng = this._mouseMarker.getLatLng();
-            this._marker.setLatLng(latlng);
-        }
-    },
-
-    moveMarker: function(latlng) {
-        if (!latlng instanceof L.latLng) {
-            latlng = L.latLng(latlng);
-        }
-        if (!this._validPoint(latlng)) { return false; }
-        if (this._pointMarker && this._pointMarker.getLatLng() == latlng) {
-            return false;
-        } else if (this._pointMarker) {
-            this._map.removeLayer(this._pointMarker);
-        }
-
-        this._pointMarker = new L.Marker(
-            latlng,
-            {
-                draggable: true,
-                icon: this.options.icon,
-            }
-        )
-            .on('dragend', this._dragend)
-            .addTo(this._map);
-
-        if (this._onCreate) {
-            this._onCreate(this._pointMarker);
-        }
-        return true;
-    },
-
-    _validPoint: function(latlng) {
-        if (!latlng || (this._validBounds && !this._validBounds.contains(latlng))) {
-            return false;
-        }
-        return true
-    },
-
-    _onClick: function () {
-        if (!this.moveMarker(this._marker.getLatLng())) {
-            return;
-        }
-        this.disable();
-        if (this.options.repeatMode) {
-            this.enable();
-        }
-    },
-});
-
-function getLatLng() {
-    var lat = document.getElementById('snodas-query-point-lat');
-    var lng = document.getElementById('snodas-query-point-lng');
-    return { lat: lat, lng: lng }
-}
-
-function updateLatLng (marker) {
-    if (!marker) {
-        var latlng = { lat: '', lng: ''}
-    } else {
-        try {
-            var latlng = marker.getLatLng();
-        } catch(err) {
-            var latlng = marker.target.getLatLng();
-        }
-    }
-    var latlngInput = getLatLng();
-    if (latlngInput.lat.value !== latlng.lat || latlngInput.lng.value !== latlng.lng) {
-        latlngInput.lat.value = latlng.lat;
-        latlngInput.lng.value = latlng.lng;
-        document.getElementById(
-                marker ? 'hidden-stuff' : 'snodas-query-point-btn'
-            ).appendChild(
-                document.getElementById('snodas-query-point-pick')
-            );
-        document.getElementById(
-                marker ? 'snodas-query-point-btn' : 'hidden-stuff'
-            ).appendChild(
-                document.getElementById('snodas-query-point-clear')
-            );
-        updateQueryBtn();
-    }
-}
-
-$('#snodas-query-point-clear').on('click', function(e) {
-    editHandler.deleteMarker();
-    var latlng = getLatLng();
-    toggleValid(latlng.lat);
-    toggleValid(latlng.lng);
-})
-
-var editHandler = new L.EditMarker(
-    map,
-    {
-        editButtonId: 'snodas-query-point-pick',
-        dragend: updateLatLng,
-        onCreate: updateLatLng,
-        onDelete: updateLatLng,
-        validBounds: L.latLngBounds([24.9504, -124.7337], [52.8754, -66.9421]),
-    }
-);
-
-document.body.addEventListener('click', function(e) {
-    var btn = document.getElementById('snodas-query-point-pick');
-    if (L.DomUtil.hasClass(btn, 'active') &&
-        editHandler._enabled &&
-        !$(e.target).closest('#map').length &&
-        !$(e.target).closest('#snodas-query-point-pick').length) {
-        editHandler.disable();
-    }
-});
-
-$('#snodas-query-point-pick').on('click', function(e) {
-    if (!L.DomUtil.hasClass(e.currentTarget, 'active')) {
-        editHandler.enable();
-    } else {
-        editHandler.disable();
-    }
-});
 
 function toggleValid(ele, isValid) {
     if (isValid === undefined) {
@@ -996,26 +1069,6 @@ function toggleValid(ele, isValid) {
         L.DomUtil.addClass(ele, isValid ? 'is-valid' : 'is-invalid');
     }
 }
-
-$('#snodas-query-point :input').on('change input', function(e) {
-    var latlng = getLatLng();
-    var latValid = latlng.lat.checkValidity(), lngValid = latlng.lng.checkValidity();
-    toggleValid(latlng.lat, latValid);
-    toggleValid(latlng.lng, lngValid);
-    if (latValid && lngValid) {
-        console.log("move");
-        editHandler.moveMarker(L.latLng([latlng.lat.value, latlng.lng.value]));
-    }
-    updateQueryBtn();
-});
-
-$('#snodas-query-type :input').on('change', function() {
-    var pourpoint_table = document.getElementById('snodas-pourpoint-table');
-    var query_point = document.getElementById('snodas-query-point');
-    pourpoint_table.hidden = query_point.hidden;
-    query_point.hidden = !query_point.hidden;
-    updateQueryBtn();
-});
 
 map.on('zoomend', function(e){
     pourpoints.refresh();
