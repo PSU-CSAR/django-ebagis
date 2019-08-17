@@ -19,7 +19,11 @@
 
       {% url 'ebagis_about' as url_about %}
       <li class="nav-item nav-icon {% if request.get_full_path == url_about %}active{% endif %}">
-        <a class="nav-link" href={{ url_about }}><i class="fas fa-question-circle" aria-hidden="true"></i> About</a> {# url 'ebagis_about' #}
+        <a class="nav-link" href={{ url_about }}><i class="fas fa-info-circle" aria-hidden="true"></i> About</a> {# url 'ebagis_about' #}
+      </li>
+
+      <li class="nav-item nav-icon">
+        <a class="nav-link" href="http://webservices.geog.pdx.edu/ebagis/"><i class="fas fa-question-circle" aria-hidden="true"></i> Help</a>
       </li>
     </ul>
 
