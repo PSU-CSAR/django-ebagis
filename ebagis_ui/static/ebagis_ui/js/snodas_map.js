@@ -339,7 +339,7 @@ query_selector.add_query(
 );*/
 
 query_selector.add_query(
-    'SNODAS Stremflow Regression Tool',
+    'SNODAS Streamflow Regression Tool',
     regression + variables_html + doy_html + submit,
     function() {
         // init
