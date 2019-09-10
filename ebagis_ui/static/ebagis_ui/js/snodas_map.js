@@ -344,6 +344,15 @@ query_selector.add_query(
     function() {
         // init
         doy_init();
+        document.getElementById('snodas-query-month-start').addEventListener('change', function(event) {
+            query_selector.validate();
+        });
+        document.getElementById('snodas-query-month-end').addEventListener('change', function(event) {
+            query_selector.validate();
+        });
+        document.getElementById('snodas-query-variable').addEventListener('change', function(event) {
+            query_selector.validate();
+        });
     },
     function() {
         // validate
@@ -359,10 +368,11 @@ query_selector.add_query(
         urlParams['forecastend'] = document.getElementById('snodas-query-month-end').value;
         urlParams['variable'] = document.getElementById('snodas-query-variable').value;
 
-
         var linkEnd = null;
         if (urlParams.day && urlParams.month && urlParams.startyear && urlParams.endyear 
-            && urlParams.forecaststart && urlParams.forecastend && urlParams.variable) {
+            && urlParams.forecaststart && urlParams.forecastend && urlParams.variable
+            && parseInt(urlParams.startyear) <= parseInt(urlParams.endyear)
+            && parseInt(urlParams.forecaststart) <= parseInt(urlParams.forecastend)) {
             linkEnd = 'analysis/streamflow/'
                 + urlParams.variable + '/'
                 + zfill(urlParams.forecaststart, 2) + '/'
