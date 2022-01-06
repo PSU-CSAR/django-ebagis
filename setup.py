@@ -44,7 +44,7 @@ def main():
         python_requires=PYTHON_REQUIREMENTS,
         install_requires=[
             'psycopg2>=2.7.1',
-            'celery==3.1.25',
+            'celery==5.2.2',
             'django-celery>=3.2.1',
             'Django>=1.10.6',
             'djangorestframework>=3.6.2',
